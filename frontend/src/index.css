@@ -1,9 +1,22 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #0F2A4A;
+  --color-navy-dark: #081B30;
+  --color-saffron: #F2802E;
+  --color-saffron-deep: #D9660F;
+  --color-green-subtle: #3F9166;
+  --color-paper: #FBFAF7;
+  --color-ink: #1C2733;
+  --color-muted: #5B6B7D;
+  --color-line: #E2E6EC;
+}
 
 @layer base {
   body {
-    @apply bg-paper text-ink antialiased;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }

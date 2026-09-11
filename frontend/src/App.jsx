@@ -2,7 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
-import StudentProfile from "./pages/StudentProfile";
+import RecruiterDashboard from "./pages/RecruiterDashboard";
+
 
 function PrivateRoute({ children }) {
   const { token } = useAuth();
@@ -25,6 +26,7 @@ export default function App() {
             }
           />
           {/* Default redirect */}
+          <Route path="/recruiter/dashboard" element={<RecruiterDashboard />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

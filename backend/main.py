@@ -1,17 +1,16 @@
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import os
-
-# Import routers and DB utilities
-from routers import auth as auth_router
-from routers import students as students_router
-from database import Base, engine
 
 app = FastAPI()
 
-# CORS configuration – allow the Vercel frontend origin (or all in dev)
-origins = [os.getenv("FRONTEND_ORIGIN", "*")]
+# Allow CORS for the frontend
+origins = [
+    "http://localhost:5173",
+    "https://job-jugaad-sepia.vercel.app"
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -20,22 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API routers
-from routers import recruiter as recruiter_router
-
-# Include API routers
-app.include_router(auth_router.router, prefix="/auth")
-app.include_router(students_router.router, prefix="/students")
-app.include_router(recruiter_router.router, prefix="/recruiter")
-
-
-# Create DB tables on startup (useful for SQLite dev)
-@app.on_event("startup")
-async def on_startup():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
 @app.get("/health")
-async def health():
-    return JSONResponse({"status": "ok"})
-
+def health_check():
+    return JSONResponse(content={"status": "ok"})

@@ -1,9 +1,2 @@
-fastapi
-uvicorn
-python-jose[cryptography]
-passlib[bcrypt]
-pdfplumber
-sqlalchemy[asyncio]
-aiosqlite
-asyncpg
-
+fastapi==0.110.0
+uvicorn==0.28.0

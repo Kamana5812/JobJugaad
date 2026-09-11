@@ -1,36 +1,46 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import SignupPage from "./pages/SignupPage";
-import LoginPage from "./pages/LoginPage";
-import StudentProfile from "./pages/StudentProfile";
-import RecruiterDashboard from "./pages/RecruiterDashboard";
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
+function App() {
+  const [healthStatus, setHealthStatus] = useState('Checking...')
+  const [error, setError] = useState(null)
 
-function PrivateRoute({ children }) {
-  const { token } = useAuth();
-  return token ? children : <Navigate to="/login" replace />;
-}
+  useEffect(() => {
+    const checkHealth = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+        const response = await axios.get(`${apiUrl}/health`)
+        setHealthStatus(response.data.status === 'ok' ? 'Online' : 'Unexpected response')
+      } catch (err) {
+        setError(err.message)
+        setHealthStatus('Offline')
+      }
+    }
+    
+    checkHealth()
+  }, [])
 
-export default function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <StudentProfile />
-              </PrivateRoute>
-            }
-          />
-          {/* Default redirect */}
-          <Route path="/recruiter/dashboard" element={<PrivateRoute><RecruiterDashboard /></PrivateRoute>} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
-  );
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="bg-white p-8 rounded-lg shadow-sm border border-line w-full max-w-md text-center">
+        <h1 className="text-3xl font-bold text-navy mb-2">JobJugaad</h1>
+        <p className="text-muted mb-6">Placement ka Jugaad, AI ke Saath.</p>
+        
+        <div className="flex flex-col gap-4">
+          <div className="p-4 rounded bg-paper border border-line">
+            <p className="text-sm font-semibold text-muted mb-1">Backend Status</p>
+            <div className="flex items-center justify-center gap-2">
+              <div className={`w-3 h-3 rounded-full ${healthStatus === 'Online' ? 'bg-green-subtle' : 'bg-red-500'}`}></div>
+              <span className={`font-bold ${healthStatus === 'Online' ? 'text-green-subtle' : 'text-red-500'}`}>
+                {healthStatus}
+              </span>
+            </div>
+            {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
+
+export default App

@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-11
-**Current phase:** Phase 1 — Student Core (completed)
+**Current phase:** Phase 0 — Environment & Skeleton (completed)
 
 ---
 
@@ -38,13 +38,12 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 ### ✅ Completed
 - [x] Phase 0 — Environment & Skeleton (deployed, live URLs functional)
-- [x] Phase 1 — Student Core (auth, student models, resume upload, readiness engine, UI)
 
 ### 🚧 In Progress
 - None
 
 ### ⏭️ Next Up
-- Phase 2 — Recruiter Core & Matching (see `PHASES.md`)
+- Phase 1 — Student Core (see `PHASES.md`)
 
 ---
 
@@ -95,6 +94,6 @@ _Do not put actual secret values here — only where to find them._
 _When ending a work session, leave a short note here for whoever (or whatever AI agent) picks this up next._
 
 > **Session ended:** 2026-09-11
-> **What I just finished:** Phase 1 — Student Core (auth, models, resume parsing, readiness engine, UI) completed and deployed. Live URLs verified.
-> **What's broken/incomplete:** None for Phase 1.
-> **What to do next:** Begin Phase 2 — Recruiter Core & Matching (implement recruiter auth, job posting, matching engine, and corresponding UI).
+> **What I just finished:** Phase 0 — Environment & Skeleton. Cleaned up previous future code and set up barebones React/Tailwind frontend and FastAPI backend with a /health endpoint.
+> **What's broken/incomplete:** None for Phase 0.
+> **What to do next:** Begin Phase 1 — Student Core (implement student auth, models, resume parsing, readiness engine, UI).

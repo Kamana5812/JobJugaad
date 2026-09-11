@@ -4,4 +4,6 @@ python-jose[cryptography]
 passlib[bcrypt]
 pdfplumber
 sqlalchemy[asyncio]
+aiosqlite
+asyncpg
 

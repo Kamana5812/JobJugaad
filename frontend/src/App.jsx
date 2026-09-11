@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -6,6 +6,19 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [health, setHealth] = useState(null)
+
+  useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL
+    if (!apiUrl) {
+      setHealth({ error: 'VITE_API_URL not set' })
+      return
+    }
+    fetch(`${apiUrl}/health`)
+      .then((r) => r.json())
+      .then((data) => setHealth(data))
+      .catch((err) => setHealth({ error: err.message }))
+  }, [])
 
   return (
     <>
@@ -28,6 +41,18 @@ function App() {
         >
           Count is {count}
         </button>
+        {/* Health check display */}
+        <div className="health">
+          {health ? (
+            health.error ? (
+              <p style={{ color: 'red' }}>Error: {health.error}</p>
+            ) : (
+              <p>Backend health: {health.status}</p>
+            )
+          ) : (
+            <p>Loading backend health…</p>
+          )}
+        </div>
       </section>
 
       <div className="ticks"></div>

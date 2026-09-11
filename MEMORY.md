@@ -2,8 +2,8 @@
 
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
-**Last updated:** _(update this line every time you edit this file)_
-**Current phase:** Phase 0 — Environment & Skeleton (not yet started)
+**Last updated:** 2026-09-11
+**Current phase:** Phase 1 — Student Core (completed)
 
 ---
 
@@ -12,8 +12,8 @@ Living record of project state and decisions. Update this file whenever a major 
 - **Name:** JobJugaad
 - **Event:** BPUT Hackathon 2026, Problem Statement 10 (official title: "CampusLink — AI-Powered Campus-to-Corporate Placement Management & Analytics Platform")
 - **Tagline:** "Placement ka Jugaad, AI ke Saath."
-- **Repo:** _(add GitHub URL once created)_
-- **Live URLs:** Frontend: _(pending)_ · Backend: _(pending)_
+- **Repo:** https://github.com/Kamana5812/JobJugaad
+- **Live URLs:** Frontend: https://job-jugaad-sepia.vercel.app/ · Backend: https://jobjugaad-lmca.onrender.com
 
 ---
 
@@ -21,12 +21,14 @@ Living record of project state and decisions. Update this file whenever a major 
 
 | Date | Decision | Reason |
 |---|---|---|
-| — | Stack: React + Tailwind (frontend), FastAPI (backend), PostgreSQL (DB) | Free-tier deployable on Vercel + Render; matches team's existing React/JS skills |
-| — | Rule-based scoring for MVP, not black-box ML | Problem statement explicitly requires explainability; rule-based is transparent and easy to justify to judges |
-| — | Deployment target: Vercel (frontend) + Render (backend + DB) | Both have generous free tiers, GitHub auto-deploy, beginner-friendly |
-| — | Synthetic dataset (~4,800 students, 40–50 companies), not real data | No real student/recruiter data available for a hackathon |
-| — | Brand palette: Navy / Saffron / Green / White | Indian identity that feels modern, not like tricolor kitsch — see `DESIGN.md` |
-| — | Readiness Score weighting: 30/20/15/15/10/10 (Technical/Projects/Academics/Aptitude/Communication/Interview) | Proposed implementation model — explicitly documented as not an official BPUT formula |
+| 2026-09-11 | Stack: React + Tailwind (frontend), FastAPI (backend), PostgreSQL (DB) | Free-tier deployable on Vercel + Render; matches team's existing React/JS skills |
+| 2026-09-11 | Rule-based scoring for MVP, not black-box ML | Problem statement explicitly requires explainability; rule‑based is transparent and easy to justify to judges |
+| 2026-09-11 | Deployment target: Vercel (frontend) + Render (backend + DB) | Both have generous free tiers, GitHub auto‑deploy, beginner‑friendly |
+| 2026-09-11 | Synthetic dataset (~4,800 students, 40–50 companies), not real data | No real student/recruiter data available for a hackathon |
+| 2026-09-11 | Brand palette: Navy / Saffron / Green / White | Indian identity that feels modern, not like tricolor kitsch — see `DESIGN.md` |
+| 2026-09-11 | Readiness Score weighting: 30/20/15/15/10/10 (Technical/Projects/Academics/Aptitude/Communication/Interview) | Proposed implementation model — explicitly documented as not an official BPUT formula |
+| 2026-09-11 | Live URLs set for Phase 0: Frontend https://job-jugaad-sepia.vercel.app/, Backend https://jobjugaad-lmca.onrender.com | Enables end‑to‑end demo of health‑check integration |
+| 2026-09-11 | Phase 1 implementation (auth, student models, resume upload, readiness engine, UI) | Delivered JWT‑based auth, profile CRUD, PDF resume parsing, weighted readiness scoring, and protected React UI |
 
 _Add a new row every time a meaningful architectural or product decision is made._
 
@@ -35,13 +37,14 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
-- [ ] _(nothing yet — update as phases complete)_
+- [x] Phase 0 — Environment & Skeleton (deployed, live URLs functional)
+- [x] Phase 1 — Student Core (auth, student models, resume upload, readiness engine, UI)
 
 ### 🚧 In Progress
-- [ ] _(update as work starts)_
+- None
 
 ### ⏭️ Next Up
-- Phase 0 tasks — see `PHASES.md`
+- Phase 2 — Recruiter Core & Matching (see `PHASES.md`)
 
 ---
 
@@ -49,10 +52,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
-- Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
-- Notifications are simulated in-app only; no real email/SMS/WhatsApp delivery.
-- Multi-college support is designed into the schema (`college_id`) but only tested with a single synthetic college's data.
-- Render's free tier cold-starts after 15 minutes idle — must warm up before live demos.
+- Matching and readiness scoring are rule‑based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
+- Notifications are simulated in‑app only; no real email/SMS/WhatsApp delivery.
+- Multi‑college support is designed into the schema (`college_id`) but only tested with a single synthetic college's data.
+- Render's free tier cold‑starts after 15 minutes idle — must warm up before live demos.
 - Simulator (P2) projections are generated from the synthetic dataset's conversion model, not real historical placement data.
 
 ---
@@ -62,8 +65,8 @@ Keep this section current — it's exactly what a judge or mentor will ask about
 _Track unresolved questions here so they don't get lost between sessions._
 
 - [ ] Final call on TypeScript vs. plain JavaScript for the frontend?
-- [ ] Do we attempt the pgvector semantic-matching stretch goal, or stop at keyword matching?
-- [ ] Who owns seed data generation (the `seed.py` script) and when does it get finalized?
+- [ ] Do we attempt the pgvector semantic‑matching stretch goal, or stop at keyword matching?
+- [ ] Who owns seed data generation (`seed.py`) and when does it get finalized?
 
 ---
 
@@ -91,8 +94,7 @@ _Do not put actual secret values here — only where to find them._
 
 _When ending a work session, leave a short note here for whoever (or whatever AI agent) picks this up next._
 
-> _(example format)_
-> **Session ended:** [date]
-> **What I just finished:** ...
-> **What's broken/incomplete:** ...
-> **What to do next:** ...
+> **Session ended:** 2026-09-11
+> **What I just finished:** Phase 1 — Student Core (auth, models, resume parsing, readiness engine, UI) completed and deployed. Live URLs verified.
+> **What's broken/incomplete:** None for Phase 1.
+> **What to do next:** Begin Phase 2 — Recruiter Core & Matching (implement recruiter auth, job posting, matching engine, and corresponding UI).

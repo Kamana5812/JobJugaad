@@ -3,7 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import os
 
-app = FastAPI()
+from database import engine, Base
+from routers import auth, students
+
+# Initialize DB tables
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="JobJugaad API")
 
 # Allow CORS for the frontend
 origins = [
@@ -19,6 +25,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
+app.include_router(students.router)
+
 @app.get("/health")
 def health_check():
     return JSONResponse(content={"status": "ok"})
+

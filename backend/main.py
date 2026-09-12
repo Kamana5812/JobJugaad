@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 import os
 
 from database import engine, Base
-from routers import auth, students
+from routers import auth, students, recruiters
 
 # Initialize DB tables
 Base.metadata.create_all(bind=engine)
@@ -27,6 +27,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(students.router)
+app.include_router(recruiters.router)
 
 @app.get("/health")
 def health_check():

@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-12
-**Current phase:** Phase 1 — Student Core (in progress)
+**Current phase:** Phase 2 — Recruiter Core & Matching (in progress)
 
 ---
 
@@ -38,12 +38,13 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 ### ✅ Completed
 - [x] Phase 0 — Environment & Skeleton (deployed, live URLs functional)
+- [x] Phase 1 — Student Core (student auth, models, resume upload, readiness engine)
 
 ### 🚧 In Progress
-- Phase 1 — Student Core
+- Phase 2 — Recruiter Core & Matching
 
 ### ⏭️ Next Up
-- Phase 2 — Recruiter Core & Matching (see `PHASES.md`)
+- Phase 3 — Scheduling & Admin Analytics (see `PHASES.md`)
 
 ---
 

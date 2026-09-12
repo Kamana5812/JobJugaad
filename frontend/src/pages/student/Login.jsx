@@ -12,8 +12,12 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate('/student/dashboard');
+      const userPayload = await login(email, password);
+      if (userPayload && userPayload.role === 'recruiter') {
+        navigate('/recruiter/dashboard');
+      } else {
+        navigate('/student/dashboard');
+      }
     } catch (err) {
       setError('Login failed. Please check your credentials.');
     }

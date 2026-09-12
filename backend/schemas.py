@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
+from datetime import datetime
 
 # --- Auth ---
 class UserCreate(BaseModel):
@@ -63,3 +64,47 @@ class ReadinessResponse(BaseModel):
     band: str
     breakdown: Dict[str, float]
     explanation: str
+
+# --- Recruiter & Jobs ---
+class CompanyCreate(BaseModel):
+    name: str
+    industry: str
+
+class CompanyProfile(BaseModel):
+    id: int
+    recruiter_user_id: int
+    name: str
+    industry: str
+    class Config:
+        from_attributes = True
+
+class JobCreate(BaseModel):
+    title: str
+    ctc: float
+    min_cgpa: float
+    eligible_branches: List[str]
+    required_skills: List[str]
+
+class JobProfile(BaseModel):
+    id: int
+    company_id: int
+    title: str
+    ctc: float
+    min_cgpa: float
+    eligible_branches: List[str]
+    required_skills: List[str]
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+class MatchResult(BaseModel):
+    id: int
+    job_id: int
+    student_id: int
+    student_name: str
+    match_score: float
+    factor_breakdown: Dict[str, Any]
+    missing_requirements: List[str]
+    explanation: str
+    class Config:
+        from_attributes = True

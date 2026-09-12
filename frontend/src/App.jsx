@@ -2,7 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import Login from './pages/student/Login';
 import Signup from './pages/student/Signup';
-import Dashboard from './pages/student/Dashboard';
+import StudentDashboard from './pages/student/Dashboard';
+import RecruiterDashboard from './pages/recruiter/Dashboard';
+import DriveDetails from './pages/recruiter/DriveDetails';
 
 function App() {
   return (
@@ -12,7 +14,9 @@ function App() {
           <Route path="/" element={<Navigate to="/student/login" replace />} />
           <Route path="/student/login" element={<Login />} />
           <Route path="/student/signup" element={<Signup />} />
-          <Route path="/student/dashboard" element={<Dashboard />} />
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/recruiter/dashboard" element={<RecruiterDashboard />} />
+          <Route path="/recruiter/drives/:id" element={<DriveDetails />} />
         </Routes>
       </Router>
     </AuthProvider>

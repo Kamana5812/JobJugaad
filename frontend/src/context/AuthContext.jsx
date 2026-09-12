@@ -35,7 +35,15 @@ export const AuthProvider = ({ children }) => {
     const res = await api.post('/auth/login', formData, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
-    setToken(res.data.access_token);
+    const access_token = res.data.access_token;
+    setToken(access_token);
+    
+    const base64Url = access_token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
   };
 
   const signup = async (data) => {

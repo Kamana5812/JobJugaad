@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Text
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Text, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database import Base
@@ -63,3 +63,42 @@ class Certification(Base):
     description = Column(Text)
 
     student = relationship("Student", back_populates="certifications")
+
+class Company(Base):
+    __tablename__ = "companies"
+    id = Column(Integer, primary_key=True, index=True)
+    recruiter_user_id = Column(Integer, ForeignKey("users.id"))
+    name = Column(String)
+    industry = Column(String)
+    
+    recruiter = relationship("User")
+    jobs = relationship("Job", back_populates="company")
+
+class Job(Base):
+    __tablename__ = "jobs"
+    id = Column(Integer, primary_key=True, index=True)
+    company_id = Column(Integer, ForeignKey("companies.id"))
+    title = Column(String)
+    ctc = Column(Float)
+    min_cgpa = Column(Float)
+    eligible_branches = Column(JSON) # list of strings
+    required_skills = Column(JSON) # list of strings
+    created_at = Column(DateTime, default=datetime.utcnow)
+    college_id = Column(String, default="default_college")
+
+    company = relationship("Company", back_populates="jobs")
+    matches = relationship("Match", back_populates="job", cascade="all, delete-orphan")
+
+class Match(Base):
+    __tablename__ = "matches"
+    id = Column(Integer, primary_key=True, index=True)
+    job_id = Column(Integer, ForeignKey("jobs.id"))
+    student_id = Column(Integer, ForeignKey("students.id"))
+    match_score = Column(Float)
+    factor_breakdown = Column(JSON)
+    missing_requirements = Column(JSON)
+    explanation = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    job = relationship("Job", back_populates="matches")
+    student = relationship("Student")

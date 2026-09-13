@@ -9,9 +9,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-from backend.routers import auth, students, recruiter
+from backend.routers import auth, students, recruiter, admin
 app.include_router(auth.router)
 app.include_router(recruiter.router)
+app.include_router(admin.router)
 
 # Wide‑open CORS for initial development only
 app.add_middleware(
@@ -48,6 +49,8 @@ async def startup():
             "CREATE POLICY jobs_college_policy ON jobs USING (college_id = current_setting('app.college_id')::uuid);",
             "ALTER TABLE matches ENABLE ROW LEVEL SECURITY;",
             "CREATE POLICY matches_college_policy ON matches USING (college_id = current_setting('app.college_id')::uuid);",
+            "ALTER TABLE interviews ENABLE ROW LEVEL SECURITY;",
+            "CREATE POLICY interviews_college_policy ON interviews USING (college_id = current_setting('app.college_id')::uuid);",
         ]
         for stmt in policies:
             db.execute(text(stmt))

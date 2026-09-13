@@ -105,3 +105,15 @@ class Certification(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
     college_id = Column(UUID(as_uuid=True), nullable=False)
+
+class Interview(Base):
+    __tablename__ = "interviews"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    job_id = Column(UUID(as_uuid=True), ForeignKey("jobs.id"), nullable=False)
+    student_id = Column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=False)
+    start_time = Column(DateTime, nullable=False)
+    end_time = Column(DateTime, nullable=False)
+    venue = Column(String, nullable=False)
+    panel = Column(String, nullable=False)
+    college_id = Column(UUID(as_uuid=True), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)

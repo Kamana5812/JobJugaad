@@ -8,7 +8,9 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import DriveCreate from './pages/DriveCreate';
+import DriveMatches from './pages/DriveMatches';
 import Profile from './pages/Profile';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const token = localStorage.getItem('access_token');
@@ -19,6 +21,7 @@ function App() {
         {!token && <Link to="/signup">Sign Up</Link>}
         {!token && <Link to="/login">Log In</Link>}
         {token && <Link to="/profile">Profile</Link>}
+        {token && <Link to="/admin">Admin Dashboard</Link>}
       </nav>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -27,6 +30,7 @@ function App() {
         <Route path="/profile" element={token ? <Profile /> : <Navigate to="/login" replace />} />
         <Route path="/drives/create" element={<DriveCreate />} />
         <Route path="/drives/:id" element={<DriveMatches />} />
+        <Route path="/admin" element={token ? <AdminDashboard /> : <Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );

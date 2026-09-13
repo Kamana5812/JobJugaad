@@ -4,7 +4,7 @@ password hashes.
 '''
 
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 import uuid
 
 class UserCreate(BaseModel):
@@ -97,3 +97,37 @@ class ReadinessResponse(BaseModel):
 
 class MatchOverride(BaseModel):
     status: str
+
+class InterviewCreate(BaseModel):
+    job_id: uuid.UUID
+    student_id: uuid.UUID
+    preferred_start: str  # ISO string
+    duration_minutes: int
+    venue: str
+    panel: str
+
+class InterviewRead(BaseModel):
+    id: uuid.UUID
+    job_id: uuid.UUID
+    student_id: uuid.UUID
+    start_time: str
+    end_time: str
+    venue: str
+    panel: str
+    college_id: uuid.UUID
+    class Config:
+        orm_mode = True
+
+class AtRiskStudent(BaseModel):
+    student_id: str
+    student_name: str
+    is_at_risk: bool
+    factors: List[str]
+    recommendation: Optional[str] = None
+
+class AdminAnalytics(BaseModel):
+    total_students: int
+    total_drives: int
+    total_matches: int
+    total_interviews: int
+    matches_by_branch: List[Dict[str, Any]]

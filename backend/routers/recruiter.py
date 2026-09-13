@@ -108,3 +108,46 @@ def override_match(match_id: str, override: schemas.MatchOverride, db: Session =
     db.commit()
     db.refresh(match)
     return match
+
+@router.post("/interviews", response_model=schemas.InterviewRead)
+def schedule_interview(interview: schemas.InterviewCreate, db: Session = Depends(get_db), payload: dict = Depends(get_current_user)):
+    if payload.get("role") != "recruiter":
+        raise HTTPException(status_code=403, detail="Only recruiters can schedule interviews")
+        
+    job = db.query(models.Job).filter(models.Job.id == interview.job_id).first()
+    if not job or job.company.recruiter_user_id != payload["user_id"]:
+        raise HTTPException(status_code=403, detail="Access denied for this job")
+        
+    from datetime import datetime
+    preferred_start = datetime.fromisoformat(interview.preferred_start.replace("Z", "+00:00"))
+    
+    from backend.engines import scheduling
+    try:
+        start_time, end_time = scheduling.propose_schedule(
+            job_id=str(interview.job_id),
+            student_id=str(interview.student_id),
+            preferred_start=preferred_start,
+            duration_minutes=interview.duration_minutes,
+            venue=interview.venue,
+            panel=interview.panel,
+            db=db
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+        
+    new_interview = models.Interview(
+        job_id=job.id,
+        student_id=interview.student_id,
+        start_time=start_time,
+        end_time=end_time,
+        venue=interview.venue,
+        panel=interview.panel,
+        college_id=payload["college_id"]
+    )
+    db.add(new_interview)
+    db.commit()
+    db.refresh(new_interview)
+    # Convert datetime to string for response model
+    new_interview.start_time = new_interview.start_time.isoformat()
+    new_interview.end_time = new_interview.end_time.isoformat()
+    return new_interview

@@ -24,7 +24,7 @@ JWT_SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = "HS256"
 
 # Dependency to get DB session and set RLS "app.college_id" parameter
-def get_db_and_set_rls(token: str = Depends(auth_scheme)):
+def get_db_and_set_rls(token: str = Depends(oauth_scheme)):
     # Decode JWT
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
@@ -42,7 +42,7 @@ def get_db_and_set_rls(token: str = Depends(auth_scheme)):
     finally:
         db.close()
 
-def get_current_user(payload: dict = Depends(lambda token=Depends(auth_scheme): jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM]))):
+def get_current_user(payload: dict = Depends(lambda token=Depends(oauth_scheme): jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM]))):
     return payload
 
 @router.get("/{student_id}", response_model=schemas.StudentRead)
@@ -96,3 +96,19 @@ def get_my_student(db_payload = Depends(get_db_and_set_rls)):
     if not student:
         raise HTTPException(status_code=404, detail="Student profile not found for this user")
     return student
+
+@router.get("/{student_id}/skill-gap")
+def get_skill_gap(student_id: str, role: str, db_payload = Depends(get_db_and_set_rls)):
+    db, token_payload = db_payload
+    student = db.query(models.Student).filter(models.Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    if str(student.college_id) != token_payload["college_id"]:
+        raise HTTPException(status_code=403, detail="Access denied for this college")
+    
+    from backend.engines import skill_gap
+    try:
+        result = skill_gap.analyze_skill_gap(student_id, role, db)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

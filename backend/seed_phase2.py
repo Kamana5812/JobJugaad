@@ -37,7 +37,13 @@ def generate_student(college_id: str):
         college_id=college_id,
         created_at=datetime.utcnow(),
     )
-    return user, student
+    return user, student, [
+        models.StudentSkill(
+            skill_name=skill,
+            proficiency=random.randint(30, 100),
+            college_id=college_id,
+        ) for skill in random.sample(["Python", "Java", "C++", "SQL", "React", "Node.js", "Excel", "JavaScript"], k=random.randint(2, 5))
+    ]
 
 def generate_company(recruiter_user_id: str, college_id: str):
     company = models.Company(
@@ -92,11 +98,15 @@ def seed_phase2(student_count=300, company_count=12):
                 db.add(job)
         # Generate students
         for _ in range(student_count):
-            user, student = generate_student(COLLEGE_ID)
+            user, student, skills = generate_student(COLLEGE_ID)
             db.add(user)
             db.flush()
             student.user_id = user.id
             db.add(student)
+            db.flush()
+            for skill in skills:
+                skill.student_id = student.id
+                db.add(skill)
         db.commit()
         print(f"✅ Seeded {student_count} students, {company_count} companies with drives")
     finally:

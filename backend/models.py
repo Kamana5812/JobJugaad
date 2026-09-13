@@ -86,6 +86,7 @@ class Match(Base):
     factor_breakdown = Column(JSON, nullable=True)
     missing_requirements = Column(JSON, nullable=True)
     explanation = Column(String, nullable=True)
+    override_status = Column(String, nullable=True)  # e.g., 'promoted' or 'rejected'
     college_id = Column(UUID(as_uuid=True), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 

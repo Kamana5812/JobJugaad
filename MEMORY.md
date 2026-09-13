@@ -2,7 +2,7 @@
 
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
-**Last updated:** _(update this line every time you edit this file)_
+**Last updated:** 2026-09-14
 **Current phase:** Phase 2 — Talent Finder (in progress)
 
 ---
@@ -41,7 +41,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 ### ✅ Completed
 - [x] Phase 0 — Environment & Skeleton (deployed health endpoint, live URLs confirmed)
-- [x] Phase 1 — Student Core (signup/login, profile, resume upload, readiness scoring)
+- [x] Phase 1 — Student Core (signup/login, profile, resume upload, readiness scoring). RLS confirmed working!
 
 ### 🚧 In Progress
 - [ ] Phase 2 — Talent Finder (in progress)

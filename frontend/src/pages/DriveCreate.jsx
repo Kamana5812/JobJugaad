@@ -31,7 +31,7 @@ function DriveCreate() {
         eligible_branches: parseArray(branches),
         required_skills: parseSkills(skills),
       };
-      const res = await axios.post('/jobs', payload, {
+      const res = await axios.post('/recruiter/jobs', payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('Drive created');

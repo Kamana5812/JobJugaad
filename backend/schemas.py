@@ -83,6 +83,7 @@ class MatchRead(BaseModel):
     factor_breakdown: Optional[Dict[str, float]] = None
     missing_requirements: Optional[Dict[str, any]] = None
     explanation: Optional[str] = None
+    override_status: Optional[str] = None
     class Config:
         orm_mode = True
 
@@ -93,3 +94,6 @@ class ReadinessResponse(BaseModel):
     explanation: str
     class Config:
         orm_mode = True
+
+class MatchOverride(BaseModel):
+    status: str

@@ -97,6 +97,9 @@ def run_matching(job_id: str, db: Session, payload: dict) -> List[schemas.MatchR
         raise ValueError("Job not found")
     # Load all students in the same college (RLS filters automatically)
     students = db.query(models.Student).all()
+    # Load existing matches to preserve manual overrides
+    existing_matches = {m.student_id: m for m in db.query(models.Match).filter(models.Match.job_id == job_id).all()}
+    
     matches: List[schemas.MatchRead] = []
     for student in students:
         # Hard eligibility
@@ -133,21 +136,25 @@ def run_matching(job_id: str, db: Session, payload: dict) -> List[schemas.MatchR
             skill_examples = missing_skills[:2]
             skill_part = " and ".join(skill_examples) if skill_examples else "none"
             explanation = f"Below Threshold: The student's {primary_reason}, but the required skill set shows a gap in {skill_part}."
-        # Store match record (optional – we persist for auditability)
-        match_record = models.Match(
-            job_id=job.id,
-            student_id=student.id,
-            match_score=match_score,
-            factor_breakdown={
-                "skill_overlap": round(overlap_score, 1),
-                "cgpa": round(cgpa_norm, 1),
-                "assessment": round(assessment_score, 1),
-            },
-            missing_requirements=missing_requirements or None,
-            explanation=explanation,
-            college_id=payload["college_id"],
-        )
-        db.add(match_record)
+        # Upsert match record
+        match_record = existing_matches.get(student.id)
+        if not match_record:
+            match_record = models.Match(
+                job_id=job.id,
+                student_id=student.id,
+                college_id=payload["college_id"]
+            )
+            db.add(match_record)
+            
+        match_record.match_score = match_score
+        match_record.factor_breakdown = {
+            "skill_overlap": round(overlap_score, 1),
+            "cgpa": round(cgpa_norm, 1),
+            "assessment": round(assessment_score, 1),
+        }
+        match_record.missing_requirements = missing_requirements or None
+        match_record.explanation = explanation
+        
         db.flush()  # get ID without committing yet
         # Build response object
         matches.append(schemas.MatchRead(
@@ -158,6 +165,7 @@ def run_matching(job_id: str, db: Session, payload: dict) -> List[schemas.MatchR
             factor_breakdown=match_record.factor_breakdown,
             missing_requirements=match_record.missing_requirements,
             explanation=explanation,
+            override_status=match_record.override_status,
         ))
     db.commit()
     # Sort matches descending by score (included and excluded are both in list)

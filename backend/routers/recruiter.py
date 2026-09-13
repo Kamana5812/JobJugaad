@@ -86,3 +86,25 @@ def get_matches(job_id: str, db: Session = Depends(get_db), payload: dict = Depe
     from backend.engines import matching
     matches = matching.run_matching(job_id=job_id, db=db, payload=payload)
     return matches
+
+@router.post("/matches/{match_id}/override", response_model=schemas.MatchRead)
+def override_match(match_id: str, override: schemas.MatchOverride, db: Session = Depends(get_db), payload: dict = Depends(get_current_user)):
+    if payload.get("role") != "recruiter":
+        raise HTTPException(status_code=403, detail="Only recruiters can override matches")
+    
+    match = db.query(models.Match).filter(models.Match.id == match_id).first()
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+        
+    # Verify the match belongs to a job owned by this recruiter
+    job = db.query(models.Job).filter(models.Job.id == match.job_id).first()
+    if not job or job.company.recruiter_user_id != payload["user_id"]:
+        raise HTTPException(status_code=403, detail="Access denied for this match")
+        
+    if override.status not in ["promoted", "rejected", "none"]:
+        raise HTTPException(status_code=400, detail="Invalid override status")
+        
+    match.override_status = override.status if override.status != "none" else None
+    db.commit()
+    db.refresh(match)
+    return match

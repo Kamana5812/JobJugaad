@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 import json
 
-from .. import models, schemas
+from backend import models, schemas
 
 # Unvalidated starting weights – these are assumptions, not empirically tuned.
 SKILL_WEIGHT = 0.4

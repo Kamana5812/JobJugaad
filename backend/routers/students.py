@@ -14,8 +14,8 @@ from sqlalchemy import text
 import pdfplumber
 from io import BytesIO
 
-from ..database import SessionLocal, engine
-from .. import models, schemas, engines
+from backend.database import SessionLocal, engine
+from backend import models, schemas, engines
 
 router = APIRouter(prefix="/students", tags=["students"])
 

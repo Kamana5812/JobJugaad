@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from ..database import SessionLocal
-from .. import models, schemas
-from .auth import get_current_user
+from backend.database import SessionLocal
+from backend import models, schemas
+from backend.routers.auth import get_current_user
 
 router = APIRouter(prefix="/recruiter", tags=["recruiter"])
 
@@ -83,6 +83,6 @@ def get_matches(job_id: str, db: Session = Depends(get_db), payload: dict = Depe
     # Ensure the caller belongs to the same college (RLS ensures) and is a recruiter
     if payload.get("role") != "recruiter":
         raise HTTPException(status_code=403, detail="Only recruiters can run matching")
-    from ..engines import matching
+    from backend.engines import matching
     matches = matching.run_matching(job_id=job_id, db=db, payload=payload)
     return matches

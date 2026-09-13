@@ -2,8 +2,8 @@ import random
 import uuid
 from datetime import datetime
 from faker import Faker
-from .database import SessionLocal
-from . import models
+from backend.database import SessionLocal
+from backend import models
 
 fake = Faker()
 

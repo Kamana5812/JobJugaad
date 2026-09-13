@@ -9,7 +9,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, JSON, ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from .database import Base
+from backend.database import Base
 
 # Helper to generate UUID primary keys
 def generate_uuid():

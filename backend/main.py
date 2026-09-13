@@ -1,3 +1,4 @@
+# Updated for Render import fix – ensuring absolute imports are used
 """Minimal FastAPI app with health endpoint and permissive CORS for Phase 0.
 
 The CORS policy is wide‑open (allow_all_origins=True) as a placeholder – it will be locked down later in Phase 5.

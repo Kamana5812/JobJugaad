@@ -16,7 +16,7 @@ function Profile() {
     // Fetch student profile (we assume one student per user)
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`/students/${userId}`, {
+        const res = await axios.get('/students/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStudent(res.data);

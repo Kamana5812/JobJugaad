@@ -87,3 +87,12 @@ def get_readiness(student_id: str, db_payload = Depends(get_db_and_set_rls)):
     # Run readiness engine
     result = engines.readiness.calculate_readiness(student)
     return result
+
+@router.get("/me", response_model=schemas.StudentRead)
+def get_my_student(db_payload = Depends(get_db_and_set_rls)):
+    db, token_payload = db_payload
+    user_id = token_payload["user_id"]
+    student = db.query(models.Student).filter(models.Student.user_id == user_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found for this user")
+    return student

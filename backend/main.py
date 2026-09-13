@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-from .routers import auth, students, recruiter
+from backend.routers import auth, students, recruiter
 app.include_router(auth.router)
 app.include_router(recruiter.router)
 
@@ -24,11 +24,11 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     # Create tables if they don't exist
-    from .database import engine, Base
+    from backend.database import engine, Base
     Base.metadata.create_all(bind=engine)
     # Enable Row‑Level Security and create policies for multi‑tenant tables
     from sqlalchemy import text
-    from .database import SessionLocal
+    from backend.database import SessionLocal
     db = SessionLocal()
     try:
         policies = [

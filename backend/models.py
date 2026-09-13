@@ -8,6 +8,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, JSON, ARRAY
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from .database import Base
 
 # Helper to generate UUID primary keys
@@ -49,6 +50,44 @@ class StudentSkill(Base):
     skill_name = Column(String, nullable=False)
     proficiency = Column(Integer, nullable=False)  # 0‑100
     college_id = Column(UUID(as_uuid=True), nullable=False)
+
+# Recruiter side models
+class Company(Base):
+    __tablename__ = "companies"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    recruiter_user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    name = Column(String, nullable=False)
+    industry = Column(String, nullable=True)
+    college_id = Column(UUID(as_uuid=True), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    # One-to-many relationship to jobs
+    jobs = relationship("Job", back_populates="company")
+
+class Job(Base):
+    __tablename__ = "jobs"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    company_id = Column(UUID(as_uuid=True), ForeignKey("companies.id"), nullable=False)
+    title = Column(String, nullable=False)
+    ctc = Column(Float, nullable=True)
+    min_cgpa = Column(Float, nullable=True)
+    eligible_branches = Column(ARRAY(String), nullable=True)
+    required_skills = Column(JSON, nullable=True)  # {skill_name: required_proficiency (0‑100)}
+    college_id = Column(UUID(as_uuid=True), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    # Relationship back to company
+    company = relationship("Company", back_populates="jobs")
+
+class Match(Base):
+    __tablename__ = "matches"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    job_id = Column(UUID(as_uuid=True), ForeignKey("jobs.id"), nullable=False)
+    student_id = Column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=False)
+    match_score = Column(Float, nullable=False)
+    factor_breakdown = Column(JSON, nullable=True)
+    missing_requirements = Column(JSON, nullable=True)
+    explanation = Column(String, nullable=True)
+    college_id = Column(UUID(as_uuid=True), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 class Project(Base):
     __tablename__ = "projects"

@@ -7,6 +7,7 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
+import DriveCreate from './pages/DriveCreate';
 import Profile from './pages/Profile';
 
 function App() {
@@ -24,6 +25,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login setToken={(t)=>localStorage.setItem('access_token', t)} />} />
         <Route path="/profile" element={token ? <Profile /> : <Navigate to="/login" replace />} />
+        <Route path="/drives/create" element={<DriveCreate />} />
+        <Route path="/drives/:id" element={<DriveMatches />} />
       </Routes>
     </Router>
   );

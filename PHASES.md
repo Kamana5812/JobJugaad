@@ -12,13 +12,15 @@ Build order for the hackathon. Each phase should end with something deployed and
 - [x] Create `frontend/` (Vite + React + Tailwind) and `backend/` (FastAPI) folders
 - [x] Backend: minimal `main.py` with a `/health` endpoint
 - [x] Frontend: minimal landing page hitting `/health` and displaying the result
-- [ ] Push to GitHub
-- [ ] Deploy backend to Render (Web Service, free tier)
-- [ ] Create Render Managed PostgreSQL instance, connect `DATABASE_URL`
-- [ ] Deploy frontend to Vercel, set `VITE_API_URL` to the live Render URL
-- [ ] Confirm: opening the Vercel URL shows a successful call to the live backend
+- [x] Push to GitHub
+- [x] Deploy backend to Render (Web Service, free tier)
+- [x] Create Render Managed PostgreSQL instance, connect `DATABASE_URL` — reused the existing `Job-Jugaad` instance
+- [x] Deploy frontend to Vercel, set `VITE_API_URL` to the live Render URL
+- [x] Confirm: opening the Vercel URL shows a successful call to the live backend — agent verified; user acceptance pending
 
 **Definition of done:** A live URL exists and works, even though it does nothing useful yet.
+
+**Deployment verified 2026-09-21:** https://jobjugaad.vercel.app → https://jobjugaad-api.onrender.com/health → PostgreSQL connected. **Awaiting the user's explicit confirmation before Phase 1.**
 
 ---
 

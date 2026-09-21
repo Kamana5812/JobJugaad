@@ -6,6 +6,12 @@ An **explainability-first** campus placement platform for BPUT Hackathon 2026's 
 
 The skeleton contains a React/Vite/Tailwind landing page, the supplied logos, and a FastAPI health endpoint. The frontend calls the real backend and displays API and PostgreSQL connection status. Student profiles, authentication, engines, and tenant tables are reserved for later, explicitly approved phases.
 
+- Frontend: [jobjugaad.vercel.app](https://jobjugaad.vercel.app)
+- Backend health: [jobjugaad-api.onrender.com/health](https://jobjugaad-api.onrender.com/health)
+- Repository: [Kamana5812/JobJugaad](https://github.com/Kamana5812/JobJugaad)
+
+Both deployments and live database connectivity were verified on 2026-09-21. Phase 0 is awaiting the user's explicit acceptance.
+
 ## Run locally (PowerShell)
 
 Use Node.js 24 LTS and Python 3.12. From the repository root, create an isolated backend environment and install its frozen dependencies:
@@ -39,7 +45,9 @@ The local `.env` sets `VITE_API_URL=http://localhost:8000`. Real `.env` files ar
 
 ### Render
 
-Create a Blueprint from this repository's `render.yaml`. It specifies a free Python web service with root directory `backend/`, installs `requirements.txt`, starts Uvicorn using Render's `PORT`, and provisions free managed PostgreSQL. `DATABASE_URL` is linked through `fromDatabase`; the database permits internal connections only. Check `/health` for both `status: "ok"` and `database: "connected"` before considering this deployment verified.
+The live deployment was configured through Render's dashboard: free Python web service `jobjugaad-api`, root `backend/`, build `pip install -r requirements.txt`, start `uvicorn main:app --host 0.0.0.0 --port $PORT`, Python 3.12.10, and health path `/health`. It reuses the existing managed PostgreSQL instance `Job-Jugaad` in Oregon, with its internal connection string stored in `DATABASE_URL`. Its existing external IP access rules were preserved. The live database expires on **2026-10-21** under its free plan.
+
+For a separate fresh environment, `render.yaml` provides a Blueprint template for a new free web service and database. That template links `DATABASE_URL` through `fromDatabase` and restricts the new database to internal connections; it was not applied to the existing live instances. Check `/health` for both `status: "ok"` and `database: "connected"` before considering a deployment verified.
 
 The free database has a limited lifetime; check its expiration in the dashboard. See [Render's free service documentation](https://render.com/docs/free) and [Blueprint reference](https://render.com/docs/blueprint-spec).
 

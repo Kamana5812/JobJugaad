@@ -2,8 +2,8 @@
 
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
-**Last updated:** 2026-09-21
-**Current phase:** Phase 0 — Environment & Skeleton (local skeleton verified; deployment and user confirmation pending)
+**Last updated:** 2026-09-22
+**Current phase:** Phase 0 — Environment & Skeleton (deployed and verified; awaiting the user's explicit confirmation)
 
 ---
 
@@ -12,8 +12,8 @@ Living record of project state and decisions. Update this file whenever a major 
 - **Name:** JobJugaad
 - **Event:** BPUT Hackathon 2026, Problem Statement 10 (official title: "CampusLink — AI-Powered Campus-to-Corporate Placement Management & Analytics Platform")
 - **Tagline:** "Placement ka Jugaad, AI ke Saath."
-- **Repo:** https://github.com/Kamana5812/JobJugaad (existing public repository; initial push pending)
-- **Live URLs:** Frontend: _(pending)_ · Backend: _(pending)_
+- **Repo:** https://github.com/Kamana5812/JobJugaad (public; initial commit `d39492c` pushed to `main` with explicit user approval)
+- **Live URLs:** Frontend: https://jobjugaad.vercel.app · Backend health: https://jobjugaad-api.onrender.com/health
 
 ---
 
@@ -39,8 +39,10 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-21 | Saved the supplied horizontal wordmark as `assets/logo_horizontal.png` and square JJ mark as `assets/logo_poster.png` | Uses the asset paths requested by the user; JPEG inputs converted to PNG without artwork changes. Horizontal wordmark is intended for the navbar, and the square mark for login/landing screens. |
 | 2026-09-21 | Use JavaScript with React/Vite and the Tailwind Vite plugin | Matches the team's React/JS experience and the permitted architecture; installs the requested Axios, React Router, and Recharts packages without semantic-matching dependencies. |
 | 2026-09-21 | Health response distinguishes an unconfigured database from a connected database; configured connection failures return HTTP 503 | Phase 0 must verify a real backend/database pipeline rather than display a misleading success. The SQLAlchemy SELECT 1 probe does not access tenant data. |
-| 2026-09-21 | Use a Render Blueprint to link the managed PostgreSQL connection string; keep CORS open temporarily without credential support | Implements the user's explicit Phase 0 instructions. Restrict CORS in Phase 5. No multi-tenant tables are created before Phase 1. |
+| 2026-09-21 | Prepare a Render Blueprint template; keep CORS open temporarily without credential support | The template supports fresh environments; the actual deployment reused an existing database through dashboard configuration. Restrict CORS in Phase 5. No multi-tenant tables are created before Phase 1. |
 | 2026-09-21 | Reuse the existing public Kamana5812/JobJugaad repository | GitHub already has this name; preserve the user's existing repository and visibility rather than create a duplicate or change settings. |
+| 2026-09-21 | Reuse the existing Render PostgreSQL instance `Job-Jugaad` in Oregon; configure the web service through Render's dashboard | The database was already available when account access completed. Its internal connection string is stored only in the backend service's `DATABASE_URL`, never in git or frontend variables. `render.yaml` remains a fresh-environment template, not the mechanism used for this deployment. |
+| 2026-09-21 | Publish all committed files to the existing public repository following explicit user approval | Automatic approval review initially blocked public publication of the project documents; the user explicitly approved publishing code, logos, and documents, and the subsequent push succeeded. |
 
 _Add a new row every time a meaningful architectural or product decision is made._
 
@@ -55,13 +57,16 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Implemented and locally verified `/health`, its Pydantic response contract, open Phase 0 CORS, `/docs`, and the OpenAPI schema. Executed `/health` through Swagger UI with HTTP 200.
 - [x] Built the React/Vite/Tailwind landing page with both supplied logos; verified the production preview calls the backend and the retry button works. Local PostgreSQL is correctly shown as not configured.
 - [x] Added `.gitignore`, safe environment examples, deployment configuration, and README instructions; verified that virtual environments, node_modules, and `.env` files are ignored.
+- [x] Created initial commit `d39492c` on `feature/phase-0`, created `main` from the locally verified commit, and pushed `main` to the existing GitHub repository.
+- [x] Deployed Render free Python web service `jobjugaad-api` from root `backend/`, using Python 3.12.10, `/health`, and the existing managed PostgreSQL instance. Public HTTPS health check returned HTTP 200 with `database: connected`.
+- [x] Deployed Vercel Hobby project `jobjugaad` from root `frontend/`, with `VITE_API_URL=https://jobjugaad-api.onrender.com` for Production and Preview.
+- [x] Verified the public Vercel page displays Backend connected, API Healthy, and PostgreSQL Connected; both supplied logo images load, and no browser errors or warnings were reported.
 
 ### 🚧 In Progress
-- [ ] Commit and push the Phase 0 skeleton to the existing GitHub repository.
-- [ ] Deploy Render backend and managed PostgreSQL, then deploy Vercel frontend with the live backend URL.
+- [ ] Await the user's explicit confirmation that both live URLs work; Phase 0 has not been accepted yet.
 
 ### ⏭️ Next Up
-- Complete Phase 0 deployment, verify both live URLs and database connectivity, and obtain the user's explicit confirmation.
+- Obtain the user's explicit confirmation of Phase 0's live URLs and Definition of Done.
 - Phase 1 is not authorized until Phase 0's Definition of Done is explicitly confirmed by the user.
 
 ---
@@ -74,10 +79,12 @@ Keep this section current — it's exactly what a judge or mentor will ask about
 - No engines or evaluation checks exist yet. Matching's synthetic sanity check and scoring's face-validity review are planned for Phase 4; no real-world accuracy is claimed.
 - Notifications are planned as simulated in-app only; they are not implemented in Phase 0.
 - Multi-college support (`college_id` filtering + Row-Level Security) is a required future implementation; no tenant tables or isolation tests exist yet.
-- Local backend verification does not validate PostgreSQL: `DATABASE_URL` is not configured locally, and the managed database still needs provisioning.
+- `DATABASE_URL` remains unconfigured locally; the live Render service has verified connectivity to the managed PostgreSQL instance.
+- Render's existing free `Job-Jugaad` database expires on **2026-10-21**, as displayed in its dashboard. No paid upgrade was made.
+- The existing database's external IP access rules were preserved; the application uses its internal Render connection. The stricter fresh-environment template in `render.yaml` has not been applied to this existing database.
 - CORS currently permits all origins by explicit Phase 0 instruction; it must be restricted in Phase 5.
 - Render's free tier cold-starts after 15 minutes idle — must warm up before live demos.
-- Simulator (P2) projections are generated from the synthetic dataset's conversion model, not real historical placement data — a hypothetical demonstration, not a forecast.
+- Simulator (P2) is not implemented. Any future projections must be labeled as hypothetical outputs from the synthetic dataset's conversion model, not validated forecasts.
 - This is not the first AI-powered campus placement platform (8+ commercial competitors and one close open-source analogue, SkillBridge, exist) — differentiation rests specifically on explainable matching, placement-specific (responsibly-framed) support prediction, and the what-if simulator, not on the general category. See `RESEARCH_AUDIT.md` for the full competitive picture.
 - AI Mock Interview is out of scope by decision, not by oversight. "Jugaad Dost" is a static label/FAQ panel, not a live chatbot, by decision.
 
@@ -98,9 +105,11 @@ _Track unresolved questions here so they don't get lost between sessions._
 
 _Do not put actual secret values here — only where to find them._
 
-- `DATABASE_URL` — set in Render dashboard (Web Service → Environment) and locally in `backend/.env`
-- `JWT_SECRET` — set in Render dashboard; generate a strong random string, never reuse across environments
+- `DATABASE_URL` — configured in Render dashboard (Web Service → Environment); not configured locally. The backend reads environment variables directly and does not automatically load `.env` files.
+- `JWT_SECRET` — reserved for Phase 1; not configured yet. Generate a strong random string when authentication is implemented.
 - `VITE_API_URL` — set in Vercel project settings (Environment Variables) and locally in `frontend/.env`
+- Render web service: `srv-daol1s5g1s2s738prvhg`; managed PostgreSQL: `dpg-daokrdjm8hqs73f3cm60-a` (`Job-Jugaad`), Oregon.
+- Vercel project dashboard: https://vercel.com/kamana5813/jobjugaad — root `frontend/`, Git branch `main`, Hobby plan.
 
 ---
 
@@ -137,3 +146,13 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **What I just finished:** Installed requested dependencies; created and built the branded skeleton; verified API/CORS/OpenAPI, Swagger execution, frontend-to-backend communication, retry behavior, and git exclusions. Prepared Render and Vercel configuration.
 > **What's broken/incomplete:** GitHub initial push and both deployments are pending. Render/Vercel account access needs the user's sign-in; no live URLs or PostgreSQL connectivity have been verified. No Phase 1 work has begun.
 > **What to do next:** Commit and push to the existing Kamana5812/JobJugaad repository, deploy the Render Blueprint, configure Vercel root `frontend/` with access to root-level assets, and set `VITE_API_URL`. Confirm backend reports `database: connected` and the frontend receives that live result, then stop for the user's explicit confirmation.
+
+> **Session ended:** 2026-09-21 — Phase 0 deployed
+> **What I just finished:** Pushed the initial commit to GitHub, deployed the Render backend with the existing managed PostgreSQL instance, and deployed the Vercel frontend. Verified public HTTP 200 health with database connected and the live browser's successful frontend → backend → PostgreSQL check, logo loading, and absence of browser errors.
+> **What's broken/incomplete:** No deployment blocker remains. Phase 0 still requires the user's explicit acceptance of both URLs. Local PostgreSQL is not configured. The free managed database expires on 2026-10-21. VS Code availability was not checked; development used Codex and the bundled Python runtime.
+> **What to do next:** Ask the user to open https://jobjugaad.vercel.app and https://jobjugaad-api.onrender.com/health and confirm both work. Do not begin Phase 1 before that explicit confirmation. No Phase 1 functionality has been built.
+
+> **Session handoff:** 2026-09-22
+> **What I just finished:** Resumed Phase 0 handoff, rechecked both public URLs (HTTP 200; backend reports PostgreSQL connected), and finalized deployment notes in MEMORY.md, PHASES.md, and README.md.
+> **What's incomplete:** The user's explicit confirmation of both live URLs is still pending. No Phase 1 functionality has been started.
+> **What to do next:** Present both live URLs and wait for Phase 0 acceptance.

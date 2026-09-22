@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-22
-**Current phase:** Phase 2 — Recruiter Core & Matching (authorized; implementation in progress)
+**Current phase:** Phase 2 — Recruiter Core & Matching (delivered live; awaiting user acceptance)
 
 ---
 
@@ -54,6 +54,13 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-22 | Use a workspace-local PostgreSQL binary for real RLS integration tests | Local test role has no bypass privileges; tooling/data/credentials remain ignored in .local/ and are not application dependencies. |
 | 2026-09-22 | User accepted Phase 1, independently tested cross-college RLS blocking, and authorized Phase 2 | Begin Talent Finder only; Phase 3 remains gated. |
 
+| 2026-09-22 | Phase 2 uses configurable 40/20/20/15/5 matching weights with normalized 0-100 factors | Unvalidated starting assumptions over the five collected evidence types; no structured experience, trained model, embeddings, or confidence score. |
+| 2026-09-22 | Apply CGPA/branch/backlog rules before primary-shortlist ranking; default score threshold 60 | Hard restrictions remain visible even for high-scoring profiles; scores never silently override eligibility. |
+| 2026-09-22 | User approved a truthful fixed no-skill-gap exclusion variant | Preserve the exact requested template when a real gap exists; never invent a skill gap for branch/CGPA/backlog-only exclusions. |
+| 2026-09-22 | Add company/job/match/audit tables with atomic FORCE RLS, college filters and composite tenant foreign keys | All nine tenant tables now have both enforcement layers; recruiters can access only their own company's drives. |
+| 2026-09-22 | Store full calculation snapshots with recruiter promote/reject reasons; preserve overrides on rerun | Human judgment is auditable and does not alter the calculated score or hide eligibility restrictions. |
+| 2026-09-22 | Expand seed.py to 300 students, 12 companies and three simulated drives | Preserve existing profiles; generate deterministic synthetic evidence and keep seed passwords unshared. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -61,6 +68,13 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] Delivered Phase 2 Talent Finder to Vercel and Render from commit 97d5e58: recruiter signup/login, company profile, configurable drive creation, skill-gap statuses and explained weighted matching.
+- [x] Added four Phase 2 tables with application college filters and atomic ENABLE/FORCE RLS, alongside recruiter ownership and tenant-consistent foreign keys.
+- [x] Implemented fixed-template explanations, full normalized factor breakdowns, missing requirements and next steps; the user-approved no-skill-gap variant is tested.
+- [x] Implemented audited manual promote/reject actions with evidence snapshots and preserved decisions after reruns.
+- [x] Expanded the managed database to 300 seeded students and 12 seeded companies. Render logged 250 newly added students, 12 companies and three seeded matching runs.
+- [x] Demonstrated three live recruiter drives against 301 profiles: Python Backend 8 shortlisted / 293 excluded; React Frontend 8 / 293; Java Graduate 26 / 275. These are synthetic outputs, not accuracy metrics.
+- [x] Passed 14 local rule/PostgreSQL integration tests, all new Swagger endpoint checks, production frontend builds, dependency and whitespace checks. Verified live signup, drive creation, factor tables, three complete candidate lists, promote/reject audit persistence, HTTP 401 without auth and HTTP 404 across colleges.
 - [x] User explicitly accepted Phase 1 on 2026-09-22 and independently confirmed that RLS blocks cross-college access.
 - [x] User explicitly confirmed Phase 0 working and authorized Phase 1 on 2026-09-22.
 - [x] Imported both user-supplied brand assets and verified PNG format and dimensions: horizontal 1600 × 533; poster 1254 × 1254. Phase 0 has been explicitly accepted.
@@ -84,10 +98,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- [ ] Finish Phase 2 browser verification and live deployment; local implementation, 14 tests and production build pass.
+- No active implementation work; Phase 2 is delivered and awaits acceptance.
 
 ### ⏭️ Next Up
-- Complete Phase 2 recruiter/company/drive flows, skill gaps, explained matching, audited overrides, and three simulated drives; stop for explicit acceptance before Phase 3.
+- Await the user's explicit Phase 2 acceptance. Only then begin Phase 3 from PHASES.md.
 
 ---
 
@@ -96,9 +110,9 @@ _Add a new row every time a meaningful architectural or product decision is made
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
 - Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
-- The weighted readiness engine and six PostgreSQL integration tests are implemented and pass locally. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
+- The readiness and matching rules and 14 local rule/PostgreSQL tests are implemented and pass. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
 - Notifications are planned as simulated in-app only; they are not implemented in Phase 0.
-- All five Phase 1 tables have college filters and FORCE RLS, verified locally with cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- All nine Phase 1/2 tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
 - Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
 - Local PostgreSQL test configuration is stored only under ignored .local/. The live Render service uses its existing managed PostgreSQL database.
@@ -118,7 +132,7 @@ _Track unresolved questions here so they don't get lost between sessions._
 
 - [x] Use plain JavaScript for the frontend (Phase 0 decision).
 - [ ] Do we attempt the pgvector semantic-matching stretch goal, or stop at keyword matching? (Default per `ARCHITECTURE.md`: stop at keyword matching for P0/P1, attempt only if time remains.)
-- [x] Phase 1 `seed.py` implements 50 synthetic profiles; expansion and final dataset generation remain scheduled for later phases.
+- [x] Phase 2 seed.py implements 300 synthetic profiles, 12 companies and three drives; final expansion remains in Phase 4.
 - [ ] Do we attempt the Random Forest upgrade to the Readiness Engine using the public Kaggle dataset, or stay with the weighted rule for the whole hackathon?
 
 ---
@@ -202,3 +216,8 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Finished:** Recruiter/company auth, drive creation, four new tenant tables with atomic FORCE RLS, skill-gap comparison, configurable normalized weighted matching, score/factor/explanation responses, pagination and audited promote/reject actions; 300 synthetic students, 12 companies and three seeded simulated drives. Recruiter UI production build passed. Fourteen local rule/PostgreSQL tests passed, including all nine tenant tables, company ownership, threshold boundaries, exact keywords and preserved overrides. New endpoints were exercised through local Swagger before frontend integration.
 > **Decision:** User approved the fixed truthful no-skill-gap exclusion variant. Matching weights 40/20/20/15/5 are explicitly unvalidated; see Architecture Section 5 for normalization and eligibility details.
 > **Pending:** Finish UI review, commit and deploy Phase 2, demonstrate three live drives, then update completion records and stop for Phase 2 acceptance. Phase 3 remains gated.
+
+> **Session handoff:** 2026-09-22 — Phase 2 delivered
+> **Finished:** Published commit 97d5e58 to main. Render deployment dep-dap8avp7lnhs73avdrlg and Vercel production deployment HTw4jiBy6ComWSXZLVCcJaQhYAZC succeeded. Live recruiter signup and drive creation worked through Vercel; complete explained candidate results were verified for Python, React and Java drives. Render confirmed FORCE RLS startup plus 250 additional students and 12 companies. Live API checked all factor sums, descending order, fixed explanations, manual promotion/rejection evidence, preserved overrides on rerun and cross-college/unauthenticated denial. Local UI showed the preserved eligibility restriction beside the human exception and saved audit reason.
+> **Honesty:** There are 300 seeded profiles plus one earlier synthetic live-check student in the tested college. Three-drive counts were captured before manual smoke-test overrides. This is a deterministic synthetic demonstration, not calibrated confidence or validated placement accuracy. Phase 4's self-labeled sanity evaluation remains pending.
+> **Next:** Present https://jobjugaad.vercel.app/recruiter/signup and https://jobjugaad-api.onrender.com/docs. Wait for explicit Phase 2 acceptance; do not begin Phase 3.

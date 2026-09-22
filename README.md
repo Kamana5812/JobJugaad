@@ -2,7 +2,7 @@
 
 An **explainability-first** campus placement platform for BPUT Hackathon 2026's CampusLink problem statement.
 
-Phase 0 was explicitly accepted on 2026-09-22. Phase 1 Student Core is deployed and verified: student signup/login, editable profiles, PDF resume text extraction, and an explained readiness score. Its live Definition of Done was demonstrated and accepted on 2026-09-22, including the user's independent RLS test. Phase 2 Talent Finder is authorized and in progress.
+Phase 0 was explicitly accepted on 2026-09-22. Phase 1 Student Core is deployed and verified: student signup/login, editable profiles, PDF resume text extraction, and an explained readiness score. Its live Definition of Done was demonstrated and accepted on 2026-09-22, including the user's independent RLS test. Phase 2 Talent Finder is deployed and verified; user acceptance is pending before Phase 3.
 
 - Frontend: [jobjugaad.vercel.app](https://jobjugaad.vercel.app)
 - Backend: [health](https://jobjugaad-api.onrender.com/health) · [interactive API](https://jobjugaad-api.onrender.com/docs)
@@ -12,7 +12,7 @@ Phase 0 was explicitly accepted on 2026-09-22. Phase 1 Student Core is deployed 
 
 Create a student account using synthetic details and Demo College 1 or 2. Use the same college when logging in. Upload a text-based resume PDF, review the extracted text, then record skills, projects, CGPA, and existing assessment results. Save to recalculate readiness. Every response and score display includes six factors and an explanation.
 
-Enrollment is self-selected for this hackathon demo, not verification of real college membership. Student tokens cannot create recruiter/admin roles or access another student's profile, even within the same college. Do not use real student data until institution-controlled enrollment and operational hardening are implemented.
+Enrollment is self-selected for this hackathon demo, not verification of real college membership. Student JWTs cannot authorize recruiter actions or access another student's profile, even within the same college. Recruiters register a separate demo account and company; administrator signup is unavailable. Do not use real student data until institution-controlled enrollment and operational hardening are implemented.
 
 ## Readiness methodology
 
@@ -31,6 +31,28 @@ Unrecorded factors contribute zero and are explicitly marked missing. Factor val
 
 No accuracy benchmark or real-world outcome validation has been performed. Phase 4's planned face-validity review remains pending.
 
+## Recruiter flow and matching
+
+Open [Talent Finder signup](https://jobjugaad.vercel.app/recruiter/signup), use synthetic company details and Demo College 1, then create a drive. Enter CTC in INR lakh/year, minimum CGPA, maximum backlogs, eligible branches and skill targets. The **Run AI Matching** button uses a keyword/weighted rule, not a trained model. The label follows the requested design; the adjacent copy states the actual method.
+
+Starting weights are **unvalidated assumptions**: skills 40%, project keyword coverage 20%, academics 20%, existing assessments 15%, and certificate count 5%. Each component is normalized to 0-100 before weighting. The form allows per-drive weights summing to 100%, a minimum score (default 60), and an assessment review benchmark. See Architecture Section 5 for exact formulas and rounding.
+
+CGPA, branch and backlog rules determine initial eligibility. Only candidates passing those rules and the score threshold enter the primary shortlist. Excluded candidates keep diagnostic scores, full factors, specific missing requirements, fixed explanations and a next step. Skill statuses compare self-reported proficiency with role targets: on-track at target, critical below half target, gap otherwise. No numeric confidence is reported.
+
+Recruiters can promote or reject any candidate with a reason. The audit records reviewer, time, previous decision and full score/evidence snapshot; reruns preserve these manual decisions. Audit rows have no edit/delete API. This is review support, not an autonomous hiring decision.
+
+### Live synthetic demonstration — 2026-09-22
+
+| Simulated drive | Profiles reviewed | Shortlisted | Excluded |
+|---|---:|---:|---:|
+| Python Backend Engineer | 301 | 8 | 293 |
+| React Frontend Engineer | 301 | 8 | 293 |
+| Java Graduate Engineer | 301 | 26 | 275 |
+
+These are actual live outputs before manual smoke-test overrides: 300 seeded students plus one earlier synthetic check profile. They are **not accuracy or benchmark claims**. The self-labeled matching sanity evaluation remains scheduled for Phase 4. Seed-company passwords are unshared; create drives under your own recruiter account to run the same workflow.
+
+Live checks verified all three candidate lists, five factor sums per result, descending order, explanations, promote/reject audit snapshots, persistence after rerun, HTTP 401 without authentication and HTTP 404 across colleges. All new endpoints were also exercised via local Swagger before frontend integration.
+
 ## Run locally (PowerShell)
 
 Use Python 3.12, Node.js 24, and PostgreSQL. Create a database whose application role owns it but has neither superuser nor BYPASSRLS privileges. Store its connection string in the environment, never in source control.
@@ -43,9 +65,9 @@ py -3.12 -m venv backend/venv
 ./backend/venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
 ```
 
-The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all five tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the initial Phase 1 schema; later schema changes need explicit migrations rather than relying on create_all.
+The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all nine tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current Phase 1/2 schema; later schema changes need explicit migrations rather than relying on create_all.
 
-Startup also runs seed.py idempotently, creating 50 named synthetic profiles in Demo College 1. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
+Startup also runs seed.py idempotently, creating 300 named synthetic profiles, 12 companies and three simulated drives in Demo College 1. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
 
 ```powershell
 cd frontend
@@ -58,7 +80,7 @@ Set VITE_API_URL to your local API URL (default http://localhost:8000). All back
 
 ## Tenant enforcement
 
-users, students, student_skills, projects, and certifications each carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
+users, students, student_skills, projects, certifications, companies, jobs, matches, and match_overrides each carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
 
 RLS is the second tenant enforcement layer, not a replacement for application authorization. The runtime role owns the initial schema for startup DDL; FORCE RLS ensures normal owner queries are still restricted. Future production deployment should separate migrations from the runtime role.
 
@@ -74,7 +96,7 @@ $env:PYTHONPATH = (Join-Path (Get-Location) 'backend')
 npm --prefix frontend run build
 ```
 
-Tests create synthetic test records only in an explicitly enabled localhost database and leave those records in place. They cover JWT claims/hash verification, tampered/expired tokens, role escalation, own-profile restrictions, all-table RLS without application filters, denied cross-tenant writes/links, tenant context reset, resume extraction/persistence/rejection, score boundaries, and seed idempotence/count. These are correctness checks, not an accuracy benchmark. All six test cases passed on 2026-09-22.
+Tests create synthetic test records only in an explicitly enabled localhost database and leave those records in place. They cover JWT claims/hash verification, tampered/expired tokens, role escalation, own-profile restrictions, all-table RLS without application filters, denied cross-tenant writes/links, tenant context reset, resume extraction/persistence/rejection, score boundaries, and seed idempotence/count. These are correctness checks, not an accuracy benchmark. All 14 test cases passed on 2026-09-22.
 
 Swagger signup, login, current identity, profile retrieval/update, readiness, and PDF upload were exercised locally before frontend integration. A synthetic PDF fixture is generated by the test helper; never use a real student's resume for automated checks.
 
@@ -88,4 +110,4 @@ Vercel: root frontend/, Vite, build npm run build, output dist. Include source f
 
 CORS remains wide open without cookies by the explicit Phase 0 instruction; restrict origins in Phase 5. Resume parsing accepts up to 5 MB, 20 pages, and 200,000 extracted characters, with a 20-second subprocess timeout. Scanned/encrypted/unreadable PDFs return a readable error. The raw PDF is not persisted.
 
-No matching, placement support prediction, mock interview, live chatbot, embedding library, or pgvector feature is implemented. Jugaad Dost is a static FAQ.
+Placement support prediction, mock interview, live chatbot, embedding libraries, and pgvector are not implemented. Jugaad Dost is a static FAQ.

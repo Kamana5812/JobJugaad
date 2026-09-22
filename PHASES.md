@@ -45,17 +45,21 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 **Goal:** Talent Finder MVP — post a job, get an explainable ranked list.
 
-- [ ] Database models: `companies`, `jobs`, `matches`
-- [ ] Recruiter signup/login, company profile creation
-- [ ] Drive/job creation endpoint (CTC, min CGPA, eligible branches, required skills)
-- [ ] Skill Gap Engine: compare student proficiency vs. target role requirements
-- [ ] Matching Engine: eligibility filter → skill match → weighted score → factor breakdown → explanation (must match the official "Below Threshold: ..." format for rejections)
-- [ ] Frontend: recruiter drive creation form, "Run AI Matching" button, ranked candidate list with score breakdown
-- [ ] Expand seed data to ~200–500 students and 10–15 companies
+- [x] Database models: `companies`, `jobs`, `matches`
+- [x] Recruiter signup/login, company profile creation
+- [x] Drive/job creation endpoint (CTC, min CGPA, eligible branches, required skills)
+- [x] Skill Gap Engine: compare student proficiency vs. target role requirements
+- [x] Matching Engine: eligibility filter → skill match → weighted score → factor breakdown → explanation (must match the official "Below Threshold: ..." format for rejections)
+- [x] Frontend: recruiter drive creation form, "Run AI Matching" button, ranked candidate list with score breakdown
+- [x] Expand seed data to ~200–500 students and 10–15 companies
+
+- [x] Audited recruiter promote/reject overrides preserve original scoring evidence and survive reruns; all new tables enforce application college filters and FORCE RLS.
 
 **Definition of done:** A recruiter can create a drive, run matching, and see a ranked, explainable shortlist — live on Vercel. Demonstrated against **at least 3 simulated drives** (official deliverable requirement).
 
 ---
+
+**Verified 2026-09-22:** Phase 2 is live on Vercel/Render. Recruiter signup, drive creation, weighted matching, full evidence, fixed explanations, and audited overrides were verified. Three simulated drives reviewed 301 profiles (300 seeded plus one prior synthetic test profile): Python 8 shortlisted, React 8, Java 26. Fourteen local tests and the production build passed. **Awaiting user acceptance; Phase 3 has not started.**
 
 ## Phase 3 — Scheduling & Admin Analytics (Day 4)
 

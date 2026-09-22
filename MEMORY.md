@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-22
-**Current phase:** Phase 0 — Environment & Skeleton (deployed and verified; awaiting the user's explicit confirmation)
+**Current phase:** Phase 1 — Student Core (authorized; implementation in progress)
 
 ---
 
@@ -44,6 +44,14 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-21 | Reuse the existing Render PostgreSQL instance `Job-Jugaad` in Oregon; configure the web service through Render's dashboard | The database was already available when account access completed. Its internal connection string is stored only in the backend service's `DATABASE_URL`, never in git or frontend variables. `render.yaml` remains a fresh-environment template, not the mechanism used for this deployment. |
 | 2026-09-21 | Publish all committed files to the existing public repository following explicit user approval | Automatic approval review initially blocked public publication of the project documents; the user explicitly approved publishing code, logos, and documents, and the subsequent push succeeded. |
 
+| 2026-09-22 | User accepted Phase 0 and explicitly authorized Phase 1 Student Core | Both Phase 0 live URLs are confirmed working; Phase 2 remains gated. |
+| 2026-09-22 | Normalize readiness with mean skill proficiency, 25 points/project capped at 100, CGPA x 10, and existing assessments /100 | Source weights are fixed but normalization was unspecified; assumptions are explicit, self-reported, and unvalidated. Missing evidence is marked and contributes zero. |
+| 2026-09-22 | Create all five tenant tables and FORCE RLS atomically; reject superuser/BYPASSRLS runtime roles | Prevent any serving window without database isolation; retain explicit application college filters, student ownership checks, and composite tenant foreign keys. |
+| 2026-09-22 | Student-only signup into two self-selected demo colleges | No real institution enrollment verification is available; UI requires synthetic demo details and privileged roles cannot be submitted through signup. |
+| 2026-09-22 | Use bcrypt via passlib with bcrypt 4.0.1, two-hour HS256 JWTs and tab-scoped sessionStorage | Pins a compatible bcrypt implementation, preserves 72-byte limits, checks signed identity claims, and provides a bounded MVP session. No refresh/reset/revocation feature is claimed. |
+| 2026-09-22 | Keep resume extraction in a bounded subprocess and store text only | PDF limit 5 MB/20 pages/200,000 characters and 20-second parser deadline; no automatic skill or readiness inference. |
+| 2026-09-22 | Seed 50 deterministic synthetic profiles idempotently at startup | Makes the requested test population available after deployment; unshared random passwords prevent public seed-account login. |
+| 2026-09-22 | Use a workspace-local PostgreSQL binary for real RLS integration tests | Local test role has no bypass privileges; tooling/data/credentials remain ignored in .local/ and are not application dependencies. |
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -51,7 +59,8 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
-- [x] Imported both user-supplied brand assets and verified PNG format and dimensions: horizontal 1600 × 533; poster 1254 × 1254. No build phase is complete yet.
+- [x] User explicitly confirmed Phase 0 working and authorized Phase 1 on 2026-09-22.
+- [x] Imported both user-supplied brand assets and verified PNG format and dimensions: horizontal 1600 × 533; poster 1254 × 1254. Phase 0 has been explicitly accepted.
 - [x] Created the architecture's frontend portal/API/component/context folders and backend engine/router folders, with later-phase modules left unimplemented.
 - [x] Created `backend/venv` using bundled Python 3.12.14, installed all nine requested packages, and saved the exact `pip freeze` output in `backend/requirements.txt`; `pip check` passed.
 - [x] Implemented and locally verified `/health`, its Pydantic response contract, open Phase 0 CORS, `/docs`, and the OpenAPI schema. Executed `/health` through Swagger UI with HTTP 200.
@@ -63,11 +72,11 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Verified the public Vercel page displays Backend connected, API Healthy, and PostgreSQL Connected; both supplied logo images load, and no browser errors or warnings were reported.
 
 ### 🚧 In Progress
-- [ ] Await the user's explicit confirmation that both live URLs work; Phase 0 has not been accepted yet.
+- [ ] Build and verify Phase 1 Student Core locally and on the existing deployments.
 
 ### ⏭️ Next Up
-- Obtain the user's explicit confirmation of Phase 0's live URLs and Definition of Done.
-- Phase 1 is not authorized until Phase 0's Definition of Done is explicitly confirmed by the user.
+- Complete Phase 1 signup/login, profiles, resume extraction, explainable readiness, and 50 synthetic students.
+- Stop after Phase 1; Phase 2 requires the user's explicit confirmation.
 
 ---
 
@@ -76,10 +85,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
 - Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
-- No engines or evaluation checks exist yet. Matching's synthetic sanity check and scoring's face-validity review are planned for Phase 4; no real-world accuracy is claimed.
+- The weighted readiness engine and six PostgreSQL integration tests are implemented and pass locally. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
 - Notifications are planned as simulated in-app only; they are not implemented in Phase 0.
-- Multi-college support (`college_id` filtering + Row-Level Security) is a required future implementation; no tenant tables or isolation tests exist yet.
-- `DATABASE_URL` remains unconfigured locally; the live Render service has verified connectivity to the managed PostgreSQL instance.
+- All five Phase 1 tables have college filters and FORCE RLS, verified locally with cross-tenant tests. Live Phase 1 verification is pending.
+- Local PostgreSQL test configuration is stored only under ignored .local/. The live Render service uses its existing managed PostgreSQL database.
 - Render's existing free `Job-Jugaad` database expires on **2026-10-21**, as displayed in its dashboard. No paid upgrade was made.
 - The existing database's external IP access rules were preserved; the application uses its internal Render connection. The stricter fresh-environment template in `render.yaml` has not been applied to this existing database.
 - CORS currently permits all origins by explicit Phase 0 instruction; it must be restricted in Phase 5.
@@ -156,3 +165,9 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **What I just finished:** Resumed Phase 0 handoff, rechecked both public URLs (HTTP 200; backend reports PostgreSQL connected), and finalized deployment notes in MEMORY.md, PHASES.md, and README.md.
 > **What's incomplete:** The user's explicit confirmation of both live URLs is still pending. No Phase 1 functionality has been started.
 > **What to do next:** Present both live URLs and wait for Phase 0 acceptance.
+
+> **Session update:** 2026-09-22 — Phase 1 implementation
+> **Finished locally:** Five tenant models and atomic FORCE RLS; student auth; profile and PDF endpoints; weighted readiness with breakdown/explanation; 50-profile idempotent seed; student frontend. Six PostgreSQL integration tests passed and the production frontend build passed. Swagger exercised all new endpoint types before frontend integration.
+> **Still pending:** Finish browser UI checks, configure live JWT_SECRET, commit/push the verified code, deploy and verify the Phase 1 flow on Vercel/Render.
+> **Next gate:** Stop when the Phase 1 live Definition of Done is demonstrated; do not start Phase 2 without explicit user acceptance.
+> **Browser verification:** Local signup/login, profile save and recalculation, persistence after a fresh login, and PDF upload/text review succeeded. The synthetic profile returned 62/100 (Developing) with six contributions and explanation. No application console errors or warnings were reported. Live deployment is still pending.

@@ -206,6 +206,12 @@ Maps to official bands: `0–40 Not Ready · 41–65 Developing · 66–85 Ready
 
 A weighted rule is used deliberately for P0 — not because it's the most accurate option, but because it requires no training data and stays fully auditable, which the explainability requirement demands. This should be presented as an **AI-assisted, structured view of a student's current profile** — not as AI that "understands" the student. **Validated upgrade path (P1):** published research (Kumar et al., 2023, IJMECS) shows Random Forest outperforming comparable weighted/simple-classifier approaches on structured placement data. If upgraded, train against the public **`Placement_Data_Full_Class.csv`** dataset (Ben Roshan's "Campus Recruitment" dataset on Kaggle — confirmed via direct inspection of 5+ independent projects using it) as a real, if small, empirical anchor — not the synthetic demo dataset, which cannot validate real-world accuracy. Note: at least one project using this dataset explicitly warns its small size means reported accuracy "is not guaranteed" — do not overstate confidence even if this upgrade is attempted.
 
+
+#### Phase 1 normalization decisions (2026-09-22)
+
+The six weights above are unchanged. Since the source formula does not prescribe component normalization, this implementation uses mean recorded skill proficiency, 25 points per recorded project capped at 100, CGPA x 10, and existing self-reported assessment scores on the 0-100 scale. Project count is a simple proxy, not a quality assessment. Missing factors contribute zero and are explicitly marked missing. Values and contributions are rounded half-up to two decimals; summed contributions are rounded half-up to a whole number before official band mapping. Every response includes score, raw total, six contributions with evidence, band, explanation, methodology, and a next step.
+
+This is a proposed weighted rule with unvalidated normalization assumptions. Resume extraction stores text for human review; it does not infer skills, assign proficiency, or change readiness automatically. Certifications and backlogs are retained without adding factors to the fixed formula. No trained model or new assessment/interview feature is introduced.
 ### Layer 3 — Matching / Ranking Engine
 ```
 Eligible Candidates (from Layer 1) → Skill Matching (keyword/weighted,

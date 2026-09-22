@@ -2,35 +2,50 @@
 
 An **explainability-first** campus placement platform for BPUT Hackathon 2026's CampusLink problem statement.
 
-## Phase 0
-
-The skeleton contains a React/Vite/Tailwind landing page, the supplied logos, and a FastAPI health endpoint. The frontend calls the real backend and displays API and PostgreSQL connection status. Student profiles, authentication, engines, and tenant tables are reserved for later, explicitly approved phases.
+Phase 0 was explicitly accepted on 2026-09-22. Phase 1 implements Student Core: student signup/login, editable profiles, PDF resume text extraction, and an explained readiness score. Phase 1 deployment verification is in progress; Phase 2 is not authorized.
 
 - Frontend: [jobjugaad.vercel.app](https://jobjugaad.vercel.app)
-- Backend health: [jobjugaad-api.onrender.com/health](https://jobjugaad-api.onrender.com/health)
+- Backend: [health](https://jobjugaad-api.onrender.com/health) · [interactive API](https://jobjugaad-api.onrender.com/docs)
 - Repository: [Kamana5812/JobJugaad](https://github.com/Kamana5812/JobJugaad)
 
-Both deployments and live database connectivity were verified on 2026-09-21. Phase 0 is awaiting the user's explicit acceptance.
+## Student flow
+
+Create a student account using synthetic details and Demo College 1 or 2. Use the same college when logging in. Upload a text-based resume PDF, review the extracted text, then record skills, projects, CGPA, and existing assessment results. Save to recalculate readiness. Every response and score display includes six factors and an explanation.
+
+Enrollment is self-selected for this hackathon demo, not verification of real college membership. Student tokens cannot create recruiter/admin roles or access another student's profile, even within the same college. Do not use real student data until institution-controlled enrollment and operational hardening are implemented.
+
+## Readiness methodology
+
+This is a **proposed weighted rule**, not a trained model or a validated placement prediction.
+
+| Factor | Normalization to 0–100 | Weight |
+|---|---|---|
+| Technical skills | Mean of recorded self-reported proficiencies | 30% |
+| Projects | 25 points per recorded project, capped at 100; quality is not assessed | 20% |
+| Academics | CGPA × 10 | 15% |
+| Aptitude | Existing self-reported assessment / 100 | 15% |
+| Communication | Existing self-reported assessment / 100 | 10% |
+| Interview | Existing self-reported assessment / 100; no interview feature | 10% |
+
+Unrecorded factors contribute zero and are explicitly marked missing. Factor values and weighted contributions are rounded half-up to two decimals. Contributions are summed and the total rounded half-up to an integer before applying the official bands: 0–40 Not Ready, 41–65 Developing, 66–85 Ready, 86–100 Highly Employable. Certifications, backlogs, and resume prose are retained but do not add points to this formula.
+
+No accuracy benchmark or real-world outcome validation has been performed. Phase 4's planned face-validity review remains pending.
 
 ## Run locally (PowerShell)
 
-Use Node.js 24 LTS and Python 3.12. From the repository root, create an isolated backend environment and install its frozen dependencies:
+Use Python 3.12, Node.js 24, and PostgreSQL. Create a database whose application role owns it but has neither superuser nor BYPASSRLS privileges. Store its connection string in the environment, never in source control.
 
 ```powershell
 py -3.12 -m venv backend/venv
 ./backend/venv/Scripts/python.exe -m pip install -r backend/requirements.txt
+# Set DATABASE_URL and a randomly generated JWT_SECRET in your local environment.
+# JWT_SECRET must contain at least 32 characters; use a cryptographically random value.
+./backend/venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
 ```
 
-Start the backend from `backend/`:
+The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all five tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the initial Phase 1 schema; later schema changes need explicit migrations rather than relying on create_all.
 
-```powershell
-cd backend
-./venv/Scripts/python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-Open `http://localhost:8000/docs` to try `GET /health`. Without `DATABASE_URL`, the API responds with `database: "not_configured"`; this does **not** verify PostgreSQL. When the environment variable contains a working PostgreSQL connection string, the health check performs `SELECT 1` through a SQLAlchemy session and responds with `database: "connected"`. An unavailable configured database produces HTTP 503 with a safe `detail` message.
-
-Start the frontend from `frontend/` in another terminal:
+Startup also runs seed.py idempotently, creating 50 named synthetic profiles in Demo College 1. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
 
 ```powershell
 cd frontend
@@ -39,28 +54,38 @@ Copy-Item .env.example .env
 npm run dev -- --host 127.0.0.1
 ```
 
-The local `.env` sets `VITE_API_URL=http://localhost:8000`. Real `.env` files are ignored by git; examples contain no credentials. The backend reads environment variables directly; it does not automatically load `.env` files.
+Set VITE_API_URL to your local API URL (default http://localhost:8000). All backend calls go through frontend/src/api. JWTs expire after two hours and are stored in sessionStorage for the current tab; logout clears the browser token. There is no refresh-token, email-verification, password-reset, or immediate server-side logout revocation flow in this phase.
 
-## Deployment
+## Tenant enforcement
 
-### Render
+users, students, student_skills, projects, and certifications each carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
 
-The live deployment was configured through Render's dashboard: free Python web service `jobjugaad-api`, root `backend/`, build `pip install -r requirements.txt`, start `uvicorn main:app --host 0.0.0.0 --port $PORT`, Python 3.12.10, and health path `/health`. It reuses the existing managed PostgreSQL instance `Job-Jugaad` in Oregon, with its internal connection string stored in `DATABASE_URL`. Its existing external IP access rules were preserved. The live database expires on **2026-10-21** under its free plan.
+RLS is the second tenant enforcement layer, not a replacement for application authorization. The runtime role owns the initial schema for startup DDL; FORCE RLS ensures normal owner queries are still restricted. Future production deployment should separate migrations from the runtime role.
 
-For a separate fresh environment, `render.yaml` provides a Blueprint template for a new free web service and database. That template links `DATABASE_URL` through `fromDatabase` and restricts the new database to internal connections; it was not applied to the existing live instances. Check `/health` for both `status: "ok"` and `database: "connected"` before considering a deployment verified.
+## Verification
 
-The free database has a limited lifetime; check its expiration in the dashboard. See [Render's free service documentation](https://render.com/docs/free) and [Blueprint reference](https://render.com/docs/blueprint-spec).
+Against a local PostgreSQL instance and a non-bypass application role:
 
-### Vercel
+```powershell
+# Configure DATABASE_URL for an isolated localhost test database and JWT_SECRET first.
+$env:ALLOW_TEST_DATABASE = 'yes'
+$env:PYTHONPATH = (Join-Path (Get-Location) 'backend')
+./backend/venv/Scripts/python.exe -m unittest discover -s backend/tests -v
+npm --prefix frontend run build
+```
 
-Import the GitHub repository, select Vite, and set **Root Directory** to `frontend`. Enable **Include source files outside of the Root Directory in the Build Step**, because the frontend imports the supplied images from the root `assets/` directory. Set `VITE_API_URL` to the actual Render service URL before deployment. Vite embeds this setting at build time, so changing it requires redeployment.
+Tests create synthetic test records only in an explicitly enabled localhost database and leave those records in place. They cover JWT claims/hash verification, tampered/expired tokens, role escalation, own-profile restrictions, all-table RLS without application filters, denied cross-tenant writes/links, tenant context reset, resume extraction/persistence/rejection, score boundaries, and seed idempotence/count. These are correctness checks, not an accuracy benchmark. All six test cases passed on 2026-09-22.
 
-Build command: `npm run build`. Output directory: `dist`. The committed `frontend/vercel.json` configures the Vite build and SPA fallback. See [Vercel build configuration](https://vercel.com/docs/builds/configure-a-build).
+Swagger signup, login, current identity, profile retrieval/update, readiness, and PDF upload were exercised locally before frontend integration. A synthetic PDF fixture is generated by the test helper; never use a real student's resume for automated checks.
 
-## Phase gate and limitations
+## Deploy
 
-- Phase 0 is complete only when the live Vercel page successfully calls the live Render backend, PostgreSQL reports connected, and the user confirms both URLs work.
-- CORS is wide open by explicit Phase 0 instruction and does not allow credentialed requests; restrict it to the frontend origin in Phase 5.
-- No score, matching, support prediction, mock interview, chatbot, embedding library, or pgvector integration is implemented.
-- No tenant tables exist yet. Every future multi-tenant table must have both application-level `college_id` filtering and PostgreSQL Row-Level Security.
-- No accuracy, performance, or security benchmarks have been claimed or measured.
+Render: existing free Python service jobjugaad-api, root backend/, build pip install -r requirements.txt, start uvicorn main:app --host 0.0.0.0 --port $PORT, health /health. Set DATABASE_URL to the managed database's internal URL and JWT_SECRET to a strong randomly generated secret in Render's Environment settings. Never set JWT_SECRET or DATABASE_URL in Vercel.
+
+The existing Oregon database Job-Jugaad expires on **2026-10-21** under its free plan. Existing external IP rules are unchanged. render.yaml is a fresh-environment template, not the configuration mechanism used for the existing live services.
+
+Vercel: root frontend/, Vite, build npm run build, output dist. Include source files outside the root directory so the supplied assets/ logos are available. VITE_API_URL=https://jobjugaad-api.onrender.com is embedded at build time. The SPA fallback supports direct login/profile URLs.
+
+CORS remains wide open without cookies by the explicit Phase 0 instruction; restrict origins in Phase 5. Resume parsing accepts up to 5 MB, 20 pages, and 200,000 extracted characters, with a 20-second subprocess timeout. Scanned/encrypted/unreadable PDFs return a readable error. The raw PDF is not persisted.
+
+No matching, placement support prediction, mock interview, live chatbot, embedding library, or pgvector feature is implemented. Jugaad Dost is a static FAQ.

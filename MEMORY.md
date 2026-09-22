@@ -84,7 +84,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- [ ] Build and verify Phase 2 Talent Finder locally and on the existing live deployments.
+- [ ] Finish Phase 2 browser verification and live deployment; local implementation, 14 tests and production build pass.
 
 ### ⏭️ Next Up
 - Complete Phase 2 recruiter/company/drive flows, skill gaps, explained matching, audited overrides, and three simulated drives; stop for explicit acceptance before Phase 3.
@@ -197,3 +197,8 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 
 
 > **Phase gate update:** 2026-09-22 — User confirmed Phase 1 working, explicitly confirmed their own RLS cross-college blocking test, and authorized Phase 2 Talent Finder. Re-read Architecture Section 5 in full before Phase 2 implementation. Stop after Phase 2''s live Definition of Done; Phase 3 requires explicit acceptance.
+
+> **Session update:** 2026-09-22 — Phase 2 implemented locally
+> **Finished:** Recruiter/company auth, drive creation, four new tenant tables with atomic FORCE RLS, skill-gap comparison, configurable normalized weighted matching, score/factor/explanation responses, pagination and audited promote/reject actions; 300 synthetic students, 12 companies and three seeded simulated drives. Recruiter UI production build passed. Fourteen local rule/PostgreSQL tests passed, including all nine tenant tables, company ownership, threshold boundaries, exact keywords and preserved overrides. New endpoints were exercised through local Swagger before frontend integration.
+> **Decision:** User approved the fixed truthful no-skill-gap exclusion variant. Matching weights 40/20/20/15/5 are explicitly unvalidated; see Architecture Section 5 for normalization and eligibility details.
+> **Pending:** Finish UI review, commit and deploy Phase 2, demonstrate three live drives, then update completion records and stop for Phase 2 acceptance. Phase 3 remains gated.

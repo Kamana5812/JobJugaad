@@ -8,8 +8,8 @@ export default function LandingPage() {
     <section className="grid items-center gap-8 rounded-3xl bg-navy-dark p-8 sm:p-12 lg:grid-cols-[1.5fr_1fr]">
       <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-saffron">Explainability-first campus placement</p>
         <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl">Placement ka Jugaad.<br /><span className="text-saffron">With a clear why.</span></h1>
-        <p className="mt-5 max-w-xl leading-7 text-white/80">Turn your profile into a transparent readiness view. See every contributing factor, understand the gaps, and plan your next step.</p>
-        <div className="mt-8 flex flex-wrap gap-3"><Link to="/signup" className={buttonStyle}>Build my profile →</Link><Link to="/login" className={secondaryStyle + ' inline-flex items-center'}>Student login</Link></div>
+        <p className="mt-5 max-w-xl leading-7 text-white/80">Turn your profile into a transparent readiness view, or create a recruiter drive and inspect an explained shortlist. See every contributing factor, understand the gaps, and plan your next step.</p>
+        <div className="mt-8 flex flex-wrap gap-3"><Link to="/signup" className={buttonStyle}>Build my profile →</Link><Link to="/login" className={secondaryStyle + ' inline-flex items-center'}>Log in</Link><Link to="/recruiter/signup" className={secondaryStyle + ' inline-flex items-center'}>Talent Finder →</Link></div>
         <p className="mt-5 text-xs text-white/60">Public hackathon prototype · use synthetic details</p>
       </div>
       <div className="mx-auto w-full max-w-64 rounded-2xl border border-line bg-white p-5"><img src={posterLogo} alt="JobJugaad graduation cap and upward arrow" width="1254" height="1254" className="h-auto w-full" /></div>

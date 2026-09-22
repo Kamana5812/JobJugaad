@@ -11,14 +11,14 @@ export default function AuthPage({ signup = false }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', college_id: 1 })
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  if (user) return <Navigate to="/student/profile" replace />
+  if (user) return <Navigate to={user.role === "recruiter" ? "/recruiter" : "/student/profile"} replace />
   const change = (key) => (event) => setForm({ ...form, [key]: event.target.value })
   async function submit(event) {
     event.preventDefault(); setError(''); setBusy(true)
     try {
       const input = { email: form.email, password: form.password, college_id: Number(form.college_id) }
       const result = signup ? await signUp({ ...input, name: form.name }) : await logIn(input)
-      authenticate(result); navigate('/student/profile', { replace: true })
+      authenticate(result); navigate(result.user.role === 'recruiter' ? '/recruiter' : '/student/profile', { replace: true })
     } catch (failure) { setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
@@ -31,7 +31,7 @@ export default function AuthPage({ signup = false }) {
       <p className="mt-8 text-sm text-white/70">A weighted rule you can inspect. No hidden placement prediction.</p>
     </section>
     <section className="p-8 sm:p-12">
-      <h2 className="text-2xl font-bold text-navy">{signup ? 'Create your student account' : 'Log in to Career Copilot'}</h2>
+      <h2 className="text-2xl font-bold text-navy">{signup ? 'Create your student account' : 'Log in to JobJugaad'}</h2>
       <p className="mt-2 text-sm text-muted">Public hackathon demo · use synthetic details.</p>
       <form className="mt-6 space-y-5" onSubmit={submit}>
         {signup && <FormField label="Full name" autoComplete="name" required maxLength="100" value={form.name} onChange={change('name')} />}
@@ -46,6 +46,7 @@ export default function AuthPage({ signup = false }) {
       </form>
       <p className="mt-6 text-sm text-muted">{signup ? 'Already have an account? ' : 'New here? '}
         <Link className="font-bold text-navy underline underline-offset-4" to={signup ? '/login' : '/signup'}>{signup ? 'Log in' : 'Create an account'}</Link></p>
+    <p className="mt-4 text-sm"><Link className="font-bold text-navy underline" to="/recruiter/signup">Recruiting? Create a Talent Finder account</Link></p>
     </section>
   </div>
 }

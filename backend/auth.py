@@ -1,4 +1,4 @@
-"""JWT identity and bcrypt password hashing; never trust tenant IDs from profile input."""
+"""JWT identity and bcrypt; role, tenant and ownership are enforced separately."""
 import os
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException
@@ -7,13 +7,15 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy import select
 from database import tenant_session
-from models import User, Student
+from models import User, Student, Company
 from schemas import UserResponse, TokenResponse
 
 passwords = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer = HTTPBearer(auto_error=False)
 TOKEN_SECONDS = 7200
 ISSUER = "jobjugaad"
+# Preserve the existing token audience so Phase 1 sessions remain valid.
+# Authorization uses the verified role claim plus the current database role.
 AUDIENCE = "jobjugaad-student"
 
 def signing_secret():
@@ -28,14 +30,28 @@ def hash_password(password):
 def verify_password(password, hashed):
     return passwords.verify(password, hashed)
 
-def issue_token(user, student):
+def user_response(session, user):
+    if user.role == "student":
+        student = session.scalar(select(Student).where(Student.user_id == user.id, Student.college_id == user.college_id))
+        if student is None:
+            raise HTTPException(404, "Student profile not found.")
+        return UserResponse(user_id=user.id, student_id=student.id, college_id=user.college_id,
+            role=user.role, email=user.email, name=student.name)
+    company = session.scalar(select(Company).where(Company.recruiter_user_id == user.id, Company.college_id == user.college_id))
+    if company is None:
+        raise HTTPException(404, "Company profile not found.")
+    return UserResponse(user_id=user.id, company_id=company.id, college_id=user.college_id,
+        role=user.role, email=user.email, name=company.name)
+
+def issue_token(user, student=None, company=None):
     now = datetime.now(timezone.utc)
     token = jwt.encode({"sub": str(user.id), "user_id": user.id, "role": user.role,
         "college_id": user.college_id, "iat": now, "exp": now + timedelta(seconds=TOKEN_SECONDS),
         "iss": ISSUER, "aud": AUDIENCE}, signing_secret(), algorithm="HS256")
     return TokenResponse(access_token=token, expires_in=TOKEN_SECONDS,
-        user=UserResponse(user_id=user.id, student_id=student.id, college_id=user.college_id,
-            role=user.role, email=user.email, name=student.name))
+        user=UserResponse(user_id=user.id, student_id=student.id if student else None,
+            company_id=company.id if company else None, college_id=user.college_id,
+            role=user.role, email=user.email, name=student.name if student else company.name))
 
 def current_identity(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)):
     unauthorized = HTTPException(401, "Please log in again; your session is missing or expired.",
@@ -49,19 +65,29 @@ def current_identity(credentials: HTTPAuthorizationCredentials | None = Depends(
             or type(claims.get("user_id")) is not int or claims["user_id"] < 1
             or claims["sub"] != str(claims["user_id"])):
             raise unauthorized
-        if claims.get("role") != "student":
-            raise HTTPException(403, "This endpoint is available to students only.")
+        if claims.get("role") not in ("student", "recruiter"):
+            raise HTTPException(403, "This role is not available in the current phase.")
         return claims
     except JWTError:
         raise unauthorized from None
 
-def student_session(identity=Depends(current_identity)):
+def authenticated_session(identity=Depends(current_identity)):
     with tenant_session(identity["college_id"]) as session:
         user = session.scalar(select(User).where(User.id == identity["user_id"],
-            User.college_id == identity["college_id"], User.role == "student"))
+            User.college_id == identity["college_id"], User.role == identity["role"]))
         if user is None:
-            raise HTTPException(401, "Your account is no longer available. Please log in again.")
+            raise HTTPException(401, "Your account or role has changed. Please log in again.")
         yield session, user
+
+def student_session(context=Depends(authenticated_session)):
+    if context[1].role != "student":
+        raise HTTPException(403, "This endpoint is available to students only.")
+    return context
+
+def recruiter_session(context=Depends(authenticated_session)):
+    if context[1].role != "recruiter":
+        raise HTTPException(403, "This endpoint is available to recruiters only.")
+    return context
 
 def owned_student(session, user, student_id):
     student = session.scalar(select(Student).where(Student.id == student_id,

@@ -45,9 +45,10 @@ class SignupRequest(LoginRequest):
 
 class UserResponse(BaseModel):
     user_id: int
-    student_id: int
+    student_id: int | None = None
+    company_id: int | None = None
     college_id: int
-    role: Literal["student"] = "student"
+    role: Literal["student", "recruiter"] = "student"
     email: str
     name: str
 
@@ -118,3 +119,129 @@ class ResumeResponse(BaseModel):
     detail: str
     extracted_characters: int
     profile: ProfileResponse
+
+# Phase 2 matching inputs and outputs: weights are explicit assumptions.
+from datetime import datetime
+from pydantic import model_validator
+
+class CompanyInput(InputModel):
+    name: str = Field(min_length=1, max_length=160)
+    industry: str = Field(min_length=1, max_length=100)
+
+class CompanyResponse(CompanyInput):
+    id: int
+    college_id: int
+    recruiter_user_id: int
+
+class RecruiterSignupRequest(LoginRequest):
+    company: CompanyInput
+
+class RequiredSkill(InputModel):
+    skill_name: str = Field(min_length=1, max_length=80)
+    min_proficiency: float = Field(ge=1, le=100, allow_inf_nan=False)
+
+    @field_validator("skill_name")
+    @classmethod
+    def normalize(cls, value):
+        return " ".join(value.lower().split())
+
+class MatchingWeights(InputModel):
+    skills: int = Field(default=40, ge=0, le=100, strict=True)
+    projects: int = Field(default=20, ge=0, le=100, strict=True)
+    academics: int = Field(default=20, ge=0, le=100, strict=True)
+    assessments: int = Field(default=15, ge=0, le=100, strict=True)
+    certifications: int = Field(default=5, ge=0, le=100, strict=True)
+
+    @model_validator(mode="after")
+    def total(self):
+        if sum(self.model_dump().values()) != 100:
+            raise ValueError("Matching weights must sum to 100.")
+        return self
+
+class JobInput(InputModel):
+    title: str = Field(min_length=1, max_length=160)
+    ctc: float = Field(gt=0, le=1000, allow_inf_nan=False)
+    min_cgpa: float = Field(ge=0, le=10, allow_inf_nan=False)
+    max_backlogs: int = Field(default=0, ge=0, le=100, strict=True)
+    eligible_branches: list[str] = Field(min_length=1, max_length=30)
+    required_skills: list[RequiredSkill] = Field(min_length=1, max_length=20)
+    weights: MatchingWeights = Field(default_factory=MatchingWeights)
+    min_match_score: Score = 60
+    assessment_benchmark: Score = 60
+
+    @field_validator("eligible_branches")
+    @classmethod
+    def branches(cls, value):
+        result = [" ".join(b.strip().upper().split()) for b in value]
+        if any(not b or len(b) > 80 for b in result) or len(set(result)) != len(result):
+            raise ValueError("Use unique, nonempty branch names of at most 80 characters.")
+        return result
+
+    @field_validator("required_skills")
+    @classmethod
+    def unique_requirements(cls, value):
+        if len({item.skill_name for item in value}) != len(value):
+            raise ValueError("Each required skill should appear only once.")
+        return value
+
+class JobResponse(JobInput):
+    id: int
+    college_id: int
+    company_id: int
+    created_at: datetime
+
+class SkillGapResponse(BaseModel):
+    skill_name: str
+    proficiency: float
+    required: float
+    shortfall: float
+    status: Literal["on-track", "gap", "critical"]
+    explanation: str
+    next_step: str
+
+class MatchCalculation(BaseModel):
+    match_score: float
+    factor_breakdown: list[FactorResponse]
+    missing_requirements: list[str]
+    skill_gaps: list[SkillGapResponse]
+    eligible: bool
+    explanation: str
+    next_step: str
+    methodology: str
+
+class OverrideInput(InputModel):
+    action: Literal["promote", "reject"]
+    reason: str = Field(min_length=10, max_length=1000)
+
+class OverrideResponse(BaseModel):
+    id: int
+    match_id: int
+    recruiter_user_id: int
+    action: Literal["promote", "reject"]
+    reason: str
+    previous_action: str | None
+    created_at: datetime
+    evidence_at_action: MatchCalculation
+
+class CandidateResponse(MatchCalculation):
+    id: int
+    job_id: int
+    student_id: int
+    student_name: str
+    branch: str
+    calculated_at: datetime
+    override_action: Literal["promote", "reject"] | None
+    shortlist_status: Literal["shortlisted", "excluded"]
+    audit: list[OverrideResponse]
+
+class MatchSummary(BaseModel):
+    job_id: int
+    total: int
+    shortlisted: int
+    excluded: int
+    overridden: int
+
+class MatchResults(MatchSummary):
+    candidates: list[CandidateResponse]
+    offset: int
+    limit: int

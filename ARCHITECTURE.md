@@ -228,6 +228,19 @@ P0) → [P1/P2: Embedding Similarity via sentence-transformers + pgvector]
 
 The rule engine (Layer 1) decides *who is eligible*; this layer only *ranks who is already eligible* — the AI does not make eligibility decisions.
 
+#### Phase 2 matching decisions (2026-09-22)
+
+- Proposed default weights: skill compatibility 40%, project relevance 20%, academics 20%, assessments 15%, certifications 5%. These total 100% and are configurable per drive. They are unvalidated starting assumptions, not empirical tuning; the illustrative weights above are examples, not fixed requirements. Experience is omitted because no structured experience field is collected.
+- Normalize skills as the mean of capped proficiency / role-target ratios times 100; normalize project relevance as the percentage of required exact keywords appearing in project titles/descriptions. Case is ignored and word boundaries prevent Java matching JavaScript. No embeddings or LLM calls.
+- Academics use CGPA x 10; assessments use the mean of the three existing /100 fields with absent fields contributing zero; certifications use 25 points per record, capped at 100, as an explicitly unvalidated count proxy. Missing evidence is identified. Values and contributions round half-up to two decimals; their sum is the thresholded score.
+- Minimum CGPA, exact normalized branch and maximum backlog count are checked first. They cannot be overridden by a calculated score. Skill proficiency targets contribute to the weighted score; they are not additional hard eligibility rules. The default minimum match score is 60/100. Assessment benchmark defaults to 60 and is a review flag, not another hard rule.
+- Only candidates passing hard eligibility and score threshold enter the primary shortlist. Excluded candidates retain diagnostic scores and factors for human review. Lists use descending score with student ID as a stable tie-breaker; no numeric confidence is returned.
+- Excluded candidates with a real skill gap use the user-required fixed "Below Threshold: The student's [reason], but the required skill set shows a gap in [skill] and [other factor]." template. The user explicitly approved a truthful fixed no-skill-gap variant when all skill targets are met. Every result also includes missing requirements and an actionable next step.
+- Skill-gap status is on-track at or above the role target, critical below half the target, and gap otherwise. Missing skill evidence is zero. These cutoffs are proposed assumptions; proficiency remains self-reported.
+- Recruiter signup creates a user and company atomically. Recruiters see their own company's drives and candidate snapshots within their selected demo college. The four new tables (companies, jobs, matches, match_overrides) receive ENABLE/FORCE RLS in the same transaction as table creation; application queries and updates also carry college filters, alongside composite tenant foreign keys.
+- Promote/reject is a human shortlist override, not a score modification. Audit rows retain reviewer, timestamp, reason, previous decision, and the full score/evidence snapshot. Reruns preserve manual decisions. Audit records have no edit/delete API; database-owner tamper resistance is not claimed.
+- Demo data is generated in seed.py: 300 deterministic synthetic students, 12 synthetic companies, and three simulated drives. Existing profiles are preserved; unshared random passwords prevent public login to seed accounts. Startup runs a seeded drive only when it has no saved matches. Synthetic outputs do not establish real-world accuracy.
+
 ### Layer 4 — Explanation Engine
 Every score from Layer 3 passes through a template-based explanation generator before reaching a student or recruiter — never a bare score. It states matching factors, missing requirements, and evidence drawn from the profile, in the format the problem statement requires:
 

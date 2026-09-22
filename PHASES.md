@@ -59,7 +59,7 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 ---
 
-**Verified 2026-09-22:** Phase 2 is live on Vercel/Render. Recruiter signup, drive creation, weighted matching, full evidence, fixed explanations, and audited overrides were verified. Three simulated drives reviewed 301 profiles (300 seeded plus one prior synthetic test profile): Python 8 shortlisted, React 8, Java 26. Fourteen local tests and the production build passed. **Awaiting user acceptance; Phase 3 has not started.**
+**Verified 2026-09-22:** Phase 2 is live on Vercel/Render. Recruiter signup, drive creation, weighted matching, full evidence, fixed explanations, and audited overrides were verified. Three simulated drives reviewed 301 profiles (300 seeded plus one prior synthetic test profile): Python 8 shortlisted, React 8, Java 26. Fourteen local tests and the production build passed. **User accepted Phase 2, manually verified a Below Threshold explanation and override, and authorized Phase 3 on 2026-09-22.**
 
 ## Phase 3 — Scheduling & Admin Analytics (Day 4)
 

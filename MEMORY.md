@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-22
-**Current phase:** Phase 2 — Recruiter Core & Matching (delivered live; awaiting user acceptance)
+**Current phase:** Phase 3 — Scheduling & Admin Analytics (authorized; implementation in progress)
 
 ---
 
@@ -61,6 +61,9 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-22 | Store full calculation snapshots with recruiter promote/reject reasons; preserve overrides on rerun | Human judgment is auditable and does not alter the calculated score or hide eligibility restrictions. |
 | 2026-09-22 | Expand seed.py to 300 students, 12 companies and three simulated drives | Preserve existing profiles; generate deterministic synthetic evidence and keep seed passwords unshared. |
 
+| 2026-09-22 | User accepted Phase 2 including a manually verified explanation and override; authorized Phase 3 | Scheduling, analytics and rule-based support only. Phase 4 remains gated. |
+| 2026-09-22 | Any future trained support-classifier upgrade must handle class imbalance with SMOTE or class weighting | Explicitly remind the user of this prerequisite if an upgrade request omits it. No classifier is built in Phase 3. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -68,6 +71,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] User accepted Phase 2, manually verified a "Below Threshold" explanation and a working override, and authorized Phase 3.
 - [x] Delivered Phase 2 Talent Finder to Vercel and Render from commit 97d5e58: recruiter signup/login, company profile, configurable drive creation, skill-gap statuses and explained weighted matching.
 - [x] Added four Phase 2 tables with application college filters and atomic ENABLE/FORCE RLS, alongside recruiter ownership and tenant-consistent foreign keys.
 - [x] Implemented fixed-template explanations, full normalized factor breakdowns, missing requirements and next steps; the user-approved no-skill-gap variant is tested.
@@ -98,10 +102,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- No active implementation work; Phase 2 is delivered and awaits acceptance.
+- [ ] Build deterministic scheduling with admin approval, honest analytics and rule-based placement support; verify locally and live.
 
 ### ⏭️ Next Up
-- Await the user's explicit Phase 2 acceptance. Only then begin Phase 3 from PHASES.md.
+- Complete Phase 3, update handoff records, and stop for explicit acceptance before Phase 4.
 
 ---
 
@@ -221,3 +225,5 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Finished:** Published commit 97d5e58 to main. Render deployment dep-dap8avp7lnhs73avdrlg and Vercel production deployment HTw4jiBy6ComWSXZLVCcJaQhYAZC succeeded. Live recruiter signup and drive creation worked through Vercel; complete explained candidate results were verified for Python, React and Java drives. Render confirmed FORCE RLS startup plus 250 additional students and 12 companies. Live API checked all factor sums, descending order, fixed explanations, manual promotion/rejection evidence, preserved overrides on rerun and cross-college/unauthenticated denial. Local UI showed the preserved eligibility restriction beside the human exception and saved audit reason.
 > **Honesty:** There are 300 seeded profiles plus one earlier synthetic live-check student in the tested college. Three-drive counts were captured before manual smoke-test overrides. This is a deterministic synthetic demonstration, not calibrated confidence or validated placement accuracy. Phase 4's self-labeled sanity evaluation remains pending.
 > **Next:** Present https://jobjugaad.vercel.app/recruiter/signup and https://jobjugaad-api.onrender.com/docs. Wait for explicit Phase 2 acceptance; do not begin Phase 3.
+
+> **Phase gate update:** 2026-09-22 — Phase 2 accepted by the user, including manual explanation and override verification. Begin Phase 3 only. Read all six root documents in order. Admin account selection is pending while implementation proceeds. Stop after the live Phase 3 Definition of Done.

@@ -2,7 +2,7 @@
 
 An **explainability-first** campus placement platform for BPUT Hackathon 2026's CampusLink problem statement.
 
-Phase 0 was explicitly accepted on 2026-09-22. Phase 1 implements Student Core: student signup/login, editable profiles, PDF resume text extraction, and an explained readiness score. Phase 1 deployment verification is in progress; Phase 2 is not authorized.
+Phase 0 was explicitly accepted on 2026-09-22. Phase 1 Student Core is deployed and verified: student signup/login, editable profiles, PDF resume text extraction, and an explained readiness score. Its live Definition of Done was demonstrated and accepted on 2026-09-22, including the user's independent RLS test. Phase 2 Talent Finder is authorized and in progress.
 
 - Frontend: [jobjugaad.vercel.app](https://jobjugaad.vercel.app)
 - Backend: [health](https://jobjugaad-api.onrender.com/health) · [interactive API](https://jobjugaad-api.onrender.com/docs)

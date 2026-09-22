@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-22
-**Current phase:** Phase 1 — Student Core (authorized; implementation in progress)
+**Current phase:** Phase 2 — Recruiter Core & Matching (authorized; implementation in progress)
 
 ---
 
@@ -52,6 +52,8 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-22 | Keep resume extraction in a bounded subprocess and store text only | PDF limit 5 MB/20 pages/200,000 characters and 20-second parser deadline; no automatic skill or readiness inference. |
 | 2026-09-22 | Seed 50 deterministic synthetic profiles idempotently at startup | Makes the requested test population available after deployment; unshared random passwords prevent public seed-account login. |
 | 2026-09-22 | Use a workspace-local PostgreSQL binary for real RLS integration tests | Local test role has no bypass privileges; tooling/data/credentials remain ignored in .local/ and are not application dependencies. |
+| 2026-09-22 | User accepted Phase 1, independently tested cross-college RLS blocking, and authorized Phase 2 | Begin Talent Finder only; Phase 3 remains gated. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -59,6 +61,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] User explicitly accepted Phase 1 on 2026-09-22 and independently confirmed that RLS blocks cross-college access.
 - [x] User explicitly confirmed Phase 0 working and authorized Phase 1 on 2026-09-22.
 - [x] Imported both user-supplied brand assets and verified PNG format and dimensions: horizontal 1600 × 533; poster 1254 × 1254. Phase 0 has been explicitly accepted.
 - [x] Created the architecture's frontend portal/API/component/context folders and backend engine/router folders, with later-phase modules left unimplemented.
@@ -71,12 +74,20 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Deployed Vercel Hobby project `jobjugaad` from root `frontend/`, with `VITE_API_URL=https://jobjugaad-api.onrender.com` for Production and Preview.
 - [x] Verified the public Vercel page displays Backend connected, API Healthy, and PostgreSQL Connected; both supplied logo images load, and no browser errors or warnings were reported.
 
+- [x] Implemented all five Phase 1 models with `college_id`, explicit application filters, student ownership checks, composite tenant foreign keys, and atomic ENABLE/FORCE PostgreSQL RLS policies.
+- [x] Implemented student signup/login with bcrypt hashing and two-hour JWTs containing `user_id`, `role`, and `college_id`; privileged signup fields are rejected.
+- [x] Implemented PDF resume extraction with pdfplumber, persisted profile text, size/page/text limits, and a parser timeout; verified local and live uploads.
+- [x] Implemented the fixed 30/20/15/15/10/10 weighted readiness rule with all four official bands, six-factor evidence breakdown, plain-language explanation, methodology, and next step.
+- [x] Built and verified branded signup/login, profile editing, resume text review, and readiness UI; Jugaad Dost is a static FAQ.
+- [x] Seeded 50 synthetic profiles on the managed database; Render startup logs confirmed FORCE RLS initialization and creation of 50 profiles.
+- [x] Passed six local PostgreSQL integration tests, Swagger endpoint checks, dependency checks, and production frontend builds. Verified live signup, login, saved profile/PDF text, explained readiness, HTTP 404 for cross-college access, and HTTP 401 for unauthenticated access.
+- [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
+
 ### 🚧 In Progress
-- [ ] Build and verify Phase 1 Student Core locally and on the existing deployments.
+- [ ] Build and verify Phase 2 Talent Finder locally and on the existing live deployments.
 
 ### ⏭️ Next Up
-- Complete Phase 1 signup/login, profiles, resume extraction, explainable readiness, and 50 synthetic students.
-- Stop after Phase 1; Phase 2 requires the user's explicit confirmation.
+- Complete Phase 2 recruiter/company/drive flows, skill gaps, explained matching, audited overrides, and three simulated drives; stop for explicit acceptance before Phase 3.
 
 ---
 
@@ -87,7 +98,9 @@ Keep this section current — it's exactly what a judge or mentor will ask about
 - Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
 - The weighted readiness engine and six PostgreSQL integration tests are implemented and pass locally. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
 - Notifications are planned as simulated in-app only; they are not implemented in Phase 0.
-- All five Phase 1 tables have college filters and FORCE RLS, verified locally with cross-tenant tests. Live Phase 1 verification is pending.
+- All five Phase 1 tables have college filters and FORCE RLS, verified locally with cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
+- Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
 - Local PostgreSQL test configuration is stored only under ignored .local/. The live Render service uses its existing managed PostgreSQL database.
 - Render's existing free `Job-Jugaad` database expires on **2026-10-21**, as displayed in its dashboard. No paid upgrade was made.
 - The existing database's external IP access rules were preserved; the application uses its internal Render connection. The stricter fresh-environment template in `render.yaml` has not been applied to this existing database.
@@ -105,7 +118,7 @@ _Track unresolved questions here so they don't get lost between sessions._
 
 - [x] Use plain JavaScript for the frontend (Phase 0 decision).
 - [ ] Do we attempt the pgvector semantic-matching stretch goal, or stop at keyword matching? (Default per `ARCHITECTURE.md`: stop at keyword matching for P0/P1, attempt only if time remains.)
-- [ ] Who owns seed data generation (the `seed.py` script) and when does it get finalized?
+- [x] Phase 1 `seed.py` implements 50 synthetic profiles; expansion and final dataset generation remain scheduled for later phases.
 - [ ] Do we attempt the Random Forest upgrade to the Readiness Engine using the public Kaggle dataset, or stay with the weighted rule for the whole hackathon?
 
 ---
@@ -114,8 +127,8 @@ _Track unresolved questions here so they don't get lost between sessions._
 
 _Do not put actual secret values here — only where to find them._
 
-- `DATABASE_URL` — configured in Render dashboard (Web Service → Environment); not configured locally. The backend reads environment variables directly and does not automatically load `.env` files.
-- `JWT_SECRET` — reserved for Phase 1; not configured yet. Generate a strong random string when authentication is implemented.
+- `DATABASE_URL` — configured in Render dashboard (Web Service → Environment). Local test database credentials are stored only in ignored `.local/` tooling. The backend reads environment variables directly and does not automatically load `.env` files.
+- `JWT_SECRET` — saved by the user in Render Environment settings; its presence in the saved configuration and successful JWT authentication were verified. No secret value is stored in documentation or git.
 - `VITE_API_URL` — set in Vercel project settings (Environment Variables) and locally in `frontend/.env`
 - Render web service: `srv-daol1s5g1s2s738prvhg`; managed PostgreSQL: `dpg-daokrdjm8hqs73f3cm60-a` (`Job-Jugaad`), Oregon.
 - Vercel project dashboard: https://vercel.com/kamana5813/jobjugaad — root `frontend/`, Git branch `main`, Hobby plan.
@@ -176,3 +189,11 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Ready:** Student Core implementation committed as `0cc7e1d` and pushed to `feature/student-core`. Backend integration tests, Swagger endpoint checks, frontend build, signup/login, persisted profile/readiness, and PDF text review passed locally. Final dependency check and git whitespace check passed.
 > **Deployment dependency:** The existing live Render service needs `JWT_SECRET`. Its Environment editor has a prepared `JWT_SECRET` row with a Generate button; the user was asked to generate and save it because browser credential entry/submission requires user handoff. Do not put the generated secret in chat or git. Current live main still serves Phase 0.
 > **Next:** Once the secret is saved, merge the verified feature branch into main, push, verify Render initializes FORCE RLS and 50 synthetic students, and exercise the live Vercel Student Core flow. Then update phase completion records and stop for the user's Phase 1 acceptance. No Phase 2 work is authorized.
+
+> **Session handoff:** 2026-09-22 — Phase 1 delivered
+> **Finished:** Verified the user's saved JWT_SECRET configuration, fast-forwarded Student Core into main, and confirmed successful Render and Vercel deployments. Render logged FORCE RLS initialization and 50 new synthetic profiles. A synthetic student signed up through the live Vercel UI, uploaded a PDF, reviewed extracted text, and saved profile evidence. The live UI and API returned 62/100 (Developing), with contributions 21/5/12/9/7/8, all factor evidence, and an explanation. Live login/persistence and cross-college/unauthenticated denial checks passed.
+> **Limitations:** Synthetic demonstration and self-reported inputs only; no placement accuracy claim. Managed free database expires 2026-10-21. CORS restriction remains scheduled for Phase 5. The optional final browser reload check was initially interrupted by an approval-review usage limit, then resumed after the user asked to continue.
+> **Next:** Present https://jobjugaad.vercel.app and https://jobjugaad-api.onrender.com/docs for review. Wait for explicit Phase 1 acceptance; do not start Phase 2.
+
+
+> **Phase gate update:** 2026-09-22 — User confirmed Phase 1 working, explicitly confirmed their own RLS cross-college blocking test, and authorized Phase 2 Talent Finder. Re-read Architecture Section 5 in full before Phase 2 implementation. Stop after Phase 2''s live Definition of Done; Phase 3 requires explicit acceptance.

@@ -28,14 +28,16 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 **Goal:** Career Copilot MVP — profile in, readiness score out.
 
-- [ ] Database models: `users`, `students`, `student_skills`, `projects`, `certifications`
-- [ ] Auth: signup/login endpoints, JWT issuance, password hashing
-- [ ] Resume upload endpoint (PDF → text extraction via pdfplumber)
-- [ ] Readiness Engine: weighted score calculation + band mapping (Not Ready → Highly Employable) + explanation string
-- [ ] Frontend: student signup/login, profile page, resume upload, readiness score display with breakdown
-- [ ] Seed script: generate ~50 synthetic student profiles for testing
+- [x] Database models: `users`, `students`, `student_skills`, `projects`, `certifications`; application college filters and PostgreSQL ENABLE/FORCE RLS on every table
+- [x] Auth: signup/login endpoints, JWT issuance, bcrypt password hashing
+- [x] Resume upload endpoint (PDF → text extraction via pdfplumber)
+- [x] Readiness Engine: weighted score calculation + band mapping (Not Ready → Highly Employable) + explanation string and full factor breakdown
+- [x] Frontend: student signup/login, profile page, resume upload, readiness score display with breakdown
+- [x] Seed script: generate 50 synthetic student profiles for testing; confirmed on Render
 
 **Definition of done:** A student can sign up, upload a resume, and see a readiness score with an explanation — live on Vercel.
+
+**Verified 2026-09-22:** Live signup, PDF upload/text review, profile save, and explained readiness succeeded on https://jobjugaad.vercel.app. Six local PostgreSQL integration tests passed; live login, persistence, and cross-college denial also passed. **User accepted Phase 1 and independently confirmed RLS cross-college blocking on 2026-09-22; Phase 2 is authorized.**
 
 ---
 

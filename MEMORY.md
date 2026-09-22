@@ -171,3 +171,8 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Still pending:** Finish browser UI checks, configure live JWT_SECRET, commit/push the verified code, deploy and verify the Phase 1 flow on Vercel/Render.
 > **Next gate:** Stop when the Phase 1 live Definition of Done is demonstrated; do not start Phase 2 without explicit user acceptance.
 > **Browser verification:** Local signup/login, profile save and recalculation, persistence after a fresh login, and PDF upload/text review succeeded. The synthetic profile returned 62/100 (Developing) with six contributions and explanation. No application console errors or warnings were reported. Live deployment is still pending.
+
+> **Release handoff:** 2026-09-22
+> **Ready:** Student Core implementation committed as `0cc7e1d` and pushed to `feature/student-core`. Backend integration tests, Swagger endpoint checks, frontend build, signup/login, persisted profile/readiness, and PDF text review passed locally. Final dependency check and git whitespace check passed.
+> **Deployment dependency:** The existing live Render service needs `JWT_SECRET`. Its Environment editor has a prepared `JWT_SECRET` row with a Generate button; the user was asked to generate and save it because browser credential entry/submission requires user handoff. Do not put the generated secret in chat or git. Current live main still serves Phase 0.
+> **Next:** Once the secret is saved, merge the verified feature branch into main, push, verify Render initializes FORCE RLS and 50 synthetic students, and exercise the live Vercel Student Core flow. Then update phase completion records and stop for the user's Phase 1 acceptance. No Phase 2 work is authorized.

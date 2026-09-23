@@ -81,16 +81,16 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 **Goal:** Complete the lifecycle past "Selected."
 
-- [ ] Database model: `offers` (offer letter, documents, verification, acceptance, joining status)
-- [ ] Offer tracking endpoints + frontend views (student and admin sides)
-- [ ] Simulated notification engine (in-app notification feed; no real email/SMS needed)
-- [ ] Expand and finalize synthetic dataset (~4,800 students, 40–50 companies) with realistic correlated distributions
+- [x] Database model: `offers` (offer letter, documents, verification, acceptance, joining status)
+- [x] Offer tracking endpoints + frontend views (student and admin sides)
+- [x] Simulated notification engine (in-app notification feed; no real email/SMS needed)
+- [x] Expand and finalize synthetic dataset (~4,800 students, 40–50 companies) with realistic correlated distributions
 - [x] Write a simple evaluation check for the matching engine: pick ~10 seeded profiles, manually decide their "expected" top-3 matches, run the engine, and report how many match. Label this explicitly as a **synthetic sanity check against our own assumptions**, not a real-world accuracy claim — never report this as a validated accuracy percentage
 - [x] Write an equivalent evaluation statement for the Readiness Score and Placement Support flags — a **face-validity review**: manually inspect ~10 seeded student profiles, confirm the readiness band and any support-priority flag each receives matches what a human would reasonably expect given their inputs, and note any mismatches. This satisfies the official deliverable "accuracy/performance evaluation of matching and scoring" for the scoring side, not just matching — per `ARCHITECTURE.md` §9, do not report a fabricated accuracy percentage here either
 
 **Definition of done:** The full lifecycle — Profiling → Matching → Scheduling → Notification → Offer Tracking → Analytics — works end-to-end on the live deployment, and both evaluation statements (Matching Engine sanity check + Readiness/Support-flag face-validity review) are written down, not just implied.
 
-**Release status 2026-09-23:** Phase 4 code is deployed from `e52147c`; API 0.5.0/database health, frontend offer/feed bundle content and protected-route unauthenticated denials passed. Thirty-four local checks passed across the regression run, matching retest and interview-notification test; production build and actual-data React rendering passed. The local dataset has 4,800 synthetic students and 45 companies. Written evaluation reports are complete. Authenticated live offer/notification/analytics walkthrough is pending; do not mark this phase accepted or begin Phase 5.
+**Release status 2026-09-23:** Phase 4 code is deployed from `e52147c`; API 0.5.0/database health, frontend offer/feed bundle content and protected-route unauthenticated denials passed. Thirty-four local checks passed across the regression run, matching retest and interview-notification test; production build and actual-data React rendering passed. The local dataset has 4,800 synthetic students and 45 companies. Written evaluation reports are complete. Live walkthrough is now demonstrated: test student 4805 / drive 17 / interview 7556 / offer 2385 reached issued, submitted, verified, accepted and joined, with six audited offer actions and working notifications. Agent verified student-side API results; the user performed admin UI actions and supplied refreshed analytics of 1,418 accepted students, 701 joined students and 2,385 offers. The save-feedback fix is deployed from b35db06. **Phase 4 is delivered for explicit user acceptance; Phase 5 remains gated.**
 
 ---
 

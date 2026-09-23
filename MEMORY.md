@@ -78,6 +78,8 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-23 | Expand to 4,800 synthetic students/45 companies using noisy correlated preparation and fictional outcomes | Preserve earlier fixtures and human changes; label synthetic offers. Accepted offers and joining remain distinct analytics measures. |
 | 2026-09-23 | Freeze assistant-authored evaluation expectations before execution in c2748bf | Reproduced 25/30 expected matches; readiness/support each agree on 10/10. Keep disagreements and sample limitations; no validated accuracy claim. |
 
+| 2026-09-23 | Phase 4 lifecycle and final analytics demonstrated; separate delivery from user phase acceptance | Agent verified the synthetic student API workflow; user performed admin UI actions and supplied refreshed counts. Stop before Phase 5 until explicitly authorized. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -85,6 +87,12 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] Phase 4 Definition of Done demonstrated on 2026-09-23: live profiling → matching → approved/selected interview → notifications → all five offer stages → refreshed outcome analytics, plus both written evaluation statements. Delivered for user acceptance; Phase 5 is not authorized.
+- [x] Delivered Phase 4 offers with five separate stages, audited role-scoped actions, version checks, student/admin views and simulated recipient-only notifications. All three new tables have application college filters and FORCE RLS (17 tenant tables total).
+- [x] Verified the live test lifecycle through student 4805, drive 17, interview 7556 and offer 2385: profiling/matching, confirmed and selected interview, issued letter, student acceptance/document submission, admin verification and joined status. Agent API checks independently confirmed all six offer audit events, nine student notifications and idempotent notification reads; admin UI actions were performed by the user.
+- [x] Finalized 4,800 seeded synthetic students and 45 seeded companies with noisy correlated preparation/outcomes; additional live test accounts are separate. Seed idempotence and increasing outcome proportions across CGPA groups passed locally.
+- [x] Wrote frozen ten-profile matching and scoring evaluations: 25/30 expected matches reproduced, readiness bands 10/10 and support flags 10/10 agreement. Five matching misses and sample limitations are retained; these are assistant-authored synthetic checks, not validated accuracy.
+- [x] Verified 34 local checks across the regression and targeted runs, production builds, actual-data React rendering, API 0.5.0/database health and live ownership/role denials. Deployed the interview save-feedback improvement in b35db06.
 - [x] Phase 3 accepted by the user on 2026-09-23 after successful live admin login, visible dashboard charts, conflict resolution after approval and a saved support review. These authenticated browser results are user-verified, not agent-observed.
 - [x] Delivered deterministic scheduling with five new tenant tables (schedules, interviews, calendar audit, support indicators and support reviews), application college filters, FORCE RLS, next-free-slot proposals, explicit approval, concurrent/stale approval protection and audit evidence.
 - [x] Delivered admin KPI tiles, Recharts branch/skill shortlist conversion, advertised CTC statistics and honest unavailable placement percentage until Phase 4 offers exist.
@@ -123,10 +131,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- Phase 4 implementation is local: offers/audit/feed with FORCE RLS, student/admin views, 4,800 synthetic students and 45 companies, and frozen written evaluations. Production build, actual-data React rendering and 34 backend checks passed across the full run, targeted matching retest and interview-notification check after fixing null-override exclusion filtering. Deployed from e52147c: API 0.5.0/database health, published frontend offer/feed content and four unauthenticated denials verified. The authenticated live offer lifecycle remains pending.
+- None. Phase 4 is delivered; awaiting the user's explicit acceptance and instruction before Phase 5.
 
 ### ⏭️ Next Up
-- Complete the authenticated live Phase 4 walkthrough: selected interview → draft/issued offer → student acceptance/document declaration → admin verification/joining → notification and analytics checks. The written evaluations are finished. The approved live synthetic student (4805) and drive (17) exist. User deferred the remaining live admin verification; resume from those records without creating duplicates, then stop for Phase 4 acceptance before Phase 5.
+- Wait for explicit Phase 4 acceptance and Phase 5 authorization. Do not begin CORS/polish/rehearsal or stretch features without that gate.
 
 ---
 
@@ -135,9 +143,9 @@ _Add a new row every time a meaningful architectural or product decision is made
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
 - Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
-- The rule engines and 25 local rule/PostgreSQL tests are implemented and pass; the user confirmed the Phase 3 authenticated live checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
-- Notifications are planned as simulated in-app only; they are not implemented in Phase 0.
-- All fourteen Phase 1–3 tenant tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- The rule engines and 34 local rule/PostgreSQL checks have passed across regression and targeted runs; the user confirmed the Phase 3 authenticated live checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
+- Notifications are implemented as simulated in-app records only; no email or SMS is sent. Offer/document stages record human declarations about external document exchange, not automatic document verification.
+- All seventeen Phase 1–4 tenant tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
 - Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
 - Local PostgreSQL test configuration is stored only under ignored .local/. The live Render service uses its existing managed PostgreSQL database.
@@ -157,7 +165,7 @@ _Track unresolved questions here so they don't get lost between sessions._
 
 - [x] Use plain JavaScript for the frontend (Phase 0 decision).
 - [ ] Do we attempt the pgvector semantic-matching stretch goal, or stop at keyword matching? (Default per `ARCHITECTURE.md`: stop at keyword matching for P0/P1, attempt only if time remains.)
-- [x] Phase 2 seed.py implements 300 synthetic profiles, 12 companies and three drives; final expansion remains in Phase 4.
+- [x] Phase 4 seed.py implements 4,800 synthetic profiles and 45 companies, preserving earlier records and three matching demonstration drives.
 - [ ] Do we attempt the Random Forest upgrade to the Readiness Engine using the public Kaggle dataset, or stay with the weighted rule for the whole hackathon?
 
 ---
@@ -297,3 +305,9 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Final local check for this handoff:** The focused PostgreSQL interview-notification test passed: approved booking creates one recipient-owned notification with the correct drive/venue; another student and another college receive 404 when attempting to mark it read; the owner can mark it read. There are now 34 checks verified across the regression and targeted runs. No live admin or offer completion is inferred from this local result. Phase 4 implementation is deployed and ready for the deferred live walkthrough; Phase 5 remains gated.
 
 > **Phase 4 status-save diagnosis:** User reported that Save interview status did not work. The supplied card was the different seeded “Simulated Python Backend Engineer” interview in demo hall/panel, ending 2026-09-24 10:30 AM, not target drive 17/student 4805. Its future end explains the server's outcome-time restriction. Found a separate feedback usability issue: interview errors appeared only in the Pending approval section, away from the clicked button. Added inline result messages beside each status button, an explicit end-time instruction, a reason-length hint and a saving label. Refresh failure after a successful mutation is now distinguished from an unsaved change. Production build passed; backend permissions/time checks are unchanged. Guide the user to choose exact test drive 17/student 4805 before continuing; no live offer completion or Phase 4 acceptance is claimed.
+
+> **Phase 4 final live workflow evidence:** Offer 2385 for synthetic student 4805 / drive 17 / selected interview 7556 is issued, documents submitted, verification verified, acceptance accepted and joining joined. The user performed admin issuance/verification/joining; agent performed the authorized synthetic student responses. Agent independently read the final stages, all six audit actions and nine recipient notifications, and confirmed marking the joining notification read is idempotent. The earlier card for another student was a different booking; do not infer changes to that student's records. Remaining final check is the refreshed admin outcome counts; user has been asked to copy them. Browser automation remains unavailable, so authenticated admin screen observations are user-provided.
+
+> **Phase 4 delivered:** 2026-09-23 — User supplied refreshed Overview values: 1,418 distinct students with active accepted offers, 701 recorded joined, 2,385 offers total, with 2,383 marked as seeded synthetic offers. Active accepted CTC: min 3.00, mean 3.34, max 6.50 LPA. These are live demonstration-record counts, not hiring accuracy or validated outcomes. They include the completed synthetic test offer 2385; the earlier other-student draft 2384 was left unchanged. The synthetic import flag marks seeded offers; manually created test records also remain fictional, as their names/reasons disclose.
+> **Evidence and completion:** Agent API verified profile/matching evidence, approved/selected interview notifications, all five final stages, six audit events, nine recipient notifications and idempotent read state. User performed and confirmed admin UI actions and supplied dashboard counts. Thirty-four local checks, production builds and actual-data React rendering passed. Both written evaluations remain frozen at 25/30 matching hits and 10/10 readiness/support agreements, explicitly synthetic and assistant-authored. Phase 4 Definition of Done is satisfied for handoff; no independent agent browser/Swagger or student-browser-interaction claim is made.
+> **Next:** Present the live app and evaluation report, then wait for explicit Phase 4 acceptance and Phase 5 authorization. No Phase 5 work has begun. Credentials and detailed authenticated test responses remain only in ignored `.local/`.

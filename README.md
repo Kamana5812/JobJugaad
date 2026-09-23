@@ -133,9 +133,9 @@ Startup expands the idempotent demo to 4,800 synthetic students and 45 companies
 Frozen expectations and limitations: [protocol](EVALUATION_PROTOCOL.md). Actual results and disagreements: [written report](evaluations/phase4-report.md) and [full evidence](evaluations/phase4-results.json). Matching reproduced 25/30 expected roles; readiness bands and support flags agreed on 10/10 each. These counts describe an assistant-authored synthetic sanity check against our own assumptions, never validated accuracy.
 
 
-### Remaining live Phase 4 acceptance walkthrough
+### Verified live Phase 4 walkthrough — 2026-09-23
 
-Use the existing **Synthetic Phase 4 Lifecycle Check** student and **Synthetic Phase 4 Lifecycle Drive** in Demo College 1; avoid creating duplicate fixtures. Profiling, matching evidence, student-owned offer/feed access and denial of admin-only access have been checked through the live API. The user deferred the remaining administrator walkthrough.
+Use the existing **Synthetic Phase 4 Lifecycle Check** student and **Synthetic Phase 4 Lifecycle Drive** in Demo College 1; avoid creating duplicate fixtures. Profiling, matching evidence, student-owned offer/feed access and denial of admin-only access have been checked through the live API. The user subsequently completed the administrator walkthrough, with student API checks performed by the agent.
 
 1. In Scheduling, verify the correct student's booking is approved. After its scheduled end, record **Selected** with a synthetic-test reason.
 2. In Offers, find that selected interview, create a draft and record **letter issued**.
@@ -143,4 +143,4 @@ Use the existing **Synthetic Phase 4 Lifecycle Check** student and **Synthetic P
 4. From the administrator account, record **verified**, then **joined**, with reasons.
 5. Check all five stages, audit history, the student/admin notification feeds and the changed accepted/joined analytics. Notifications are in-app only.
 
-The local workflow and isolation tests passed, but this live sequence is not yet confirmed. Browser automation is unavailable; user-confirmed UI actions and agent API checks must remain distinguishable. Credentials are not included in the repository.
+The live sequence completed for student 4805 / drive 17 / interview 7556 / offer 2385. All five final stages and six offer audit actions were verified through the student API, along with nine recipient notifications and idempotent read state. The user supplied refreshed admin analytics: 1,418 students with active accepted offers, 701 recorded joined and 2,385 offers, including 2,383 seeded synthetic offers. Manually created test records are fictional too and are disclosed by their names/reasons; the seed marker does not make other records validated real placements. Browser automation remained unavailable: admin UI actions/counts are user-verified, while student actions were API-verified. Thirty-four local checks and production builds passed. Phase 4 is delivered for user acceptance; Phase 5 has not started. Credentials are not included in the repository.

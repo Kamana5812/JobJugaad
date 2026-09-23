@@ -14,10 +14,16 @@ export default function SchedulingPanel({ board, refresh }) {
   const names = { student: id => board.students.find(item => item.id === id)?.name || 'Student #' + id,
     job: id => board.jobs.find(item => item.id === id)?.name || 'Drive #' + id }
   const pending = board.proposals.filter(item => item.status === 'pending')
-  async function perform(action, success) {
+  async function perform(action, success, onResult) {
     setBusy(true); setError(''); setMessage('')
-    try { await action(); await refresh(); setMessage(success); setSource(null); return true }
-    catch (failure) { setError(errorMessage(failure)); return false }
+    let saved = false
+    try {
+      await action(); saved = true; await refresh(); setMessage(success); setSource(null)
+      onResult?.({ error: false, message: success }); return true
+    } catch (failure) {
+      const detail = saved ? 'Your change was saved, but the dashboard could not refresh. Click Refresh dashboard to see it.' : errorMessage(failure)
+      setError(detail); onResult?.({ error: true, message: detail }); return saved
+    }
     finally { setBusy(false) }
   }
   function resolve(item) {

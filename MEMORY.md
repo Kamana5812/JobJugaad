@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-23
-**Current phase:** Phase 3 — Scheduling & Admin Analytics (implemented locally; deployment and browser verification pending)
+**Current phase:** Phase 3 — Scheduling & Admin Analytics (deployed; authenticated live/browser verification pending)
 
 ---
 
@@ -77,6 +77,8 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] Published Phase 3 implementation commits `3d27d16` and `9922077` to main. Vercel deployment `4frMbuFgqk47YnESCyqU2FFXvFBe` succeeded; public frontend serves the Command Center bundle. Render serves API 0.4.0 with all ten admin endpoints and PostgreSQL-connected health. Unauthenticated live admin analytics/calendar/support requests return 401. **This verifies release availability, not the pending authenticated Phase 3 Definition of Done.**
+- [x] Passed 25 local PostgreSQL/rule/API tests, production frontend build, HTTP preview checks and React server-rendering checks against real local API responses. All new tenant tables were tested independently of application filters; concurrent/stale approvals and support-review preservation were covered.
 - [x] User accepted Phase 2, manually verified a "Below Threshold" explanation and a working override, and authorized Phase 3.
 - [x] Delivered Phase 2 Talent Finder to Vercel and Render from commit 97d5e58: recruiter signup/login, company profile, configurable drive creation, skill-gap statuses and explained weighted matching.
 - [x] Added four Phase 2 tables with application college filters and atomic ENABLE/FORCE RLS, alongside recruiter ownership and tenant-consistent foreign keys.
@@ -113,7 +115,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 ### ⏭️ Next Up
 - Finish Phase 3 Swagger UI/visual checks once browser automation works; current initialization fails with “failed to write kernel assets”. API integration and React rendering checks are separate evidence, not a claim of completed browser testing.
 - Configure the user-selected existing Demo College 1 admin via Render `ADMIN_ACCOUNTS`; user was given the exact private configuration in chat. Check successful provisioning without exposing secrets.
-- Deploy Phase 3, verify live admin login, charts, conflict proposal/approval, support breakdown/review, then move finished Phase 3 items to Completed and stop for acceptance. Phase 4 is not authorized.
+- Verify live admin login, charts, conflict proposal/approval and support breakdown/review after the pending Render account configuration. Then confirm the remaining Phase 3 checklist and stop for acceptance. Phase 4 is not authorized.
 
 ---
 
@@ -242,3 +244,9 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Verification:** All 25 backend rule/PostgreSQL tests passed, including all ten admin endpoint contracts, status timing, simultaneous approval, stale versions, composite foreign keys and independent RLS on all new tables. Production frontend build passed with admin charts loaded separately. Server rendering against actual local API responses passed for analytics, the seeded conflict/proposals and 94 explained support cards in the accumulated local test dataset. One intervening run hit a transient database connection timeout; the complete sequential rerun passed. Browser automation fails during initialization, so Swagger UI execution and interactive visual verification remain pending.
 > **Admin setup:** User selected an existing Demo College 1 account. The exact email/configuration is in the private task conversation, not this public file. Render configuration and live provisioning are pending confirmation.
 > **Next gate:** Complete live Phase 3 verification before marking it delivered. Do not start Phase 4.
+
+
+> **Deployment handoff:** 2026-09-23 — Phase 3 release published
+> **Finished:** Fast-forwarded `feature/admin-scheduling` to main and pushed `9922077`. Vercel reported successful deployment `4frMbuFgqk47YnESCyqU2FFXvFBe`. Live frontend `/admin` returns 200 and loads `AdminPage-B2ZxoLxy.js` with the new interface. Render OpenAPI reports 0.4.0 and all ten admin operations; health returns 200 with PostgreSQL connected. Public admin analytics/calendar/support requests correctly return 401. Initial Render health timed out during startup; the retry succeeded.
+> **Still pending:** User must save the requested Render `ADMIN_ACCOUNTS` setting for the exact existing account selected in chat, then log out/in using Demo College 1. Browser automation failed repeatedly before initialization with “failed to write kernel assets: The system cannot find the path specified”; one reset did not resolve it. No authentication secret was read or changed. Swagger HTML and OpenAPI/API contracts were tested over HTTP, but Swagger UI execution and interactive visual/live admin verification could not be performed. Do not describe those checks as passed.
+> **Next:** Resume browser access (may require restarting the Codex app), confirm the Render setting, then use the user's authenticated admin session to inspect charts, resolve the seeded double-booking through proposal and approval, and review support factors/interventions. Local preview is at http://127.0.0.1:5176 with API/docs at http://127.0.0.1:8003/docs; its synthetic admin is local-only. Update Phase 3 completion only after live flow verification. Phase 4 remains unstarted.

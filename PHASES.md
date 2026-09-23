@@ -73,6 +73,8 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 **Definition of done:** Admin can see a live dashboard, trigger a scheduling conflict, watch it get resolved (pending admin approval), and see students who may need additional support flagged with named factors — all live.
 
+**Release status 2026-09-23:** Phase 3 code is deployed from `9922077`. Twenty-five local tests, the production build, actual-data React rendering, live API 0.4.0/database health, frontend bundle presence and unauthenticated admin denial passed. Admin environment setup confirmation and authenticated Swagger/browser/live flow checks remain pending; Phase 3 is not yet marked complete or accepted. Phase 4 is gated.
+
 ---
 
 ## Phase 4 — Offers, Notifications & Data Polish (Day 5)

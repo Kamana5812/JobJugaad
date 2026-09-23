@@ -23,17 +23,17 @@ export default function CandidateCard({ candidate: c, position, onReviewed }) {
       </div>
       <div className="text-right"><p className="text-3xl font-bold text-navy">{c.match_score}<span className="text-sm text-muted"> /100</span></p><p className="text-xs text-muted">Weighted match score</p></div>
     </div>
-    {c.override_action && <p className="mt-4 rounded-xl bg-[#FDF0E3] p-3 text-sm text-navy">A recruiter manually {c.override_action === 'promote' ? 'promoted' : 'rejected'} this candidate. The calculated recommendation below is retained for review.</p>}
+    {c.override_action && <p className="mt-4 rounded-xl bg-warning-soft p-3 text-sm text-navy">A recruiter manually {c.override_action === 'promote' ? 'promoted' : 'rejected'} this candidate. The calculated recommendation below is retained for review.</p>}
     <p className="my-4 text-sm leading-6">{c.explanation}</p>
     <FactorTable factors={c.factor_breakdown} />
-    {c.missing_requirements.length > 0 && <div className="mt-4 rounded-xl bg-[#FDF0E3] p-4">
+    {c.missing_requirements.length > 0 && <div className="mt-4 rounded-xl bg-warning-soft p-4">
       <h4 className="font-bold text-navy">Requirements and review flags</h4><ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{c.missing_requirements.map((item, i) => <li key={i}>{item}</li>)}</ul>
     </div>}
     <details className="mt-4 rounded-xl border border-line p-4">
       <summary className="cursor-pointer font-bold text-navy">Kahan Kami Hai? · Skill-by-skill comparison</summary>
       <div className="mt-3 space-y-3">{[...c.skill_gaps].sort((a,b) => ({critical:0,gap:1,'on-track':2}[a.status] - {critical:0,gap:1,'on-track':2}[b.status])).map(g =>
         <div key={g.skill_name} className="border-t border-line pt-3"><p className="flex flex-wrap items-center justify-between gap-2 font-semibold text-navy">{g.skill_name}
-          <span className={'rounded-full px-3 py-1 text-xs ' + (g.status === 'on-track' ? 'bg-[#E2F3E9] text-navy' : g.status === 'critical' ? 'bg-[#FBE6E6] text-[#922B2B]' : 'bg-[#FDF0E3] text-navy')}>{g.status}</span></p>
+          <span className={'rounded-full px-3 py-1 text-xs ' + (g.status === 'on-track' ? 'bg-growth-soft text-navy' : g.status === 'critical' ? 'bg-critical-soft text-critical' : 'bg-warning-soft text-navy')}>{g.status}</span></p>
           <p className="mt-2 text-sm">{g.explanation}</p><p className="mt-1 text-xs text-muted">Shortfall: {g.shortfall} points. {g.next_step}</p></div>)}</div>
     </details>
     <p className="mt-4 text-sm"><strong className="text-navy">Your Next Jugaad: </strong>{c.next_step}</p>

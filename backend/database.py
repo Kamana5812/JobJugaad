@@ -46,6 +46,16 @@ def initialize_schema():
                 predicate = "college_id = NULLIF(current_setting('app.college_id', true), '')::integer"
                 connection.execute(text(f"CREATE POLICY college_isolation ON {name} USING ({predicate}) WITH CHECK ({predicate})"))
 
+        from security_audit import require_isolation
+        require_isolation(connection)
+
+def isolation_report():
+    from security_audit import require_isolation
+    if engine is None:
+        raise RuntimeError("Database is not configured.")
+    with engine.connect() as connection:
+        return require_isolation(connection)
+
 def check_database():
     if SessionLocal is None:
         return "not_configured"

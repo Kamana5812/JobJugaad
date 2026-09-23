@@ -16,7 +16,7 @@ export default function EvidenceEditor({ title, items, onChange, kind, limit }) 
           : <label className="text-sm font-semibold text-navy">Description<textarea className={inputStyle + ' mt-1.5 min-h-24'} required maxLength="3000" value={item.description}
             onChange={(event) => update(index, 'description', event.target.value)} /></label>}
       </div>
-      <button type="button" className="mt-3 text-xs font-semibold text-[#922B2B] underline underline-offset-4" onClick={() => onChange(items.filter((_, i) => i !== index))}>Remove {skills ? 'skill' : 'entry'} {index + 1}</button>
+      <button type="button" className="mt-3 text-xs font-semibold text-critical underline underline-offset-4" onClick={() => onChange(items.filter((_, i) => i !== index))}>Remove {skills ? 'skill' : 'entry'} {index + 1}</button>
     </fieldset>)}</div>
     <button type="button" className={secondaryStyle + ' mt-4'} disabled={items.length >= limit}
       onClick={() => onChange([...items, skills ? { skill_name: '', proficiency: '' } : { title: '', description: '' }])}>+ Add {skills ? 'skill' : kind === 'projects' ? 'project' : 'certification'}</button>

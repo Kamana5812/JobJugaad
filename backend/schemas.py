@@ -9,10 +9,25 @@ Name = Annotated[str, Field(min_length=1, max_length=100)]
 class InputModel(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
+class IsolationTableResponse(BaseModel):
+    table: str
+    college_id: bool
+    enabled: bool
+    forced: bool
+    policy: str | None
+    read_write_scoped: bool
+    status: Literal["verified", "failed"]
+
+class IsolationResponse(BaseModel):
+    status: Literal["verified", "failed"]
+    runtime_role_restricted: bool
+    tables: list[IsolationTableResponse]
+
 class HealthResponse(BaseModel):
     status: Literal["ok"] = "ok"
     service: Literal["jobjugaad-api"] = "jobjugaad-api"
     database: Literal["connected", "not_configured"]
+    isolation: IsolationResponse
 
 class LoginRequest(InputModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=False)

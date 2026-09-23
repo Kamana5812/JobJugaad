@@ -42,7 +42,7 @@ export default function TalentPage() {
           <h2 className="text-xl font-bold text-navy">Your drives <span className="text-sm text-muted">({jobs.length})</span></h2>
           {jobs.length === 0 && <p className="mt-4 text-sm text-muted">Create your first drive to see matching results here. The seeded companies’ drives belong to their own recruiter accounts.</p>}
           <div className="mt-4 max-h-[32rem] space-y-3 overflow-y-auto">{jobs.map(job => <button key={job.id} type="button" aria-pressed={selected?.id === job.id}
-            className={'w-full rounded-xl border p-4 text-left transition ' + (selected?.id === job.id ? 'border-saffron bg-[#FDF0E3]' : 'border-line hover:bg-paper')}
+            className={'w-full rounded-xl border p-4 text-left transition ' + (selected?.id === job.id ? 'border-saffron bg-warning-soft' : 'border-line hover:bg-paper')}
             onClick={() => setSelected(job)}><span className="block font-bold text-navy">{job.title}</span><span className="mt-1 block text-xs text-muted">₹{job.ctc} lakh/year · {job.eligible_branches.join(', ')}</span></button>)}</div>
         </aside>
       </div>

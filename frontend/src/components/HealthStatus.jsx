@@ -32,7 +32,7 @@ export default function HealthStatus() {
     <section id="connection" className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-8" aria-labelledby="connection-heading">
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-muted">Live connection check</p>
       <div role="status" aria-live="polite" className="mt-5">
-        <span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${connected ? 'bg-[#E2F3E9] text-growth' : 'bg-[#FDF0E3] text-saffron-deep'}`}>
+        <span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${connected ? 'bg-growth-soft text-growth' : 'bg-warning-soft text-saffron-deep'}`}>
           {checking ? 'Checking connection…' : connected ? '✓ Backend connected' : '⚠ Connection needs attention'}
         </span>
         <h2 id="connection-heading" className="mt-4 text-2xl font-bold text-navy">

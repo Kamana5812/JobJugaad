@@ -6,7 +6,7 @@ export default function OfferCard({ offer, children }) {
     <p className="text-sm text-muted">{offer.company_name} · {offer.student_name} · Offer #{offer.id}</p>
     <p className="mt-2 font-bold text-navy">CTC: {offer.ctc.toFixed(2)} LPA</p>
     <dl className="my-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{offerStages.map(([key, label]) => <div key={key} className="rounded-xl bg-paper p-3">
-      <dt className="mb-2 text-xs font-bold text-muted">{label}</dt><dd><StatusPill warning={!['issued', 'submitted', 'verified', 'accepted', 'joined'].includes(offer[key])}>{human(offer[key])}</StatusPill></dd>
+      <dt className="mb-2 text-xs font-bold text-muted">{label}</dt><dd><StatusPill critical={['withdrawn', 'rejected', 'declined', 'not_joined'].includes(offer[key])} warning={!['issued', 'submitted', 'verified', 'accepted', 'joined'].includes(offer[key])}>{human(offer[key])}</StatusPill></dd>
     </div>)}</dl>
     <ul className="list-disc space-y-1 pl-5 text-sm">{offer.next_steps.map(step => <li key={step}>{step}</li>)}</ul>
     <p className="mt-4 text-xs leading-5 text-muted">{offer.methodology}</p>

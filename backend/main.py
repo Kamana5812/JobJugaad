@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from auth import signing_secret
-from database import check_database, initialize_schema
+from database import check_database, initialize_schema, isolation_report
 from routers import auth, students, recruiters, admin, notifications
 from schemas import HealthResponse
 from seed import seed_students, seed_companies, seed_phase3, seed_phase4
@@ -27,12 +27,12 @@ async def lifespan(app):
     logging.getLogger("uvicorn.error").info("Phase 3 FORCE RLS initialized; fixtures: %s; admin accounts provisioned: %s", phase3, admins)
     yield
 
-app = FastAPI(title="JobJugaad API", version="0.5.0",
+app = FastAPI(title="JobJugaad API", version="0.6.0",
     description="Explainability-first Student Core, Talent Finder and Placement Command Center. Proposed weighted rules; no trained model.",
     lifespan=lifespan)
-# Explicit Phase 0/1 setting; restrict allowed origins in Phase 5.
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False,
-    allow_methods=["*"], allow_headers=["*"])
+# Exact production origin. CORS is a browser boundary, not a substitute for JWT/RBAC/RLS.
+app.add_middleware(CORSMiddleware, allow_origins=["https://jobjugaad.vercel.app"], allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "OPTIONS"], allow_headers=["Authorization", "Content-Type"])
 app.include_router(auth.router)
 app.include_router(students.router)
 app.include_router(recruiters.router)
@@ -52,6 +52,6 @@ async def database_error(request: Request, error: SQLAlchemyError):
 @app.get("/health", response_model=HealthResponse, tags=["Health"])
 def health():
     try:
-        return HealthResponse(database=check_database())
-    except SQLAlchemyError:
-        raise HTTPException(503, "The database is temporarily unavailable.") from None
+        return HealthResponse(database=check_database(), isolation=isolation_report())
+    except (SQLAlchemyError, RuntimeError):
+        raise HTTPException(503, "The database health or isolation check failed.") from None

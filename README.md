@@ -2,7 +2,7 @@
 
 An **explainability-first** campus placement platform for BPUT Hackathon 2026's CampusLink problem statement.
 
-Phase 0 was explicitly accepted on 2026-09-22. Phase 1 Student Core is deployed and verified: student signup/login, editable profiles, PDF resume text extraction, and an explained readiness score. Its live Definition of Done was demonstrated and accepted on 2026-09-22, including the user's independent RLS test. Phase 2 Talent Finder is deployed and verified; user acceptance is pending before Phase 3.
+Phases 0–4 are deployed and explicitly accepted. Phase 5 adds the final UI, CORS, isolation audit and presentation documentation; verification status is in [PHASE5_AUDIT.md](PHASE5_AUDIT.md).
 
 - Frontend: [jobjugaad.vercel.app](https://jobjugaad.vercel.app)
 - Backend: [health](https://jobjugaad-api.onrender.com/health) · [interactive API](https://jobjugaad-api.onrender.com/docs)
@@ -65,9 +65,9 @@ py -3.12 -m venv backend/venv
 ./backend/venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
 ```
 
-The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all nine tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current Phase 1/2 schema; later schema changes need explicit migrations rather than relying on create_all.
+The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 17 tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all.
 
-Startup also runs seed.py idempotently, creating 300 named synthetic profiles, 12 companies and three simulated drives in Demo College 1. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
+Startup also runs seed.py idempotently, creating 4,800 named synthetic profiles, 45 companies and simulated drives in Demo College 1. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
 
 ```powershell
 cd frontend
@@ -76,11 +76,11 @@ Copy-Item .env.example .env
 npm run dev -- --host 127.0.0.1
 ```
 
-Set VITE_API_URL to your local API URL (default http://localhost:8000). All backend calls go through frontend/src/api. JWTs expire after two hours and are stored in sessionStorage for the current tab; logout clears the browser token. There is no refresh-token, email-verification, password-reset, or immediate server-side logout revocation flow in this phase.
+Set VITE_API_URL=/api for local development. Vite proxies /api to http://127.0.0.1:8000, keeping local browser requests on the frontend origin. Production VITE_API_URL remains the absolute Render URL; production CORS permits only https://jobjugaad.vercel.app. All backend calls go through frontend/src/api. JWTs expire after two hours and are stored in sessionStorage for the current tab; logout clears the browser token. There is no refresh-token, email-verification, password-reset, or immediate server-side logout revocation flow in this phase.
 
 ## Tenant enforcement
 
-users, students, student_skills, projects, certifications, companies, jobs, matches, and match_overrides each carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
+All 17 tenant tables listed in [PHASE5_AUDIT.md](PHASE5_AUDIT.md) carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
 
 RLS is the second tenant enforcement layer, not a replacement for application authorization. The runtime role owns the initial schema for startup DDL; FORCE RLS ensures normal owner queries are still restricted. Future production deployment should separate migrations from the runtime role.
 
@@ -108,9 +108,9 @@ The existing Oregon database Job-Jugaad expires on **2026-10-21** under its free
 
 Vercel: root frontend/, Vite, build npm run build, output dist. Include source files outside the root directory so the supplied assets/ logos are available. VITE_API_URL=https://jobjugaad-api.onrender.com is embedded at build time. The SPA fallback supports direct login/profile URLs.
 
-CORS remains wide open without cookies by the explicit Phase 0 instruction; restrict origins in Phase 5. Resume parsing accepts up to 5 MB, 20 pages, and 200,000 extracted characters, with a 20-second subprocess timeout. Scanned/encrypted/unreadable PDFs return a readable error. The raw PDF is not persisted.
+CORS permits exactly https://jobjugaad.vercel.app with explicit GET/POST/PUT/OPTIONS methods and Authorization/Content-Type headers; no cookies or wildcard configuration. Resume parsing accepts up to 5 MB, 20 pages, and 200,000 extracted characters, with a 20-second subprocess timeout. Scanned/encrypted/unreadable PDFs return a readable error. The raw PDF is not persisted.
 
-Placement support prediction, mock interview, live chatbot, embedding libraries, and pgvector are not implemented. Jugaad Dost is a static FAQ.
+Placement support uses simple thresholds. A trained support classifier, mock interview, live chatbot, embedding libraries and pgvector are not implemented. Jugaad Dost is a static FAQ.
 
 
 ## Phase 3 administrator setup
@@ -143,4 +143,8 @@ Use the existing **Synthetic Phase 4 Lifecycle Check** student and **Synthetic P
 4. From the administrator account, record **verified**, then **joined**, with reasons.
 5. Check all five stages, audit history, the student/admin notification feeds and the changed accepted/joined analytics. Notifications are in-app only.
 
-The live sequence completed for student 4805 / drive 17 / interview 7556 / offer 2385. All five final stages and six offer audit actions were verified through the student API, along with nine recipient notifications and idempotent read state. The user supplied refreshed admin analytics: 1,418 students with active accepted offers, 701 recorded joined and 2,385 offers, including 2,383 seeded synthetic offers. Manually created test records are fictional too and are disclosed by their names/reasons; the seed marker does not make other records validated real placements. Browser automation remained unavailable: admin UI actions/counts are user-verified, while student actions were API-verified. Thirty-four local checks and production builds passed. Phase 4 is delivered for user acceptance; Phase 5 has not started. Credentials are not included in the repository.
+The live sequence completed for student 4805 / drive 17 / interview 7556 / offer 2385. All five final stages and six offer audit actions were verified through the student API, along with nine recipient notifications and idempotent read state. The user supplied refreshed admin analytics: 1,418 students with active accepted offers, 701 recorded joined and 2,385 offers, including 2,383 seeded synthetic offers. Manually created test records are fictional too and are disclosed by their names/reasons; the seed marker does not make other records validated real placements. Browser automation remained unavailable: admin UI actions/counts are user-verified, while student actions were API-verified. Thirty-four local checks and production builds passed. The user accepted Phase 4 end to end and authorized Phase 5. Credentials are not included in the repository.
+
+## Final demo and honest scope
+
+Follow [DEMO_GUIDE.md](DEMO_GUIDE.md) for the exact Profiling → Matching → Scheduling → Offer → Analytics clicks, named fixtures and fresh-run alternative. [JUDGE_REVIEW.md](JUDGE_REVIEW.md) provides implementation-grounded answers; the written scalability statement is in [Architecture Section 9](ARCHITECTURE.md#9-dataset--evaluation). Competing campus placement platforms exist; no first-mover claim is made. The demonstration dataset is synthetic, scores are unvalidated rules, notifications never deliver email/SMS and document stages are human declarations. Self-selected enrollment, schema-owner runtime privileges, missing rate limiting and absent production backup/migration workflows remain hardening work.

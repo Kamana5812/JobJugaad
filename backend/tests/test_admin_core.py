@@ -136,11 +136,13 @@ class AdminIntegrationTests(unittest.TestCase):
 
     def test_interview_notification_delivery_and_recipient_isolation(self):
         account = self.accounts[0]
-        # Setup approved an interview for this administrator's original student profile.
+        # Target the baseline interview: earlier tests may confirm another booking.
+        board = self.client.get("/admin/schedules", headers=account["headers"]).json()
+        baseline = next(row for row in board["interviews"] if row["schedule_id"] == account["proposal"]["id"])
         feed = self.client.get("/notifications", headers=account["headers"])
         self.assertEqual(feed.status_code, 200, feed.text)
         confirmed = [item for item in feed.json()["notifications"]
-            if item["title"] == "Interview confirmed" and f"drive #{account['job_id']} " in item["body"]]
+            if item["title"] == "Interview confirmed" and item["body"].startswith(f"Interview #{baseline['id']} for drive #{account['job_id']} ")]
         self.assertEqual(len(confirmed), 1)
         notice = confirmed[0]
         self.assertEqual(notice["delivery"], "simulated_in_app")

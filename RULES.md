@@ -75,7 +75,7 @@ Conventions and guardrails for anyone (human or AI agent) working on this codeba
 - **Never fabricate an accuracy, benchmark, or performance number.** If asked for one and no real evaluation has been run, say so and define the evaluation protocol instead (see `ARCHITECTURE.md` §9) — this applies to code comments, UI copy, and spoken pitch material equally.
 - **The Explanation Generator is template-based, never an LLM call.** An LLM can hallucinate an incorrect reason for a score, which is worse than no explanation at all. The only place an LLM use is justified anywhere in this system is free-text resume section extraction — nowhere else.
 - **If an At-Risk classifier goes beyond P0 rule-based thresholds, class imbalance must be handled** (SMOTE or class weighting) before it ships. Students needing support are always a minority class; an untreated classifier will silently predict "no support needed" for nearly everyone while looking falsely accurate. See `ARCHITECTURE.md` §5, Layer 5 (Predictive Analytics).
-- **Scope discipline:** do not build the AI Mock Interview feature — the competitive space is saturated with 10+ mature dedicated products, and a hackathon version cannot compete. "Jugaad Dost" (AI Career Chatbot) ships only as a static UI label / FAQ panel, never as a built LLM-backed chatbot, unless P0 and P1 are fully complete with time remaining.
+- **Scope discipline:** do not build the AI Mock Interview feature — the competitive space is saturated with 10+ mature dedicated products, and a hackathon version cannot compete. "Jugaad Dost" (AI Career Chatbot) ships only as a static UI label / FAQ panel, never as a built LLM-backed chatbot.
 
 ---
 
@@ -83,7 +83,7 @@ Conventions and guardrails for anyone (human or AI agent) working on this codeba
 
 These apply everywhere the product speaks to a user — UI copy, API response messages, pitch material, and documentation alike.
 
-- **Never say an AI "understands" or "completely knows" a student.** Use "AI-assisted, structured view of the student's profile" instead. AI provides a data-driven view; it does not claim comprehension.
+- **Never say an AI "understands" or "completely knows" a student.** Use "rule-based, structured view of the student's profile" for this implementation; no trained model is present.
 - **Never label a student outcome as "at risk" without qualification, and never imply failure.** The correct framing is: "a student who may require additional placement support based on measurable indicators." Support categories (Technical / Aptitude / Communication / Resume-Profile / Mentoring) are always preferred over a single risk label.
 - **Never present a rejection as a dead end.** Every "not eligible" or "below threshold" output must be paired with the specific gap and, where feasible, a suggested next step — per the "Reject Less → Identify the Gap → Help Improve" philosophy in `PRD.md` §1.
 - **Never claim an academic-performance ranking is fair to all recruiters' priorities.** Different recruiters weight academics, skills, projects, certifications, and communication differently — never hardcode CGPA as the dominant or sole ranking factor; the weighting must remain configurable per role.

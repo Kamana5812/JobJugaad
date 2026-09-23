@@ -35,7 +35,7 @@ export default function SchedulingPanel({ board, refresh }) {
       <p className="mb-4 text-sm text-muted">Independent drives may run together. Overlapping drives conflict when they share a student, venue or panel. Pending proposals do not reserve a slot.</p>
       {board.conflicts.length ? <div className="space-y-3">{board.conflicts.map(conflict => {
         const item = board.interviews.find(row => row.id === conflict.other_interview_id)
-        return <div key={conflict.interview_id + '-' + conflict.other_interview_id} className="rounded-xl border border-[#D9660F]/30 bg-[#FDF0E3] p-4">
+        return <div key={conflict.interview_id + '-' + conflict.other_interview_id} className="rounded-xl border border-saffron-deep/30 bg-warning-soft p-4">
           <p className="text-sm">{conflict.explanation}</p>
           {item?.status === 'scheduled' && <button className={secondaryStyle + ' mt-3'} onClick={() => resolve(item)}>Propose resolution for #{item.id}</button>}
         </div>

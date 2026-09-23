@@ -2,7 +2,7 @@
 
 **Tagline:** Placement ka Jugaad, AI ke Saath.
 **Event:** BPUT Hackathon 2026 — Problem Statement 10 (CampusLink)
-**Status:** Draft v1.0
+**Status:** Phase 5 implementation-aligned requirements; aspirational items are labeled below.
 
 ---
 
@@ -15,9 +15,9 @@ Profile → Readiness → Skill Gap → Opportunity → Matching → Shortlistin
 Scheduling → Interview → Offer → Documentation → Joining → Analytics
 ```
 
-**Core positioning (revised per `REVISED_DOCUMENTATION.md` Phase 17):** JobJugaad connects student readiness, opportunity matching, conflict-aware scheduling, predictive intervention, offer tracking, and placement analytics into one workflow — using deterministic, auditable logic wherever it suffices, and machine learning only where free-text parsing or class-imbalanced prediction genuinely requires it. It doesn't just tell colleges what happened — it tells them who needs help, who fits which opportunity, where the process is breaking, and what intervention could improve outcomes.
+**Core positioning:** JobJugaad connects readiness, keyword/weighted matching, conflict-aware scheduling, rule-based support, offers and analytics. This prototype uses deterministic calculations and fixed explanations with human review; no trained model or LLM calls.
 
-> **Honest competitive framing (see `RESEARCH_AUDIT.md`):** this is not the first AI-powered campus placement platform — at least 8 commercial products (Superset, PlacementPilot AI, Relatezone, CNEAR Falcon, LeetCampus, iamneo, Naukri RMS) and one very close open-source analogue (SkillBridge) already exist. Resume parsing, basic matching, scheduling, and analytics are table stakes across this category — never pitch them as innovative. The three defensible differentiators, confirmed absent from every reviewed competitor, are: **(1)** consistent factor-level explainable matching in the official "Below Threshold: ..." format, **(2)** placement-specific, responsibly-framed support prediction, and **(3)** the Jugaad Simulator's what-if intervention modeling. Lead with these three, not with "AI-powered" generally.
+> **Honest competitive framing:** Campus placement platforms already exist; no first-mover or exclusive-feature claim is made. Demonstrate visible factor-level evidence, named support indicators, human overrides and the connected workflow. The simulator is future work. Historical research files are absent from this checkout; their competitor counts and uniqueness assertions are not evidence for the final pitch.
 
 **Core product philosophy: Reject Less → Identify the Gap → Help the Student Improve.** When a student doesn't match a role, the system's job does not end at "Not Eligible." It identifies the specific skill, communication, or aptitude gap and turns it into an actionable next step. This principle governs the Readiness Engine, the Matching Engine, and the Placement Support system consistently — see Section 7 and Section 11.
 
@@ -35,15 +35,23 @@ Scheduling → Interview → Offer → Documentation → Joining → Analytics
 
 ## 3. Goals & Success Metrics
 
+These are product targets, not measured benchmark results.
+
+These are product targets, not measured benchmarks.
+
 | Goal | Metric |
 |---|---|
 | Give students actionable readiness feedback | Every student has a Readiness Score + at least 1 skill-gap recommendation |
 | Give recruiters trustworthy, ranked shortlists | Every match has an explainable score breakdown, not just a raw percentage |
-| Eliminate scheduling conflicts | 100% of double-booked interview slots are auto-detected before confirmation |
-| Give placement cells predictive visibility | Students who may need additional placement support are flagged early, based on measurable indicators, before they go unplaced |
+| Eliminate scheduling conflicts | Check recorded student, venue and panel overlaps before confirmation; no universal detection-rate claim |
+| Give placement cells support visibility | Students who may need additional placement support are flagged early, based on measurable indicators, before they go unplaced |
 | Ship a working, deployed prototype | Live URL demoable end-to-end across all 3 portals by hackathon deadline |
 
 ---
+
+**Current implementation boundary:** Students have profile/readiness, offer tracking and notifications. Recruiters manage their own companies/drives and matching; admins manage scheduling/offers/support/analytics. A student opportunities/application portal, recruiter scheduling UI, automatic JD extraction, simulator and trained prediction are roadmap items, not delivered features.
+
+**Current boundary:** Students have profile/readiness, offers and notifications. Recruiters manage company/drives/matching; admins manage scheduling/offers/support/analytics. Student opportunities/applications, recruiter scheduling, automatic JD extraction, simulator and trained prediction remain roadmap items.
 
 ## 4. Target Users
 
@@ -57,7 +65,7 @@ Scheduling → Interview → Offer → Documentation → Joining → Analytics
 ### 4.2 Recruiters (Talent Finder)
 - Create company profile and placement drives
 - Define job requirements and eligibility criteria
-- Run AI matching against the candidate pool
+- Run keyword/weighted matching against the candidate pool
 - Understand match reasoning (explainability)
 - Schedule interviews, manage offers
 
@@ -67,7 +75,7 @@ Scheduling → Interview → Offer → Documentation → Joining → Analytics
 - Track offers and documentation
 - Identify students who may need additional placement support
 - Analyze placement trends, run "what-if" simulations
-- Review, override, or dismiss any AI-influenced recommendation
+- Review, override, or dismiss any calculated recommendation
 
 ---
 
@@ -78,8 +86,8 @@ Scheduling → Interview → Offer → Documentation → Joining → Analytics
 | Area | Features |
 |---|---|
 | Student | Profile, resume parsing, readiness score, skill-gap analysis |
-| Recruiter | Company profile, JD/drive creation, requirement extraction, eligibility filtering, AI matching, explainable ranking |
-| Admin | Drive management, conflict detection (admin-approved), scheduling, placement analytics, placement-support prediction, offer tracking |
+| Recruiter | Company profile, structured drive creation, manually entered requirements, eligibility filtering, keyword/weighted matching, explainable ranking |
+| Admin | Drive management, conflict detection (admin-approved), scheduling, placement analytics, rule-based placement-support indicators, offer tracking |
 
 ### 🟡 P1 — Should Work
 
@@ -91,12 +99,12 @@ Scheduling → Interview → Offer → Documentation → Joining → Analytics
 
 ### 🟢 P2 — Optional / Future
 
-- Jugaad Simulator ("what if we train 200 students in AWS?") — genuine differentiator, build only after P0/P1 are solid
-- Semantic matching via embeddings (sentence-transformers + pgvector) — real differentiator per research, but adds infra complexity; attempt only after the rule-based Matching Engine works end-to-end
+- Jugaad Simulator ("what if we train 200 students in AWS?") — future capability requiring explicit authorization
+- Semantic matching via embeddings (sentence-transformers + pgvector) — future capability requiring explicit authorization
 - Gamified preparation
 - PWA / mobile experience
 
-> **Dropped per `TECHNICAL_VALIDATION.md` Phase 10:** **AI Mock Interview** is removed from the roadmap entirely — 10+ mature dedicated competitors exist (Eklavvya, Interview Pilot, Final Round AI, Google Interview Warm-Up), and a hackathon-quality version cannot compete. **AI Career Chatbot ("Jugaad Dost")** is demoted to a static UI label / FAQ panel, not a built LLM feature — an academic prototype (Campus-Connect) already ships a near-identical GPT-based chatbot, so building one adds no differentiation for real effort.
+> **Excluded by user scope:** AI Mock Interview is not built. Jugaad Dost is a static FAQ/help label only; no live chatbot.
 
 ---
 
@@ -108,7 +116,7 @@ Scheduling → Interview → Offer → Documentation → Joining → Analytics
 - As a student, I want to see why I wasn't shortlisted, so I can improve instead of guessing.
 
 **Recruiter**
-- As a recruiter, I want to post a job and get a ranked candidate list instantly, so I don't manually screen hundreds of resumes.
+- As a recruiter, I want to post a job and get a ranked candidate list, so I don't manually screen hundreds of resumes.
 - As a recruiter, I want to see *why* a candidate ranked where they did, so I can trust the shortlist.
 
 **Admin**
@@ -127,7 +135,7 @@ Per the official problem statement, every rejection/ranking must be explainable 
 Readiness/fit level should also map to the official four-band scale:
 **Not Ready → Developing → Ready → Highly Employable**
 
-**Responsible language requirement:** the system never claims to "understand" a student — output is described as an AI-assisted, structured view of their current profile. Support-priority flags never imply a student will fail or is unsuccessful; they identify measurable indicators and route them to a human for review. A rejection is never a dead end — it always carries the specific gap behind it and, where possible, a suggested next step (see Section 1's "Reject Less" philosophy).
+**Responsible language requirement:** the system never claims to "understand" a student — output is described as a rule-based, structured view of their current profile. Support-priority flags never imply a student will fail or is unsuccessful; they identify measurable indicators and route them to a human for review. A rejection is never a dead end — it always carries the specific gap behind it and, where possible, a suggested next step (see Section 1's "Reject Less" philosophy).
 
 ---
 
@@ -136,9 +144,9 @@ Readiness/fit level should also map to the official four-band scale:
 - **Explainability:** No black-box scores — every score must show its contributing factors.
 - **Multi-tenancy:** Data model must support multiple colleges (`college_id` on core tables).
 - **Availability:** Deployed and demoable, not localhost-only.
-- **Performance:** Matching against a few thousand synthetic student rows should return in a few seconds.
+- **Performance target, not a measured claim:** evaluate matching latency on representative deployment resources before promising response times.
 - **Security:** Role-based access control (student/recruiter/admin) enforced on every endpoint via JWT, backed by database-level Row-Level Security. No absolute claims ("100% secure," "military-grade") are made anywhere in product materials.
-- **Human oversight:** Every AI-influenced ranking, schedule change, or support flag must be reviewable, editable, or dismissible by a placement administrator or recruiter — AI is decision support, never an autonomous final decision-maker.
+- **Human oversight:** Every calculated ranking, schedule change, or support flag must be reviewable, editable, or dismissible by a placement administrator or recruiter — the system provides decision support, never an autonomous final decision-maker.
 
 ---
 

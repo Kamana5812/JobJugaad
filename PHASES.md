@@ -90,7 +90,7 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 **Definition of done:** The full lifecycle — Profiling → Matching → Scheduling → Notification → Offer Tracking → Analytics — works end-to-end on the live deployment, and both evaluation statements (Matching Engine sanity check + Readiness/Support-flag face-validity review) are written down, not just implied.
 
-**Release status 2026-09-23:** Phase 4 code is deployed from `e52147c`; API 0.5.0/database health, frontend offer/feed bundle content and protected-route unauthenticated denials passed. Thirty-four local checks passed across the regression run, matching retest and interview-notification test; production build and actual-data React rendering passed. The local dataset has 4,800 synthetic students and 45 companies. Written evaluation reports are complete. Live walkthrough is now demonstrated: test student 4805 / drive 17 / interview 7556 / offer 2385 reached issued, submitted, verified, accepted and joined, with six audited offer actions and working notifications. Agent verified student-side API results; the user performed admin UI actions and supplied refreshed analytics of 1,418 accepted students, 701 joined students and 2,385 offers. The save-feedback fix is deployed from b35db06. **Phase 4 is delivered for explicit user acceptance; Phase 5 remains gated.**
+**Release status 2026-09-23:** Phase 4 code is deployed from `e52147c`; API 0.5.0/database health, frontend offer/feed bundle content and protected-route unauthenticated denials passed. Thirty-four local checks passed across the regression run, matching retest and interview-notification test; production build and actual-data React rendering passed. The local dataset has 4,800 synthetic students and 45 companies. Written evaluation reports are complete. Live walkthrough is now demonstrated: test student 4805 / drive 17 / interview 7556 / offer 2385 reached issued, submitted, verified, accepted and joined, with six audited offer actions and working notifications. Agent verified student-side API results; the user performed admin UI actions and supplied refreshed analytics of 1,418 accepted students, 701 joined students and 2,385 offers. The save-feedback fix is deployed from b35db06. **User explicitly accepted Phase 4 end to end and authorized Phase 5 on 2026-09-23.**
 
 ---
 
@@ -100,7 +100,7 @@ Build order for the hackathon. Each phase should end with something deployed and
 - [ ] Lock CORS to the real Vercel origin (remove `allow_origins=["*"]`)
 - [ ] Confirm system architecture diagram and algorithm documentation are ready to present
 - [ ] Rehearse the live demo flow in order: Profiling → Matching → Scheduling → Offer → Analytics
-- [ ] Read `JUDGE_REVIEW.md` yourself, out loud, once — internalize the honest answers to hard questions before the demo
+- [ ] Presenter: read `JUDGE_REVIEW.md` out loud before the demo (manual rehearsal; automated checks do not fulfill this)
 - [ ] Write a one-paragraph **Scalability & Deployment Approach** statement (add to `ARCHITECTURE.md` §9 or a new README section) describing the multi-campus design explicitly: every core table carries a `college_id` column enforced by both application-level filtering and a PostgreSQL Row-Level Security policy, so one deployment can serve multiple colleges as isolated tenants without re-architecture. This is an official minimum deliverable ("scalability and deployment approach across multiple campuses") — it must exist as a written statement, not just as implemented code
 - [ ] Open the live app ~5 minutes before the demo slot (Render free tier cold-start warm-up)
 - [ ] Update `MEMORY.md` with final state and known limitations
@@ -124,7 +124,7 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 ## ✅ Official Minimum Deliverables — Full Coverage Check
 
-Cross-referenced against the CampusLink problem statement's 12 minimum deliverables. All 12 are now covered by the phases above:
+Cross-referenced against the CampusLink problem statement's 12 minimum deliverables. All 12 are mapped below; this does not claim independent predictive validation:
 
 | # | Deliverable | Covered In |
 |---|---|---|
@@ -135,8 +135,8 @@ Cross-referenced against the CampusLink problem statement's 12 minimum deliverab
 | 5 | Explainable shortlisting/matching output | Phase 2 |
 | 6 | Placement monitoring dashboard | Phase 3 |
 | 7 | Offer and documentation tracking | Phase 4 |
-| 8 | System architecture | `ARCHITECTURE.md` + Technical Documentation |
-| 9 | Details of models/algorithms used | `ARCHITECTURE.md` §5, `TECHNICAL_VALIDATION.md` |
-| 10 | Demonstration using simulated/public datasets | Synthetic dataset + `Placement_Data_Full_Class.csv` |
+| 8 | System architecture | `ARCHITECTURE.md` |
+| 9 | Details of models/algorithms used | `ARCHITECTURE.md` §5 + `JUDGE_REVIEW.md` |
+| 10 | Demonstration using simulated/public datasets | Synthetic dataset in `seed.py` (no external validation dataset used) |
 | 11 | Accuracy/performance evaluation of matching **and scoring** | Phase 4 (both evaluation bullets) |
 | 12 | Scalability/deployment approach across multiple campuses | Phase 5 (written statement) |

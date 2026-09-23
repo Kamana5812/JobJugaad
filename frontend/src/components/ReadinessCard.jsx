@@ -6,9 +6,9 @@ export default function ReadinessCard({ readiness, dirty }) {
         <p className="text-xs font-bold uppercase tracking-widest text-muted">Career Copilot · Readiness</p>
         <h2 id="readiness-title" className="mt-2 text-2xl font-bold text-navy">Kitne Ready Ho?</h2>
         <p className="mt-4 text-6xl font-bold tracking-tight text-navy">{readiness.score}<span className="text-xl font-medium text-muted"> / 100</span></p>
-        <span className={`mt-4 inline-block rounded-full px-3 py-1 text-sm font-semibold ${healthy ? 'bg-[#E2F3E9] text-[#286844]' : 'bg-[#FDF0E3] text-[#914005]'}`}>{readiness.band}</span>
+        <span className={`mt-4 inline-block rounded-full px-3 py-1 text-sm font-semibold ${healthy ? 'bg-growth-soft text-navy' : 'bg-warning-soft text-navy'}`}>{readiness.band}</span>
         <p className="mt-4 text-xs text-muted">Based on your saved profile.</p>
-        {dirty && <p className="mt-2 text-sm font-semibold text-[#914005]">Unsaved changes — save to recalculate.</p>}
+        {dirty && <p className="mt-2 text-sm font-semibold text-navy">Unsaved changes — save to recalculate.</p>}
       </div>
       <div>
         <p className="text-lg font-medium leading-8 text-navy">{readiness.explanation}</p>

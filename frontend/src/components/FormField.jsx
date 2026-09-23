@@ -13,5 +13,5 @@ export function FormField({ label, hint, children, ...props }) {
   </div>
 }
 export function Message({ error, children }) {
-  return children ? <p role={error ? 'alert' : 'status'} className={`rounded-xl border p-3 text-sm ${error ? 'border-[#C53D3D]/30 bg-[#FBE6E6] text-[#922B2B]' : 'border-growth/30 bg-[#E2F3E9] text-navy'}`}>{children}</p> : null
+  return children ? <p role={error ? 'alert' : 'status'} className={`rounded-xl border p-3 text-sm ${error ? 'border-critical/30 bg-critical-soft text-critical' : 'border-growth/30 bg-growth-soft text-navy'}`}>{children}</p> : null
 }

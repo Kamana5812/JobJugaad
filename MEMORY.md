@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-23
-**Current phase:** Phase 4 — Offers, Notifications & Data Polish (authorized; implementation in progress). Phase 3 remains accepted.
+**Current phase:** Phase 5 — final UI/security/docs verification in progress. Phase 4 explicitly accepted end to end on 2026-09-23.
 
 ---
 
@@ -80,6 +80,11 @@ Living record of project state and decisions. Update this file whenever a major 
 
 | 2026-09-23 | Phase 4 lifecycle and final analytics demonstrated; separate delivery from user phase acceptance | Agent verified the synthetic student API workflow; user performed admin UI actions and supplied refreshed counts. Stop before Phase 5 until explicitly authorized. |
 
+| 2026-09-23 | User accepted Phase 4 end to end and authorized Phase 5 | Final polish, security audit and demo documentation only; no stretch features. |
+| 2026-09-23 | Verify actual PostgreSQL catalog policies at startup and health checks | Fail closed on policy drift; publish only safe configuration status, while retaining college filters and ownership/RBAC checks. |
+| 2026-09-23 | Exact Vercel CORS with a local Vite /api proxy | Remove production wildcards without trusting arbitrary preview/local origins. |
+| 2026-09-23 | Write implementation-grounded audit, judge sheet and click-by-click demo | Separate synthetic evidence, prior user browser acceptance and automated checks; do not reconstruct missing research or claim unsupported uniqueness. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -87,7 +92,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
-- [x] Phase 4 Definition of Done demonstrated on 2026-09-23: live profiling → matching → approved/selected interview → notifications → all five offer stages → refreshed outcome analytics, plus both written evaluation statements. Delivered for user acceptance; Phase 5 is not authorized.
+- [x] Phase 4 Definition of Done demonstrated on 2026-09-23: live profiling → matching → approved/selected interview → notifications → all five offer stages → refreshed outcome analytics, plus both written evaluation statements. User explicitly accepted Phase 4 end to end and authorized Phase 5 on 2026-09-23.
 - [x] Delivered Phase 4 offers with five separate stages, audited role-scoped actions, version checks, student/admin views and simulated recipient-only notifications. All three new tables have application college filters and FORCE RLS (17 tenant tables total).
 - [x] Verified the live test lifecycle through student 4805, drive 17, interview 7556 and offer 2385: profiling/matching, confirmed and selected interview, issued letter, student acceptance/document submission, admin verification and joined status. Agent API checks independently confirmed all six offer audit events, nine student notifications and idempotent notification reads; admin UI actions were performed by the user.
 - [x] Finalized 4,800 seeded synthetic students and 45 seeded companies with noisy correlated preparation/outcomes; additional live test accounts are separate. Seed idempotence and increasing outcome proportions across CGPA groups passed locally.
@@ -131,10 +136,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- None. Phase 4 is delivered; awaiting the user's explicit acceptance and instruction before Phase 5.
+- Phase 5: UI/design consistency, exact production CORS, catalog-based RLS audit, scope/explainability/positioning checks and final demo documentation.
 
 ### ⏭️ Next Up
-- Wait for explicit Phase 4 acceptance and Phase 5 authorization. Do not begin CORS/polish/rehearsal or stretch features without that gate.
+- Complete and deploy Phase 5, list actual RLS statuses and score-screen audit results, write scalability statement and exact demo guide; do not start stretch features.
 
 ---
 
@@ -151,10 +156,10 @@ Keep this section current — it's exactly what a judge or mentor will ask about
 - Local PostgreSQL test configuration is stored only under ignored .local/. The live Render service uses its existing managed PostgreSQL database.
 - Render's existing free `Job-Jugaad` database expires on **2026-10-21**, as displayed in its dashboard. No paid upgrade was made.
 - The existing database's external IP access rules were preserved; the application uses its internal Render connection. The stricter fresh-environment template in `render.yaml` has not been applied to this existing database.
-- CORS currently permits all origins by explicit Phase 0 instruction; it must be restricted in Phase 5.
+- Phase 5 restricts CORS to https://jobjugaad.vercel.app; local development uses Vite's /api proxy. Live verification is pending release.
 - Render's free tier cold-starts after 15 minutes idle — must warm up before live demos.
 - Simulator (P2) is not implemented. Any future projections must be labeled as hypothetical outputs from the synthetic dataset's conversion model, not validated forecasts.
-- This is not the first AI-powered campus placement platform (8+ commercial competitors and one close open-source analogue, SkillBridge, exist) — differentiation rests specifically on explainable matching, placement-specific (responsibly-framed) support prediction, and the what-if simulator, not on the general category. See `RESEARCH_AUDIT.md` for the full competitive picture.
+- Competing campus placement platforms exist; no first-mover or exclusive-feature claim is made. Demonstrate the implemented explanations, rule-based support and human-reviewed workflow. Historical research files are absent; the simulator is not implemented.
 - AI Mock Interview is out of scope by decision, not by oversight. "Jugaad Dost" is a static label/FAQ panel, not a live chatbot, by decision.
 
 ---
@@ -311,3 +316,7 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Phase 4 delivered:** 2026-09-23 — User supplied refreshed Overview values: 1,418 distinct students with active accepted offers, 701 recorded joined, 2,385 offers total, with 2,383 marked as seeded synthetic offers. Active accepted CTC: min 3.00, mean 3.34, max 6.50 LPA. These are live demonstration-record counts, not hiring accuracy or validated outcomes. They include the completed synthetic test offer 2385; the earlier other-student draft 2384 was left unchanged. The synthetic import flag marks seeded offers; manually created test records also remain fictional, as their names/reasons disclose.
 > **Evidence and completion:** Agent API verified profile/matching evidence, approved/selected interview notifications, all five final stages, six audit events, nine recipient notifications and idempotent read state. User performed and confirmed admin UI actions and supplied dashboard counts. Thirty-four local checks, production builds and actual-data React rendering passed. Both written evaluations remain frozen at 25/30 matching hits and 10/10 readiness/support agreements, explicitly synthetic and assistant-authored. Phase 4 Definition of Done is satisfied for handoff; no independent agent browser/Swagger or student-browser-interaction claim is made.
 > **Next:** Present the live app and evaluation report, then wait for explicit Phase 4 acceptance and Phase 5 authorization. No Phase 5 work has begun. Credentials and detailed authenticated test responses remain only in ignored `.local/`.
+
+> **Phase 5 authorized:** User explicitly confirmed Phase 4 working end to end and requested the final polish/security/documentation pass. Read the six project documents; JUDGE_REVIEW.md and several historical research-reference files are absent from this checkout. Prepare a new implementation-grounded judge sheet and do not claim those missing sources were read. No trained model, live chatbot, mock interview or semantic-matching upgrade is authorized.
+
+> **Phase 5 local verification:** 2026-09-23 — Exact Vercel CORS, live catalog isolation reporting, DESIGN palette cleanup, critical-status styling and numbered headings are implemented. The complete regression run passed 36/37; the notification assertion counted two different interviews from shared test setup. Scoped it to the baseline interview ID and all 12 affected tests passed on retest, covering 37 checks across runs. Final Vite build, offer/analytics rendering, readiness/10 matching/94 support-card rendering passed. No failed bare-score screen was found. Wrote PHASE5_AUDIT.md, DEMO_GUIDE.md, JUDGE_REVIEW.md and Architecture Section 9 scalability statement; cleaned unsupported active claims. Browser initialization still fails before opening a session, so no visual/Swagger rehearsal is claimed. Next: deploy and read the actual live 17-table policy report plus exact-origin CORS responses; then record final evidence. No stretch features.

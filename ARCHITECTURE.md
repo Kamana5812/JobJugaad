@@ -19,7 +19,7 @@ Reference implementation architecture for the JobJugaad platform. See `PRD.md` f
                         │   FastAPI Backend    │
                         │   (Render)           │
                         │  Auth · Routers ·    │
-                        │  AI Engines          │
+                        │  Rule Engines        │
                         └──────────┬───────────┘
                                    │ SQLAlchemy
                                    ▼
@@ -27,8 +27,6 @@ Reference implementation architecture for the JobJugaad platform. See `PRD.md` f
                         │  PostgreSQL          │
                         │  (Render Managed DB) │
                         │  + Row-Level Security│
-                        │  + pgvector (P1/P2,  │
-                        │    conditional only) │
                         └─────────────────────┘
 ```
 
@@ -124,7 +122,7 @@ jobjugaad/
 
 ## 4. Database Schema
 
-### Core Entities
+### Core Entities (conceptual roadmap; implemented inventory follows)
 ```
 users, students, recruiters, companies
 skills, student_skills, projects, certifications, assessments
@@ -134,6 +132,8 @@ offers, documents
 notifications
 risk_predictions, simulations
 ```
+
+**Implemented tenant tables (17):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications. All include college_id. Jobs represent drives; several conceptual entities above have no separate table.
 
 ### Key Tables (fields)
 
@@ -195,19 +195,16 @@ RECRUITER ──> COMPANY ──< JOBS ──< MATCHES ──> STUDENTS
 
 ---
 
-## 5. AI / Engine Architecture
+## 5. Explainable Engine Architecture
 
-JobJugaad is not one AI model — it is a hybrid, seven-layer pipeline. Each layer uses the simplest technique that satisfies the requirement, and every layer that produces a judgment about a student ends in human review, not an autonomous decision.
+The architecture separates seven responsibilities. The deployed prototype is rule-based; optional model-based extensions below require explicit authorization. Each layer uses the simplest technique that satisfies the requirement, and every layer that produces a judgment about a student ends in human review, not an autonomous decision.
 
 ### Layer 1 — Rule Engine
-Hard constraints evaluated deterministically, never by a model: branch eligibility, minimum CGPA, backlog count, graduation year, drive-specific eligibility rules. These run first and are never overridden by AI output.
+Implemented hard constraints are branch eligibility, minimum CGPA and maximum backlog count. They run before shortlist ranking; the score cannot override them. Graduation-year filtering is not collected in this prototype. A separately logged human override may change shortlist status without changing the calculation.
 
-### Layer 2 — NLP / Embedding Model (Profile AI)
-```
-Resume / JD → Document Parser (pdfplumber) → LLM/NLP for free-text
-sections → Structured Profile / Job Profile → Skill Graph
-```
-Used for resume extraction, JD extraction, skill extraction, project analysis, experience extraction. **This is the one place in the entire pipeline an LLM use is justified** — resume and JD formats are genuinely unstructured, and an LLM's flexibility beats brittle regex here. No other layer uses an LLM.
+### Layer 2 — Profile extraction (current) and optional future NLP
+
+Current: PDF → pdfplumber text extraction → stored resume text for review. Students manually enter skills, projects, academics and existing assessments; recruiters enter structured requirements. Uploading text does not infer skills or change readiness. No LLM, embeddings, JD extractor or skill graph is implemented. Free-text section extraction is a separately authorized future option.
 
 ### Readiness Engine (feeds Layer 5)
 ```
@@ -216,7 +213,7 @@ Readiness Score = 30% Technical Skills + 20% Projects + 15% Academics
 ```
 Maps to official bands: `0–40 Not Ready · 41–65 Developing · 66–85 Ready · 86–100 Highly Employable`
 
-A weighted rule is used deliberately for P0 — not because it's the most accurate option, but because it requires no training data and stays fully auditable, which the explainability requirement demands. This should be presented as an **AI-assisted, structured view of a student's current profile** — not as AI that "understands" the student. **Validated upgrade path (P1):** published research (Kumar et al., 2023, IJMECS) shows Random Forest outperforming comparable weighted/simple-classifier approaches on structured placement data. If upgraded, train against the public **`Placement_Data_Full_Class.csv`** dataset (Ben Roshan's "Campus Recruitment" dataset on Kaggle — confirmed via direct inspection of 5+ independent projects using it) as a real, if small, empirical anchor — not the synthetic demo dataset, which cannot validate real-world accuracy. Note: at least one project using this dataset explicitly warns its small size means reported accuracy "is not guaranteed" — do not overstate confidence even if this upgrade is attempted.
+The six-factor calculation is a proposed weighted rule over self-reported evidence, not a trained model or validated placement prediction. The weights and normalization require real outcome data before predictive-validity claims. Any future trained upgrade needs an appropriate dataset, independent evaluation and explicit authorization. No external research result is this prototype's performance.
 
 
 #### Phase 1 normalization decisions (2026-09-22)
@@ -238,7 +235,7 @@ P0) → [P1/P2: Embedding Similarity via sentence-transformers + pgvector]
 - **Confidence:** do not report a numeric confidence score at P0 — there is no calibration data to justify one.
 - **Evaluation:** define, don't fabricate — report precision/recall for the Matching Engine against a small, self-labeled synthetic ground truth (e.g. 10 profiles where you manually decide the "expected" top-3 matches), explicitly caveated as a synthetic sanity check, not a real-world accuracy claim.
 
-The rule engine (Layer 1) decides *who is eligible*; this layer only *ranks who is already eligible* — the AI does not make eligibility decisions.
+The rule engine (Layer 1) decides *who is eligible*; this layer only *ranks who is already eligible* — weighted scores do not bypass eligibility rules.
 
 #### Phase 2 matching decisions (2026-09-22)
 
@@ -269,7 +266,7 @@ class-imbalance handling (P1) → Support Priority + Contributing Factors
 ```
 **Responsible framing:** this layer never predicts who will "fail" or "succeed." It identifies students who may benefit from additional placement support, based on measurable indicators (low readiness, skill gaps, low mock-interview performance, low activity) — output is a support-priority level and named contributing factors, not a pass/fail verdict.
 
-**Critical methodological requirement if upgraded to a classifier (P1):** students needing support are always a minority class in any real or synthetic dataset. Per Lee & Chung (2019), a naive classifier trained without addressing this will silently default to predicting "no support needed" for nearly everyone while reporting misleadingly high raw accuracy. Any classifier here **must** use SMOTE oversampling or class weighting — this is not optional, it is the single most commonly cited failure mode in the dropout/at-risk prediction literature reviewed. No accuracy claim is made without the evaluation protocol in §9.
+**Critical methodological requirement if upgraded to a classifier:** inspect class balance and handle imbalance with SMOTE or class weighting inside an appropriate training/evaluation split. Remind the user of this prerequisite if an upgrade request omits it. No classifier or trained accuracy result exists in this release.
 
 **Phase 3 rule, explicitly unvalidated:** flag only when all three conditions hold: (1) at least three required role skills have gap/critical status, (2) the existing self-reported interview score is known and below 40/100, and (3) fewer than two completed interview records exist in the past 30 days. Completed includes completed/selected/rejected, excludes cancelled/future interviews, and uses end time. Missing interview scores remain unknown and cannot trigger the combined flag. Recorded activity is an opportunity/record proxy, never a measure of effort.
 
@@ -284,7 +281,7 @@ Lookup → Suggested Actions (training / mentoring / mock interview) →
 Converts a Layer 5 indicator into a specific, actionable recommendation — never a bare label. This is a lookup/mapping task, not a prediction task. The before/after tracking loop (re-running the Readiness Engine after a suggested action to measure change) is the target design; if not implemented in the P0/P1 build, it must be described as a **planned capability**, not a working feature.
 
 ### Layer 7 — Human Oversight
-Placement administrators and recruiters can review every AI-influenced recommendation, override any ranking, shortlist, or schedule change, approve or reject Layer 6 suggestions, and correct underlying data. AI throughout this system is decision support — it never independently makes an irreversible placement decision.
+Recruiters may promote/reject candidates for their own drives with audited reasons. Administrators approve/reject scheduling proposals and review/dismiss support suggestions; students edit their own profile evidence. These role-specific actions do not imply that every role can edit every field. No irreversible placement decision is made automatically.
 
 ### Scheduling Engine (cross-cutting, works alongside Layers 1–7)
 ```
@@ -292,7 +289,7 @@ New Interview Request → Check Student Availability → Check Venue →
 Check Panel → Check Overlapping Drives → Conflict? → Propose Next
 Free Slot → Layer 7 Approval → Confirm
 ```
-Implemented as **deterministic rule-based conflict checking**, not an LLM call — scheduling must be reliable and repeatable. Formally, interview scheduling is a Graph Coloring Problem (NP-complete) per published research (arXiv 2204.08695). At hackathon scale, a greedy constraint-checker is provably sufficient and dramatically lower-risk than a metaheuristic solver (genetic algorithm, ant colony optimization) — do not over-engineer this even though more sophisticated approaches exist in the literature. The proposed resolution always requires administrator approval before it is final — full autonomous optimization is not claimed.
+Implemented as a **deterministic greedy constraint-checker**, with no LLM or metaheuristic solver. It proposes the next slot clearing recorded student, venue and panel conflicts within its bounded search. No globally optimal timetable is claimed. Each proposed resolution requires administrator approval and a fresh conflict check.
 
 **Phase 3 scheduling mechanics:** all stored times include UTC offsets; forms display the browser timezone. Intervals are half-open, so adjacent interviews do not conflict. Resource names are normalized for case/whitespace. Different drives may overlap only when they share no student, venue or panel; a shared-resource clash on another drive is explicitly explained as overlapping drives. The deterministic greedy search jumps to the latest end of the current blockers and repeats, bounded to seven days. Working hours and panel qualifications are not modeled; an administrator reviews the proposed time.
 
@@ -310,44 +307,45 @@ Outputs are always labeled as projections generated from the synthetic dataset's
 
 ---
 
-## 6. API Design (representative endpoints)
+## 6. API Design (implemented representative endpoints)
 
-```
-POST   /auth/signup
-POST   /auth/login
+The live `/openapi.json` is the exhaustive route/contract reference. These routes are implemented; student opportunities, automated JD extraction and simulator routes are not.
 
-GET    /students/{id}/profile
-POST   /students/{id}/resume            (upload + parse)
-GET    /students/{id}/readiness
-GET    /students/{id}/skill-gap?role=Software+Engineer
-GET    /students/{id}/opportunities
-
-POST   /recruiters/{id}/companies
-POST   /recruiters/{id}/drives
-POST   /recruiters/drives/{id}/run-matching
-GET    /recruiters/drives/{id}/candidates
-
-GET    /admin/analytics/overview
-GET    /admin/schedules
-POST   /admin/schedules/check-conflict
-POST   /admin/schedules
-POST   /admin/schedules/{schedule_id}/review
-POST   /admin/schedules/{schedule_id}/recheck
-PUT    /admin/interviews/{interview_id}/status
-GET    /admin/support?job_id=...
-POST   /admin/support/run
-POST   /admin/support/{prediction_id}/review
-GET    /admin/offers
-GET    /admin/offers/eligible-interviews
-POST   /admin/offers
-PUT    /admin/offers/{offer_id}
-GET    /students/{id}/offers
-POST   /students/{id}/offers/{offer_id}/actions
-GET    /notifications
-PUT    /notifications/{notification_id}/read
-POST   /admin/simulate                  (P2, not implemented)
-
-GET    /health
+```text
+POST /auth/signup
+POST /auth/recruiter/signup
+POST /auth/login
+GET  /auth/me
+GET  /students/{student_id}
+PUT  /students/{student_id}
+POST /students/{student_id}/resume
+GET  /students/{student_id}/readiness
+GET  /recruiters/company
+PUT  /recruiters/company
+GET  /recruiters/jobs
+POST /recruiters/jobs
+POST /recruiters/jobs/{job_id}/matching
+GET  /recruiters/jobs/{job_id}/matches
+POST /recruiters/jobs/{job_id}/matches/{match_id}/override
+GET  /admin/analytics/overview
+GET  /admin/schedules
+POST /admin/schedules/check-conflict
+POST /admin/schedules
+POST /admin/schedules/{schedule_id}/review
+POST /admin/schedules/{schedule_id}/recheck
+PUT  /admin/interviews/{interview_id}/status
+GET  /admin/support
+POST /admin/support/run
+POST /admin/support/{prediction_id}/review
+GET  /admin/offers
+GET  /admin/offers/eligible-interviews
+POST /admin/offers
+PUT  /admin/offers/{offer_id}
+GET  /students/{student_id}/offers
+POST /students/{student_id}/offers/{offer_id}/actions
+GET  /notifications
+PUT  /notifications/{notification_id}/read
+GET  /health
 ```
 
 All authenticated endpoints require a `Bearer <JWT>` header; the token payload includes `user_id`, `role`, and `college_id`.
@@ -372,7 +370,7 @@ All authenticated endpoints require a `Bearer <JWT>` header; the token payload i
 
 - Passwords hashed with `passlib` (bcrypt).
 - JWT tokens carry role + college_id; every router checks role before returning data. Phase 3 admin access uses server-only `ADMIN_ACCOUNTS`, a JSON array of existing email/college pairs. Startup promotes only those accounts; no public signup can request admin. Every admin login/request checks both database role and the current allowlist. Removing the pair denies access even to an unexpired token. A missing configured account fails startup with a registration instruction; it never creates a default password. Log in again after promotion because old student/recruiter tokens no longer match the database role.
-- **Two-layer multi-tenancy enforcement:** application-level `WHERE college_id = ...` filtering on every query, **plus** a PostgreSQL Row-Level Security (RLS) policy on every multi-tenant table as a database-enforced second layer. This pattern is confirmed via direct inspection of a comparable real academic platform (`codeecoffee/SmartCampus`), not assumed — it means even an application bug that forgets the filter cannot leak one college's or one student's data into another's results.
+- **Two-layer multi-tenancy enforcement:** application-level `WHERE college_id = ...` filtering on every query, **plus** a PostgreSQL Row-Level Security (RLS) policy on every multi-tenant table as a database-enforced second layer. RLS scopes database reads and writes to the transaction's college. Student ownership, recruiter company ownership and administrator permissions within a college are separate application checks; college RLS alone does not isolate individual students within that college.
 - CORS locked to the known frontend origin in production.
 - No secrets committed to the repo — all via environment variables (see `RULES.md`).
 - Least-privilege access throughout: each role reaches only the endpoints and data it needs; resumes, documents, and offer details are restricted to the owning student, the relevant recruiter, and admin.
@@ -382,6 +380,10 @@ All authenticated endpoints require a `Bearer <JWT>` header; the token payload i
 ---
 
 ## 9. Dataset & Evaluation
+
+### Scalability & Deployment Approach
+
+Every core table carries a `college_id` column enforced by both application-level filtering and a PostgreSQL Row-Level Security policy, so one deployment can serve multiple colleges as isolated tenants without re-architecture. FastAPI uses a transaction-local college context derived from authenticated identity, ENABLE/FORCE RLS with read/write predicates, role and ownership checks, and composite tenant foreign keys; the runtime role cannot bypass RLS. React is deployed on Vercel and FastAPI with managed PostgreSQL on Render. The demo exposes two self-selected colleges; real campus onboarding needs institution-controlled enrollment and tenant configuration, rather than a new data model. More traffic requires measured capacity planning, suitable database/service sizing and operational hardening; no production-scale benchmark is claimed.
 
 | Category | Status |
 |---|---|
@@ -403,3 +405,7 @@ The local dataset contains 4,800 synthetic students (4,796 numbered profiles plu
 [EVALUATION_PROTOCOL.md](EVALUATION_PROTOCOL.md) and `backend/evaluation_expected.json` were frozen in commit `c2748bf` before engine evaluation. Ten manually inspected profiles have assistant-authored expected top-three roles, readiness bands and support flags, with input hashes and written reasons. [The report](evaluations/phase4-report.md) records **25 of 30 expected matches reproduced**, synthetic precision 25/30 and recall 25/30, **10/10 readiness-band agreements** and **10/10 support-flag agreements**. All five missing expected matches and full evidence are retained in the report and companion JSON. No weights, profiles or labels were tuned after observing results.
 
 These are synthetic sanity checks against our own assumptions and a face-validity review, not validated accuracy or independent human validation. The convenience sample lacks a Not Ready example and contains only one flagged support case. No generalization, calibrated confidence, latency benchmark or causal outcome claim follows. Requirement-coverage scoring may favor easier role targets over specialist fit. Re-running `backend/evaluate.py` refuses changed input/activity hashes rather than silently comparing different profiles; activity is time-sensitive and will age out of its 30-day window.
+
+### Phase 5 deployment verification
+
+`/health` checks actual PostgreSQL catalogs for all 17 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.

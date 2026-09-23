@@ -114,7 +114,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 ### ⏭️ Next Up
 - Finish Phase 3 Swagger UI/visual checks once browser automation works; current initialization fails with “failed to write kernel assets”. API integration and React rendering checks are separate evidence, not a claim of completed browser testing.
-- Register the selected admin email in Demo College 1, then redeploy Render. The supplied deployment log confirms ADMIN_ACCOUNTS is parsed, but a configured email/college pair does not yet exist. The existing live backend remains healthy. Check successful provisioning without exposing secrets.
+- User reports the selected account is now registered and Render redeployed. Verify a fresh Demo College 1 login opens Placement Command Center; then finish live scheduling/support review. Public health is connected and API 0.4.0 exposes all ten admin operations; this alone does not verify account promotion.
 - Verify live admin login, charts, conflict proposal/approval and support breakdown/review after the pending Render account configuration. Then confirm the remaining Phase 3 checklist and stop for acceptance. Phase 4 is not authorized.
 
 ---
@@ -256,3 +256,8 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Evidence:** User supplied logs for Render deployment `dep-dapjme67bikc73fo2tsg`: dependency installation/build succeeded, but startup failed in `provision_admin_accounts()` because a configured email/college pair does not exist. This is not a package-installation or database-connection failure. The allowlist is configuration, not account creation.
 > **Current availability:** Rechecked live health (HTTP 200, PostgreSQL connected) and the Vercel signup page (HTTP 200). The existing deployment remains available for registration.
 > **Next:** User creates the selected account through normal signup in Demo College 1, using a private password, then chooses Render Manual Deploy / Deploy latest commit. After success, log out/in to receive an admin token and finish authenticated Phase 3 verification. Do not silently create an admin password or relax the allowlist. Browser automation still cannot initialize. This note is committed locally on the feature branch; defer publishing it until registration to avoid triggering another known-failing deployment.
+
+
+> **Registration follow-up:** 2026-09-23
+> **User report:** The selected account has been registered and Render redeployed. Rechecked live health: HTTP 200, PostgreSQL connected; OpenAPI 0.4.0 exposes all ten admin operations and the live admin page returns 200.
+> **Pending:** Fresh login with Demo College 1 must show Placement Command Center. User was asked which screen appears. Browser automation still fails before initialization, so authenticated admin access, live chart rendering, seeded conflict resolution/approval and support review are not yet independently verified. Do not infer successful promotion merely from public health. The user's previously open localhost:8001 Swagger tab is an older local API, not the live deployment.

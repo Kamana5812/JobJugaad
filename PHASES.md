@@ -65,15 +65,15 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 **Goal:** Placement Command Center MVP — conflict-free scheduling and a live dashboard.
 
-- [ ] Database models: `schedules`, `interviews`
-- [ ] Scheduling Engine: conflict detection (student/venue/panel overlap) + next-free-slot suggestion
-- [ ] Admin analytics endpoint: totals (students, placement %, recruiters, drives), branch/skill conversion, package stats
-- [ ] Frontend: admin dashboard with conflict alerts and analytics charts (Recharts)
-- [ ] Placement Support Engine: **rule-based thresholds only for this phase** (e.g. 3+ skill gaps AND low mock score AND low activity). Output is a support priority + named contributing factors, never a "will fail"-style verdict. Do not build a trained classifier yet — if upgraded later, class imbalance must be handled via SMOTE or class weighting first, per `ARCHITECTURE.md` §5, or the model will silently predict "no support needed" for nearly everyone
+- [x] Database models: `schedules`, `interviews`
+- [x] Scheduling Engine: conflict detection (student/venue/panel overlap) + next-free-slot suggestion
+- [x] Admin analytics endpoint: totals (students, placement %, recruiters, drives), branch/skill conversion, package stats
+- [x] Frontend: admin dashboard with conflict alerts and analytics charts (Recharts)
+- [x] Placement Support Engine: **rule-based thresholds only for this phase** (e.g. 3+ skill gaps AND low mock score AND low activity). Output is a support priority + named contributing factors, never a "will fail"-style verdict. Do not build a trained classifier yet — if upgraded later, class imbalance must be handled via SMOTE or class weighting first, per `ARCHITECTURE.md` §5, or the model will silently predict "no support needed" for nearly everyone
 
 **Definition of done:** Admin can see a live dashboard, trigger a scheduling conflict, watch it get resolved (pending admin approval), and see students who may need additional support flagged with named factors — all live.
 
-**Release status 2026-09-23:** Phase 3 code is deployed from `9922077`. Twenty-five local tests, the production build, actual-data React rendering, live API 0.4.0/database health, frontend bundle presence and unauthenticated admin denial passed. Admin environment setup confirmation and authenticated Swagger/browser/live flow checks remain pending; Phase 3 is not yet marked complete or accepted. Phase 4 is gated.
+**Release status 2026-09-23:** Phase 3 code is deployed from `9922077`. Twenty-five local tests, the production build, actual-data React rendering, live API 0.4.0/database health, frontend bundle presence and unauthenticated admin denial passed. The user subsequently confirmed registration/redeployment, a fresh admin login, visible dashboard charts, conflict resolution after approval and a saved support review. **Phase 3 was explicitly accepted on 2026-09-23.** Authenticated live UI checks are user-verified; agent browser automation/Swagger UI execution remained unavailable. Placement percentage is deliberately unavailable until offers exist; charts show shortlist conversion. Phase 4 awaits an explicit instruction to start.
 
 ---
 

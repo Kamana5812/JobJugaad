@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-23
-**Current phase:** Phase 3 — Scheduling & Admin Analytics (deployed; authenticated live/browser verification pending)
+**Current phase:** Phase 3 — Scheduling & Admin Analytics (complete; explicitly accepted by the user). Awaiting instruction to start Phase 4.
 
 ---
 
@@ -70,6 +70,8 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-23 | Analytics reports shortlist conversion and advertised CTC; placement percentage remains null | Offers do not exist until Phase 4; a match, manual promotion or interview selection does not prove placement. |
 | 2026-09-23 | Seed four support profiles and a genuine overlapping pair with stable keys | Three support examples meet all rules; a fourth has participation evidence. Restarts preserve reviews and resolved bookings. |
 
+| 2026-09-23 | User explicitly confirmed Phase 3 live checks passed and accepted the phase | Fresh admin login opened Command Center; charts appeared, the scheduling conflict disappeared after approval, and the support review saved. No Phase 4 work starts without a new instruction. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -77,7 +79,12 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
-- [x] Published Phase 3 implementation commits `3d27d16` and `9922077` to main. Vercel deployment `4frMbuFgqk47YnESCyqU2FFXvFBe` succeeded; public frontend serves the Command Center bundle. Render serves API 0.4.0 with all ten admin endpoints and PostgreSQL-connected health. Unauthenticated live admin analytics/calendar/support requests return 401. **This verifies release availability, not the pending authenticated Phase 3 Definition of Done.**
+- [x] Phase 3 accepted by the user on 2026-09-23 after successful live admin login, visible dashboard charts, conflict resolution after approval and a saved support review. These authenticated browser results are user-verified, not agent-observed.
+- [x] Delivered deterministic scheduling with five new tenant tables (schedules, interviews, calendar audit, support indicators and support reviews), application college filters, FORCE RLS, next-free-slot proposals, explicit approval, concurrent/stale approval protection and audit evidence.
+- [x] Delivered admin KPI tiles, Recharts branch/skill shortlist conversion, advertised CTC statistics and honest unavailable placement percentage until Phase 4 offers exist.
+- [x] Delivered rule-only support checks with all three named factors, score as a count out of three, plain-language explanations, recommended interventions and saved human reviews. No trained classifier or risk probability is claimed.
+- [x] Seeded four synthetic support examples and a genuine double-booking pair; stable seed keys preserve the user's resolved conflict across redeployments.
+- [x] Published Phase 3 implementation commits `3d27d16` and `9922077` to main. Vercel deployment `4frMbuFgqk47YnESCyqU2FFXvFBe` succeeded; public frontend serves the Command Center bundle. Render serves API 0.4.0 with all ten admin endpoints and PostgreSQL-connected health. Unauthenticated live admin analytics/calendar/support requests return 401. **Authenticated Phase 3 live flow checks were subsequently confirmed by the user.**
 - [x] Passed 25 local PostgreSQL/rule/API tests, production frontend build, HTTP preview checks and React server-rendering checks against real local API responses. All new tenant tables were tested independently of application filters; concurrent/stale approvals and support-review preservation were covered.
 - [x] User accepted Phase 2, manually verified a "Below Threshold" explanation and a working override, and authorized Phase 3.
 - [x] Delivered Phase 2 Talent Finder to Vercel and Render from commit 97d5e58: recruiter signup/login, company profile, configurable drive creation, skill-gap statuses and explained weighted matching.
@@ -110,12 +117,11 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- [ ] Build deterministic scheduling with admin approval, honest analytics and rule-based placement support; verify locally and live.
+- None. Phase 3 is complete and accepted.
 
 ### ⏭️ Next Up
-- Finish Phase 3 Swagger UI/visual checks once browser automation works; current initialization fails with “failed to write kernel assets”. API integration and React rendering checks are separate evidence, not a claim of completed browser testing.
-- User reports the selected account is now registered and Render redeployed. Verify a fresh Demo College 1 login opens Placement Command Center; then finish live scheduling/support review. Public health is connected and API 0.4.0 exposes all ten admin operations; this alone does not verify account promotion.
-- Verify live admin login, charts, conflict proposal/approval and support breakdown/review after the pending Render account configuration. Then confirm the remaining Phase 3 checklist and stop for acceptance. Phase 4 is not authorized.
+- Wait for the user's explicit instruction to start Phase 4: offers, simulated in-app notifications, data expansion and honestly labeled evaluation reviews.
+- Keep Phase 4 and all later phases unstarted until requested.
 
 ---
 
@@ -124,9 +130,9 @@ _Add a new row every time a meaningful architectural or product decision is made
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
 - Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
-- The rule engines and 25 local rule/PostgreSQL tests are implemented and pass; Phase 3 browser/live verification is still pending. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
+- The rule engines and 25 local rule/PostgreSQL tests are implemented and pass; the user confirmed the Phase 3 authenticated live checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
 - Notifications are planned as simulated in-app only; they are not implemented in Phase 0.
-- All nine Phase 1/2 tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- All fourteen Phase 1–3 tenant tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
 - Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
 - Local PostgreSQL test configuration is stored only under ignored .local/. The live Render service uses its existing managed PostgreSQL database.
@@ -261,3 +267,9 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Registration follow-up:** 2026-09-23
 > **User report:** The selected account has been registered and Render redeployed. Rechecked live health: HTTP 200, PostgreSQL connected; OpenAPI 0.4.0 exposes all ten admin operations and the live admin page returns 200.
 > **Pending:** Fresh login with Demo College 1 must show Placement Command Center. User was asked which screen appears. Browser automation still fails before initialization, so authenticated admin access, live chart rendering, seeded conflict resolution/approval and support review are not yet independently verified. Do not infer successful promotion merely from public health. The user's previously open localhost:8001 Swagger tab is an older local API, not the live deployment.
+
+
+> **Phase 3 acceptance handoff:** 2026-09-23
+> **Finished:** User confirmed a fresh login opens Placement Command Center, then answered yes when explicitly asked whether charts appeared, the scheduling conflict disappeared after approval and the support review saved. Phase 3 Definition of Done is accepted. Updated Completed, cleared In Progress and moved Next Up to the Phase 4 instruction gate.
+> **Evidence boundaries:** Twenty-five local backend tests, frontend production build and actual-data React rendering passed. Agent checked live health/database connectivity, API version/routes, deployed bundle and unauthenticated denial. The authenticated dashboard/scheduling/support checks were performed and confirmed by the user. Browser automation and Swagger UI execution were unavailable; no claim that the agent independently performed those checks.
+> **Next:** Wait for an explicit Phase 4 request. Do not start offers, notifications, large-data expansion, evaluations or later phases yet. Future support-classifier upgrades still require SMOTE/class weighting; current implementation remains simple rules only.

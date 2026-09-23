@@ -161,11 +161,15 @@ risk_predictions, simulations
 **schedules / interviews**
 `id, job_id, student_id, scheduled_time, venue, panel_id, status (upcoming|scheduled|completed|selected|rejected|pending)`
 
+**Phase 3 implemented scheduling extensions:** `schedules` stores requested/proposed start, end, venue/panel, conflicts JSON, explanation, pending/scheduled/rejected status, source interview for rescheduling, creator/reviewer/reason, version and timestamps. `interviews` stores confirmed start/end, scheduled/completed/selected/rejected/cancelled status, optional schedule reference and unique seed key. `schedule_events` stores actor, action, reason and before/after snapshots. Composite tenant foreign keys bind every relationship to its college. All three tables have application filters and ENABLE/FORCE RLS from the same schema transaction.
+
 **offers**
 `id, student_id, job_id, ctc, offer_letter_status, documents_status, verification_status, acceptance_status, joining_status`
 
 **risk_predictions**
 `id, student_id, support_priority (low|medium|high), score, contributing_factors (JSON), recommendation (JSON)`
+
+**Phase 3 implemented support extensions:** `risk_predictions` is unique per college/student/target job and stores the rule count (0–3), low/high support priority, flagged/assessable state, full factors/recommendations/explanation, evidence hash, evaluation time and active/reviewed/dismissed status. `support_reviews` stores the actor, action, reason and explained evidence snapshot. Both tables have college filters, composite tenant foreign keys and ENABLE/FORCE RLS. The historical table name does not imply a trained risk predictor.
 
 ### Relationships
 ```
@@ -259,6 +263,10 @@ class-imbalance handling (P1) → Support Priority + Contributing Factors
 
 **Critical methodological requirement if upgraded to a classifier (P1):** students needing support are always a minority class in any real or synthetic dataset. Per Lee & Chung (2019), a naive classifier trained without addressing this will silently default to predicting "no support needed" for nearly everyone while reporting misleadingly high raw accuracy. Any classifier here **must** use SMOTE oversampling or class weighting — this is not optional, it is the single most commonly cited failure mode in the dropout/at-risk prediction literature reviewed. No accuracy claim is made without the evaluation protocol in §9.
 
+**Phase 3 rule, explicitly unvalidated:** flag only when all three conditions hold: (1) at least three required role skills have gap/critical status, (2) the existing self-reported interview score is known and below 40/100, and (3) fewer than two completed interview records exist in the past 30 days. Completed includes completed/selected/rejected, excludes cancelled/future interviews, and uses end time. Missing interview scores remain unknown and cannot trigger the combined flag. Recorded activity is an opportunity/record proxy, never a measure of effort.
+
+The score is the count of triggered conditions out of three, **not a probability or confidence**. Every returned score includes all named factors, observed values, thresholds, contributions and explanation; flagged records add technical practice, mentor-led interview preparation and opportunity/attendance review. No automated mock interview is built. Admins may mark reviewed, dismiss or reopen with a reason. Recalculation preserves reviews only while the evidence hash stays identical; changed evidence requires fresh review. Recommendations and flags do not initiate interventions automatically. Remind the user about SMOTE/class weighting if a future classifier request omits it.
+
 ### Layer 6 — Intervention Engine
 ```
 Support Priority + Contributing Factors → Rule-Based Recommendation
@@ -277,6 +285,12 @@ Check Panel → Check Overlapping Drives → Conflict? → Propose Next
 Free Slot → Layer 7 Approval → Confirm
 ```
 Implemented as **deterministic rule-based conflict checking**, not an LLM call — scheduling must be reliable and repeatable. Formally, interview scheduling is a Graph Coloring Problem (NP-complete) per published research (arXiv 2204.08695). At hackathon scale, a greedy constraint-checker is provably sufficient and dramatically lower-risk than a metaheuristic solver (genetic algorithm, ant colony optimization) — do not over-engineer this even though more sophisticated approaches exist in the literature. The proposed resolution always requires administrator approval before it is final — full autonomous optimization is not claimed.
+
+**Phase 3 scheduling mechanics:** all stored times include UTC offsets; forms display the browser timezone. Intervals are half-open, so adjacent interviews do not conflict. Resource names are normalized for case/whitespace. Different drives may overlap only when they share no student, venue or panel; a shared-resource clash on another drive is explicitly explained as overlapping drives. The deterministic greedy search jumps to the latest end of the current blockers and repeats, bounded to seven days. Working hours and panel qualifications are not modeled; an administrator reviews the proposed time.
+
+Pending proposals do not reserve resources. A college-scoped PostgreSQL transaction advisory lock serializes confirmation/rescheduling/status changes; approval checks current availability again. Stale versions or newly occupied slots return 409 for recheck. Rescheduling cancels the old interview and inserts the replacement atomically only after approval, retaining history and audit evidence. Outcomes cannot be recorded before the interview ends. The seed deliberately imports two overlapping synthetic bookings; normal API confirmation cannot introduce that overlap. Seed keys preserve resolved fixtures across restarts.
+
+**Phase 3 analytics:** branch/skill conversion is distinct students shortlisted for any drive divided by recorded students in that group. It uses saved match snapshots and human overrides; it is not offer/placement conversion. Advertised CTC min/mean/max come from jobs. Placement percentage is null with an explanation until Phase 4 implements offers. No fabricated outcomes or benchmark metrics appear.
 
 ### Simulator (P2)
 ```
@@ -305,9 +319,16 @@ POST   /recruiters/{id}/drives
 POST   /recruiters/drives/{id}/run-matching
 GET    /recruiters/drives/{id}/candidates
 
-POST   /admin/schedule/check-conflict
 GET    /admin/analytics/overview
-GET    /admin/at-risk
+GET    /admin/schedules
+POST   /admin/schedules/check-conflict
+POST   /admin/schedules
+POST   /admin/schedules/{schedule_id}/review
+POST   /admin/schedules/{schedule_id}/recheck
+PUT    /admin/interviews/{interview_id}/status
+GET    /admin/support?job_id=...
+POST   /admin/support/run
+POST   /admin/support/{prediction_id}/review
 POST   /admin/simulate
 
 GET    /health
@@ -325,7 +346,7 @@ All authenticated endpoints require a `Bearer <JWT>` header; the token payload i
 | Backend hosting | Render Web Service, auto-deploy from `main`, root dir `backend/` |
 | Database | Render Managed PostgreSQL (free tier) |
 | Env vars (frontend) | `VITE_API_URL` |
-| Env vars (backend) | `DATABASE_URL`, `JWT_SECRET` |
+| Env vars (backend) | `DATABASE_URL`, `JWT_SECRET`, `ADMIN_ACCOUNTS` (explicit existing accounts) |
 | CORS | Backend allows only the deployed Vercel origin in production |
 | Cold starts | Render free tier sleeps after 15 min idle — warm up before demos |
 
@@ -334,7 +355,7 @@ All authenticated endpoints require a `Bearer <JWT>` header; the token payload i
 ## 8. Security
 
 - Passwords hashed with `passlib` (bcrypt).
-- JWT tokens carry role + college_id; every router checks role before returning data.
+- JWT tokens carry role + college_id; every router checks role before returning data. Phase 3 admin access uses server-only `ADMIN_ACCOUNTS`, a JSON array of existing email/college pairs. Startup promotes only those accounts; no public signup can request admin. Every admin login/request checks both database role and the current allowlist. Removing the pair denies access even to an unexpired token. A missing configured account fails startup with a registration instruction; it never creates a default password. Log in again after promotion because old student/recruiter tokens no longer match the database role.
 - **Two-layer multi-tenancy enforcement:** application-level `WHERE college_id = ...` filtering on every query, **plus** a PostgreSQL Row-Level Security (RLS) policy on every multi-tenant table as a database-enforced second layer. This pattern is confirmed via direct inspection of a comparable real academic platform (`codeecoffee/SmartCampus`), not assumed — it means even an application bug that forgets the filter cannot leak one college's or one student's data into another's results.
 - CORS locked to the known frontend origin in production.
 - No secrets committed to the repo — all via environment variables (see `RULES.md`).

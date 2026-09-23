@@ -1,3 +1,4 @@
+import { roleHome } from '../../context/roleHome'
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import posterLogo from '../../../../assets/logo_poster.png'
@@ -12,7 +13,7 @@ export default function RecruiterSignup() {
   const [form, setForm] = useState({ name: '', industry: '', email: '', password: '', college_id: '1' })
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  if (user) return <Navigate to={user.role === 'recruiter' ? '/recruiter' : '/student/profile'} replace />
+  if (user) return <Navigate to={roleHome(user.role)} replace />
   const change = key => event => setForm({ ...form, [key]: event.target.value })
   async function submit(event) {
     event.preventDefault(); setBusy(true); setError('')

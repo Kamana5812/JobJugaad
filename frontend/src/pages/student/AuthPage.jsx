@@ -1,3 +1,4 @@
+import { roleHome } from '../../context/roleHome'
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import posterLogo from '../../../../assets/logo_poster.png'
@@ -11,14 +12,14 @@ export default function AuthPage({ signup = false }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', college_id: 1 })
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  if (user) return <Navigate to={user.role === "recruiter" ? "/recruiter" : "/student/profile"} replace />
+  if (user) return <Navigate to={roleHome(user.role)} replace />
   const change = (key) => (event) => setForm({ ...form, [key]: event.target.value })
   async function submit(event) {
     event.preventDefault(); setError(''); setBusy(true)
     try {
       const input = { email: form.email, password: form.password, college_id: Number(form.college_id) }
       const result = signup ? await signUp({ ...input, name: form.name }) : await logIn(input)
-      authenticate(result); navigate(result.user.role === 'recruiter' ? '/recruiter' : '/student/profile', { replace: true })
+      authenticate(result); navigate(result.roleHome(user.role), { replace: true })
     } catch (failure) { setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }

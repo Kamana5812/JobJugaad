@@ -111,3 +111,12 @@ Vercel: root frontend/, Vite, build npm run build, output dist. Include source f
 CORS remains wide open without cookies by the explicit Phase 0 instruction; restrict origins in Phase 5. Resume parsing accepts up to 5 MB, 20 pages, and 200,000 extracted characters, with a 20-second subprocess timeout. Scanned/encrypted/unreadable PDFs return a readable error. The raw PDF is not persisted.
 
 Placement support prediction, mock interview, live chatbot, embedding libraries, and pgvector are not implemented. Jugaad Dost is a static FAQ.
+
+
+## Phase 3 administrator setup
+
+The Command Center is available at `/admin` after logging in with an allowlisted account. Register the intended account through the normal signup first. In the backend environment, set `ADMIN_ACCOUNTS` to a JSON array such as `[{"email":"admin@example.test","college_id":1}]`, using the exact existing account and demo college. Do not commit real account details or passwords. Startup promotes the selected account; log in again after deployment. No public admin signup or default admin password exists. Removing an allowlist entry denies subsequent admin logins and requests.
+
+Phase 3 adds deterministic scheduling proposals with explicit admin approval, branch/skill **shortlist** conversion charts, advertised package statistics and rule-based placement support review. Placement percentage remains unavailable until offers are tracked. Support scores count three proposed indicators and always include factors, explanations and interventions; they are not risk probabilities. See `ARCHITECTURE.md` Section 5 for exact thresholds and scheduling semantics.
+
+For the synthetic demo, open Scheduling to inspect the deliberately imported overlap, propose a resolution and approve it with a reason. Open Placement support and select Simulated Cloud Support Track to inspect the support evidence. Resolved fixtures are not recreated on restart. Phase 3 live/browser verification status is tracked in `MEMORY.md`; Phase 4 remains gated.

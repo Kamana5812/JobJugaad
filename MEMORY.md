@@ -2,8 +2,8 @@
 
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
-**Last updated:** 2026-09-22
-**Current phase:** Phase 3 — Scheduling & Admin Analytics (authorized; implementation in progress)
+**Last updated:** 2026-09-23
+**Current phase:** Phase 3 — Scheduling & Admin Analytics (implemented locally; deployment and browser verification pending)
 
 ---
 
@@ -64,6 +64,12 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-22 | User accepted Phase 2 including a manually verified explanation and override; authorized Phase 3 | Scheduling, analytics and rule-based support only. Phase 4 remains gated. |
 | 2026-09-22 | Any future trained support-classifier upgrade must handle class imbalance with SMOTE or class weighting | Explicitly remind the user of this prerequisite if an upgrade request omits it. No classifier is built in Phase 3. |
 
+| 2026-09-23 | Admin access is an explicit server-side allowlist of existing accounts | User selected one existing account in Demo College 1; its email stays out of public source/docs. No public admin signup; current role and allowlist checked on every request. |
+| 2026-09-23 | Use half-open interview intervals, normalized resources, a seven-day greedy search and a college-scoped confirmation lock | Adjacent slots and independent drives are allowed; shared-resource overlaps are explained. Recheck at approval prevents stale and concurrent double-booking; old booking survives until reschedule approval. |
+| 2026-09-23 | Support flag requires all three proposed thresholds; score is a count out of three | At least three role skill gaps, known interview score below 40, fewer than two completed interviews in the last 30 days. Missing scores remain unknown; activity is an opportunity/record proxy. No ML, probability or accuracy claim. |
+| 2026-09-23 | Analytics reports shortlist conversion and advertised CTC; placement percentage remains null | Offers do not exist until Phase 4; a match, manual promotion or interview selection does not prove placement. |
+| 2026-09-23 | Seed four support profiles and a genuine overlapping pair with stable keys | Three support examples meet all rules; a fourth has participation evidence. Restarts preserve reviews and resolved bookings. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -105,7 +111,9 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [ ] Build deterministic scheduling with admin approval, honest analytics and rule-based placement support; verify locally and live.
 
 ### ⏭️ Next Up
-- Complete Phase 3, update handoff records, and stop for explicit acceptance before Phase 4.
+- Finish Phase 3 Swagger UI/visual checks once browser automation works; current initialization fails with “failed to write kernel assets”. API integration and React rendering checks are separate evidence, not a claim of completed browser testing.
+- Configure the user-selected existing Demo College 1 admin via Render `ADMIN_ACCOUNTS`; user was given the exact private configuration in chat. Check successful provisioning without exposing secrets.
+- Deploy Phase 3, verify live admin login, charts, conflict proposal/approval, support breakdown/review, then move finished Phase 3 items to Completed and stop for acceptance. Phase 4 is not authorized.
 
 ---
 
@@ -114,7 +122,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
 - Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
-- The readiness and matching rules and 14 local rule/PostgreSQL tests are implemented and pass. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
+- The rule engines and 25 local rule/PostgreSQL tests are implemented and pass; Phase 3 browser/live verification is still pending. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
 - Notifications are planned as simulated in-app only; they are not implemented in Phase 0.
 - All nine Phase 1/2 tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
@@ -227,3 +235,10 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Next:** Present https://jobjugaad.vercel.app/recruiter/signup and https://jobjugaad-api.onrender.com/docs. Wait for explicit Phase 2 acceptance; do not begin Phase 3.
 
 > **Phase gate update:** 2026-09-22 — Phase 2 accepted by the user, including manual explanation and override verification. Begin Phase 3 only. Read all six root documents in order. Admin account selection is pending while implementation proceeds. Stop after the live Phase 3 Definition of Done.
+
+
+> **Session update:** 2026-09-23 — Phase 3 implemented locally
+> **Implemented:** Five tenant tables with atomic FORCE RLS and college filters; allowlisted admin auth; deterministic greedy scheduling with pending approval, concurrency/version protection and audit history; analytics from actual records; rule-only support indicators with factors, interventions and human review; idempotent conflict/support fixtures. Frontend adds the branded Command Center, Recharts conversion views, scheduling forms and explained support review.
+> **Verification:** All 25 backend rule/PostgreSQL tests passed, including all ten admin endpoint contracts, status timing, simultaneous approval, stale versions, composite foreign keys and independent RLS on all new tables. Production frontend build passed with admin charts loaded separately. Server rendering against actual local API responses passed for analytics, the seeded conflict/proposals and 94 explained support cards in the accumulated local test dataset. One intervening run hit a transient database connection timeout; the complete sequential rerun passed. Browser automation fails during initialization, so Swagger UI execution and interactive visual verification remain pending.
+> **Admin setup:** User selected an existing Demo College 1 account. The exact email/configuration is in the private task conversation, not this public file. Render configuration and live provisioning are pending confirmation.
+> **Next gate:** Complete live Phase 3 verification before marking it delivered. Do not start Phase 4.

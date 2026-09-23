@@ -90,7 +90,7 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 **Definition of done:** The full lifecycle — Profiling → Matching → Scheduling → Notification → Offer Tracking → Analytics — works end-to-end on the live deployment, and both evaluation statements (Matching Engine sanity check + Readiness/Support-flag face-validity review) are written down, not just implied.
 
-**Release status 2026-09-23:** Phase 4 code is deployed from `e52147c`; API 0.5.0/database health, frontend offer/feed bundle content and protected-route unauthenticated denials passed. Thirty-three local checks passed across the regression run and matching retest; production build and actual-data React rendering passed. The local dataset has 4,800 synthetic students and 45 companies. Written evaluation reports are complete. Authenticated live offer/notification/analytics walkthrough is pending; do not mark this phase accepted or begin Phase 5.
+**Release status 2026-09-23:** Phase 4 code is deployed from `e52147c`; API 0.5.0/database health, frontend offer/feed bundle content and protected-route unauthenticated denials passed. Thirty-four local checks passed across the regression run, matching retest and interview-notification test; production build and actual-data React rendering passed. The local dataset has 4,800 synthetic students and 45 companies. Written evaluation reports are complete. Authenticated live offer/notification/analytics walkthrough is pending; do not mark this phase accepted or begin Phase 5.
 
 ---
 

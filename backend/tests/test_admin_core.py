@@ -134,6 +134,23 @@ class AdminIntegrationTests(unittest.TestCase):
         if cls.old_admins is None:os.environ.pop("ADMIN_ACCOUNTS",None)
         else:os.environ["ADMIN_ACCOUNTS"]=cls.old_admins
 
+    def test_interview_notification_delivery_and_recipient_isolation(self):
+        account = self.accounts[0]
+        # Setup approved an interview for this administrator's original student profile.
+        feed = self.client.get("/notifications", headers=account["headers"])
+        self.assertEqual(feed.status_code, 200, feed.text)
+        confirmed = [item for item in feed.json()["notifications"]
+            if item["title"] == "Interview confirmed" and f"drive #{account['job_id']} " in item["body"]]
+        self.assertEqual(len(confirmed), 1)
+        notice = confirmed[0]
+        self.assertEqual(notice["delivery"], "simulated_in_app")
+        self.assertIn(account["slot"]["venue"], notice["body"])
+        self.assertEqual(self.client.put(f"/notifications/{notice['id']}/read", headers=account["student_headers"]).status_code, 404)
+        self.assertEqual(self.client.put(f"/notifications/{notice['id']}/read", headers=self.accounts[1]["headers"]).status_code, 404)
+        read = self.client.put(f"/notifications/{notice['id']}/read", headers=account["headers"])
+        self.assertEqual(read.status_code, 200, read.text)
+        self.assertIsNotNone(read.json()["read_at"])
+
     def test_admin_role_allowlist_and_cross_tenant_access(self):
         a,b=self.accounts
         self.assertEqual(self.client.get("/admin/schedules").status_code,401)

@@ -131,3 +131,16 @@ Students open **My offers** to inspect letter, documents, verification, acceptan
 Startup expands the idempotent demo to 4,800 synthetic students and 45 companies. Shared preparation plus noise creates correlated profiles/outcomes; these are proposed generation assumptions, not real placement data. Matching demonstrations retain the original three drives; the evaluation considers 13 simulated roles.
 
 Frozen expectations and limitations: [protocol](EVALUATION_PROTOCOL.md). Actual results and disagreements: [written report](evaluations/phase4-report.md) and [full evidence](evaluations/phase4-results.json). Matching reproduced 25/30 expected roles; readiness bands and support flags agreed on 10/10 each. These counts describe an assistant-authored synthetic sanity check against our own assumptions, never validated accuracy.
+
+
+### Remaining live Phase 4 acceptance walkthrough
+
+Use the existing **Synthetic Phase 4 Lifecycle Check** student and **Synthetic Phase 4 Lifecycle Drive** in Demo College 1; avoid creating duplicate fixtures. Profiling, matching evidence, student-owned offer/feed access and denial of admin-only access have been checked through the live API. The user deferred the remaining administrator walkthrough.
+
+1. In Scheduling, verify the correct student's booking is approved. After its scheduled end, record **Selected** with a synthetic-test reason.
+2. In Offers, find that selected interview, create a draft and record **letter issued**.
+3. From the owning synthetic student account, record **acceptance** and **documents submitted**. This declares external document exchange; there is no document upload/automatic verification feature.
+4. From the administrator account, record **verified**, then **joined**, with reasons.
+5. Check all five stages, audit history, the student/admin notification feeds and the changed accepted/joined analytics. Notifications are in-app only.
+
+The local workflow and isolation tests passed, but this live sequence is not yet confirmed. Browser automation is unavailable; user-confirmed UI actions and agent API checks must remain distinguishable. Credentials are not included in the repository.

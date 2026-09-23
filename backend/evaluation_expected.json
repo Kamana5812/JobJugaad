@@ -1,0 +1,661 @@
+{
+  "label": "Assistant-authored synthetic sanity check against our own assumptions; not validated accuracy.",
+  "support_role": "Simulated Cloud Support Track",
+  "samples": [
+    {
+      "seed_index": 301,
+      "expected_top3": [
+        "Simulated React Product Engineer",
+        "Simulated Web UI Developer",
+        "Simulated React Frontend Engineer"
+      ],
+      "expected_readiness_band": "Ready",
+      "expected_support_flag": false,
+      "review_reason": "Strong React/CSS and three relevant projects support frontend roles; assessments are solid rather than uniformly exceptional. Cloud gaps alone do not trigger support because interview performance and activity are adequate.",
+      "input_sha256": "84ae5bb4ce2b05d6c487b29e58d1361f62a1117cc6b79eee8be745468659d10d",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 301",
+          "branch": "CSE",
+          "cgpa": 7.9,
+          "backlog_count": 0,
+          "aptitude_score": 74.52,
+          "communication_score": 70.06,
+          "interview_score": 72.76,
+          "skills": [
+            {
+              "skill_name": "react",
+              "proficiency": 76.74
+            },
+            {
+              "skill_name": "javascript",
+              "proficiency": 64.23
+            },
+            {
+              "skill_name": "css",
+              "proficiency": 83.5
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 76.67
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 69.43
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic react project 1",
+              "description": "Synthetic coursework using react, git, css, javascript; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic react project 2",
+              "description": "Synthetic coursework using javascript, css; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic react project 3",
+              "description": "Synthetic coursework using javascript, react; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic react course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            },
+            {
+              "title": "Synthetic react course 2",
+              "description": "Simulated completion; no accreditation claimed."
+            },
+            {
+              "title": "Synthetic react course 3",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 3
+      }
+    },
+    {
+      "seed_index": 302,
+      "expected_top3": [
+        "Simulated Java Platform Engineer",
+        "Simulated Java Graduate Engineer",
+        "Simulated Quality Automation Associate"
+      ],
+      "expected_readiness_band": "Ready",
+      "expected_support_flag": false,
+      "review_reason": "Java is the strongest skill, with SQL/git projects and strong academics. The lower assessment results keep the overall view below the highest readiness band. Interview score and activity do not meet the support trigger.",
+      "input_sha256": "377d5b06fd6776c506dc1338e6c71e2d7509feb370cf37543d965e61e83a86ef",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 302",
+          "branch": "CSE",
+          "cgpa": 8.95,
+          "backlog_count": 0,
+          "aptitude_score": 61.61,
+          "communication_score": 65.07,
+          "interview_score": 58.39,
+          "skills": [
+            {
+              "skill_name": "java",
+              "proficiency": 99.0
+            },
+            {
+              "skill_name": "sql",
+              "proficiency": 55.57
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 70.18
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 70.08
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic java project 1",
+              "description": "Synthetic coursework using java, communication, sql; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic java project 2",
+              "description": "Synthetic coursework using git, communication, sql; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic java project 3",
+              "description": "Synthetic coursework using git; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic java project 4",
+              "description": "Synthetic coursework using git; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic java course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            },
+            {
+              "title": "Synthetic java course 2",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 2
+      }
+    },
+    {
+      "seed_index": 303,
+      "expected_top3": [
+        "Simulated Python Cloud Engineer",
+        "Simulated Data Engineering Associate",
+        "Simulated Cloud Support Track"
+      ],
+      "expected_readiness_band": "Ready",
+      "expected_support_flag": false,
+      "review_reason": "Python/SQL/AWS evidence and four relevant projects fit cloud/data work. EE excludes the original Python Backend drive. Uneven communication/interview evidence suggests Ready rather than the highest band; no cloud skill gaps or low interview trigger.",
+      "input_sha256": "566a894dd5bff642deb1821f131269e65b43feafe7d06383de188668277f28f5",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 303",
+          "branch": "EE",
+          "cgpa": 7.99,
+          "backlog_count": 0,
+          "aptitude_score": 71.76,
+          "communication_score": 56.95,
+          "interview_score": 56.84,
+          "skills": [
+            {
+              "skill_name": "python",
+              "proficiency": 86.84
+            },
+            {
+              "skill_name": "sql",
+              "proficiency": 71.75
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 79.69
+            },
+            {
+              "skill_name": "aws",
+              "proficiency": 74.7
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 81.98
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic python project 1",
+              "description": "Synthetic coursework using sql; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic python project 2",
+              "description": "Synthetic coursework using git, sql, aws; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic python project 3",
+              "description": "Synthetic coursework using git; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic python project 4",
+              "description": "Synthetic coursework using git, sql, aws, python; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic python course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 3
+      }
+    },
+    {
+      "seed_index": 304,
+      "expected_top3": [
+        "Simulated React Product Engineer",
+        "Simulated Web UI Developer",
+        "Simulated React Frontend Engineer"
+      ],
+      "expected_readiness_band": "Highly Employable",
+      "expected_support_flag": false,
+      "review_reason": "High frontend proficiencies, four projects, strong academics and interview evidence suggest the highest band. The support rule is not triggered despite a different cloud role's skill gaps.",
+      "input_sha256": "ad73ee2b94a41067cd5eec7b55772863ae79e71d2f33018dbd4feee9c88894fa",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 304",
+          "branch": "CSE",
+          "cgpa": 9.08,
+          "backlog_count": 0,
+          "aptitude_score": 72.77,
+          "communication_score": 74.03,
+          "interview_score": 90.48,
+          "skills": [
+            {
+              "skill_name": "react",
+              "proficiency": 84.97
+            },
+            {
+              "skill_name": "javascript",
+              "proficiency": 89.64
+            },
+            {
+              "skill_name": "css",
+              "proficiency": 93.37
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 72.46
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 86.34
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic react project 1",
+              "description": "Synthetic coursework using react, css; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic react project 2",
+              "description": "Synthetic coursework using javascript, react, git; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic react project 3",
+              "description": "Synthetic coursework using javascript; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic react project 4",
+              "description": "Synthetic coursework using javascript, git, css; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic react course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            },
+            {
+              "title": "Synthetic react course 2",
+              "description": "Simulated completion; no accreditation claimed."
+            },
+            {
+              "title": "Synthetic react course 3",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 2
+      }
+    },
+    {
+      "seed_index": 306,
+      "expected_top3": [
+        "Simulated Cloud Support Track",
+        "Simulated Backend Apprentice",
+        "Simulated General Support Trainee"
+      ],
+      "expected_readiness_band": "Developing",
+      "expected_support_flag": false,
+      "review_reason": "Three backlogs restrict most graduate drives; the cloud track and apprenticeships allow them. Missing interview evidence should reduce the weighted readiness view but must stay unknown for support, never be treated as poor performance.",
+      "input_sha256": "50875ab1d910062b9dcd3822b165747b58f2912990eec3300f554741c3fdc525",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 306",
+          "branch": "CSE",
+          "cgpa": 7.61,
+          "backlog_count": 3,
+          "aptitude_score": 63.82,
+          "communication_score": 53.5,
+          "interview_score": null,
+          "skills": [
+            {
+              "skill_name": "python",
+              "proficiency": 56.69
+            },
+            {
+              "skill_name": "sql",
+              "proficiency": 61.85
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 62.0
+            },
+            {
+              "skill_name": "aws",
+              "proficiency": 61.17
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 63.43
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic python project 1",
+              "description": "Synthetic coursework using aws, python; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic python project 2",
+              "description": "Synthetic coursework using aws; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic python project 3",
+              "description": "Synthetic coursework using git, aws, sql, python; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic python course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 1
+      }
+    },
+    {
+      "seed_index": 307,
+      "expected_top3": [
+        "Simulated Web UI Developer",
+        "Simulated Web Apprentice",
+        "Simulated React Product Engineer"
+      ],
+      "expected_readiness_band": "Developing",
+      "expected_support_flag": false,
+      "review_reason": "A web specialism with just one project and a low interview score suggests development is still needed. ME excludes the original React drive. Two recorded completed interviews prevent the AND support flag despite cloud skill gaps and a low interview score.",
+      "input_sha256": "0f7bb426a1622fe7fa11609d94040150cae858591840439d28107f63878b206b",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 307",
+          "branch": "ME",
+          "cgpa": 7.98,
+          "backlog_count": 0,
+          "aptitude_score": 69.22,
+          "communication_score": 52.66,
+          "interview_score": 32.32,
+          "skills": [
+            {
+              "skill_name": "react",
+              "proficiency": 66.8
+            },
+            {
+              "skill_name": "javascript",
+              "proficiency": 54.2
+            },
+            {
+              "skill_name": "css",
+              "proficiency": 77.25
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 47.67
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 59.7
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic react project 1",
+              "description": "Synthetic coursework using javascript, git, react, css; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic react course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 2
+      }
+    },
+    {
+      "seed_index": 313,
+      "expected_top3": [
+        "Simulated Web Apprentice",
+        "Simulated General Support Trainee",
+        "Simulated Backend Apprentice"
+      ],
+      "expected_readiness_band": "Developing",
+      "expected_support_flag": true,
+      "review_reason": "Entry-level roles fit modest frontend/git/communication proficiencies and two projects better than graduate roles. For the cloud target, multiple skill gaps, low interview score and no completed interview activity justify a support review.",
+      "input_sha256": "580e700062a612f4eb2cf885815e59a714aa6c32113dc496223618105b5d72f9",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 313",
+          "branch": "ECE",
+          "cgpa": 6.0,
+          "backlog_count": 0,
+          "aptitude_score": 59.34,
+          "communication_score": 66.84,
+          "interview_score": 30.85,
+          "skills": [
+            {
+              "skill_name": "react",
+              "proficiency": 38.22
+            },
+            {
+              "skill_name": "javascript",
+              "proficiency": 32.62
+            },
+            {
+              "skill_name": "css",
+              "proficiency": 49.79
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 38.93
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 30.4
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic react project 1",
+              "description": "Synthetic coursework using css, javascript, git; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic react project 2",
+              "description": "Synthetic coursework using react, git, javascript, css; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": []
+        },
+        "completed_interviews": 0
+      }
+    },
+    {
+      "seed_index": 315,
+      "expected_top3": [
+        "Simulated Backend Apprentice",
+        "Simulated Cloud Support Track",
+        "Simulated General Support Trainee"
+      ],
+      "expected_readiness_band": "Developing",
+      "expected_support_flag": false,
+      "review_reason": "Three backlogs narrow options, while Python projects and lower-threshold support roles remain plausible. Weak aptitude/communication and incomplete skill targets suggest Developing. Interview score is above the support cutoff and activity is adequate.",
+      "input_sha256": "acddb3f1d7af2be41b76b83404c9a2423e0bc16b6d0080b7d0133476ed700a22",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 315",
+          "branch": "ME",
+          "cgpa": 5.78,
+          "backlog_count": 3,
+          "aptitude_score": 30.23,
+          "communication_score": 17.56,
+          "interview_score": 44.63,
+          "skills": [
+            {
+              "skill_name": "python",
+              "proficiency": 59.3
+            },
+            {
+              "skill_name": "sql",
+              "proficiency": 38.54
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 41.56
+            },
+            {
+              "skill_name": "aws",
+              "proficiency": 49.89
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 51.05
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic python project 1",
+              "description": "Synthetic coursework using python, aws; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic python project 2",
+              "description": "Synthetic coursework using aws, git, sql; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic python course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 2
+      }
+    },
+    {
+      "seed_index": 318,
+      "expected_top3": [
+        "Simulated Python Backend Engineer",
+        "Simulated Cloud Support Track",
+        "Simulated Data Engineering Associate"
+      ],
+      "expected_readiness_band": "Developing",
+      "expected_support_flag": false,
+      "review_reason": "Python/SQL/AWS are stronger than the single recorded project and low interview result. Graduate roles allowing one backlog remain plausible. Only git is below the cloud target, so the combined support flag should not trigger.",
+      "input_sha256": "b79b1df35878521edf797e78294cad6876546727e7801fdc548585fc3fe4edd3",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 318",
+          "branch": "CSE",
+          "cgpa": 7.73,
+          "backlog_count": 1,
+          "aptitude_score": 55.76,
+          "communication_score": 46.75,
+          "interview_score": 34.46,
+          "skills": [
+            {
+              "skill_name": "python",
+              "proficiency": 61.86
+            },
+            {
+              "skill_name": "sql",
+              "proficiency": 66.72
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 47.32
+            },
+            {
+              "skill_name": "aws",
+              "proficiency": 69.7
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 44.49
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic python project 1",
+              "description": "Synthetic coursework using aws; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic python course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 2
+      }
+    },
+    {
+      "seed_index": 320,
+      "expected_top3": [
+        "Simulated Java Graduate Engineer",
+        "Simulated Quality Automation Associate",
+        "Simulated General Support Trainee"
+      ],
+      "expected_readiness_band": "Developing",
+      "expected_support_flag": false,
+      "review_reason": "SQL/git projects, moderate Java and stronger communication/interview evidence suggest entry-level Java/QA/support fits. Three projects do not erase the uneven skills and aptitude. Interview score is not low, so no combined support flag.",
+      "input_sha256": "527cb28313fe09362ab3a3b8372e0463e6ae0adfbf95fb29986797fbdbb1b9ef",
+      "inputs": {
+        "profile": {
+          "name": "Synthetic Student 320",
+          "branch": "ME",
+          "cgpa": 6.48,
+          "backlog_count": 0,
+          "aptitude_score": 38.96,
+          "communication_score": 70.66,
+          "interview_score": 69.14,
+          "skills": [
+            {
+              "skill_name": "java",
+              "proficiency": 37.1
+            },
+            {
+              "skill_name": "sql",
+              "proficiency": 64.67
+            },
+            {
+              "skill_name": "git",
+              "proficiency": 59.81
+            },
+            {
+              "skill_name": "communication",
+              "proficiency": 54.26
+            }
+          ],
+          "projects": [
+            {
+              "title": "Synthetic java project 1",
+              "description": "Synthetic coursework using java, sql; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic java project 2",
+              "description": "Synthetic coursework using java, sql, git; demonstration, not verified achievement."
+            },
+            {
+              "title": "Synthetic java project 3",
+              "description": "Synthetic coursework using git, sql; demonstration, not verified achievement."
+            }
+          ],
+          "certifications": [
+            {
+              "title": "Synthetic java course 1",
+              "description": "Simulated completion; no accreditation claimed."
+            }
+          ]
+        },
+        "completed_interviews": 1
+      }
+    }
+  ]
+}

@@ -150,3 +150,46 @@ if __name__ == "__main__":
     print(f"Created {seed_students()} synthetic students.")
     print(seed_companies())
     print(seed_phase3())
+
+# Phase 4 population: proposed synthetic distributions, NOT observed placement statistics.
+# Shared preparation influences CGPA/skills/assessments; independent noise leaves realistic exceptions.
+PHASE4_ROLES = [
+    ("Simulated Python Cloud Engineer", 9, 7, 60, [("python",75),("sql",65),("aws",60)]),
+    ("Simulated Data Engineering Associate", 7, 6.5, 60, [("python",65),("sql",70),("git",55)]),
+    ("Simulated Backend Apprentice", 3.5, 4, 45, [("python",35),("git",30)]),
+    ("Simulated React Product Engineer", 9, 7, 60, [("react",75),("javascript",70),("css",60)]),
+    ("Simulated Web UI Developer", 6.5, 6, 60, [("react",60),("css",55),("git",50)]),
+    ("Simulated Web Apprentice", 3.5, 4, 45, [("javascript",30),("git",25)]),
+    ("Simulated Java Platform Engineer", 8, 7, 60, [("java",75),("sql",65),("git",60)]),
+    ("Simulated Quality Automation Associate", 5, 5.5, 55, [("python",50),("java",50),("git",50)]),
+    ("Simulated General Support Trainee", 3, 4, 45, [("communication",30),("git",25)]),
+]
+
+
+def phase4_profile(index):
+    rng=random.Random(20260400+index)
+    preparation=rng.betavariate(2.4,2.0)
+    bounded=lambda value,low=0,high=100: round(max(low,min(high,value)),2)
+    cgpa=bounded(4.2+5.5*preparation+rng.gauss(0,0.5),4,9.95)
+    tracks=(("python","sql","git","aws"),("react","javascript","css","git"),("java","sql","git","communication"))
+    track=tracks[index%3]
+    skill_names=list(dict.fromkeys((*track,"communication")))
+    skills=[SkillInput(skill_name=name,proficiency=bounded(18+80*preparation+rng.gauss(0,12),10,99)) for name in skill_names]
+    projects=[EvidenceInput(title=f"Synthetic {track[0]} project {n+1}",
+        description="Synthetic coursework using "+", ".join(rng.sample(list(track),rng.randint(1,len(track))))+"; demonstration, not verified achievement.")
+        for n in range(max(0,min(5,round(5*preparation+rng.gauss(0,0.8)))))]
+    aptitude=bounded(15+80*preparation+rng.gauss(0,11),5,99)
+    communication=bounded(20+70*preparation+rng.gauss(0,15),5,99)
+    interview=None if index%17==0 else bounded(12+85*preparation+rng.gauss(0,14),5,99)
+    backlogs=0 if preparation>0.55 or rng.random()<preparation else rng.randint(1,3)
+    certs=[EvidenceInput(title=f"Synthetic {track[0]} course {n+1}",description="Simulated completion; no accreditation claimed.")
+        for n in range(max(0,min(4,round(3*preparation+rng.gauss(0,0.6)))))]
+    profile=ProfileUpdate(name=f"Synthetic Student {index:02d}",
+        branch=rng.choices(["CSE","ECE","EE","ME"],weights=[45,25,15,15])[0],
+        cgpa=cgpa,backlog_count=backlogs,skills=skills,projects=projects,certifications=certs,
+        aptitude_score=aptitude,communication_score=communication,interview_score=interview)
+    # These are data-generation probabilities, not model outputs, accuracy or individual forecasts.
+    selected=rng.random()<min(0.92,0.08+0.72*preparation+0.12*(cgpa-4)/6)
+    activity=max(0,min(3,round(3*preparation+rng.gauss(0,0.7))))
+    outcome_roll=rng.random()
+    return profile,dict(track=index%3,selected=selected,activity=activity,outcome_roll=outcome_roll)

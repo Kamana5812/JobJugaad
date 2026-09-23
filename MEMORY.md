@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-23
-**Current phase:** Phase 3 — Scheduling & Admin Analytics (complete; explicitly accepted by the user). Awaiting instruction to start Phase 4.
+**Current phase:** Phase 4 — Offers, Notifications & Data Polish (authorized; implementation in progress). Phase 3 remains accepted.
 
 ---
 
@@ -72,6 +72,8 @@ Living record of project state and decisions. Update this file whenever a major 
 
 | 2026-09-23 | User explicitly confirmed Phase 3 live checks passed and accepted the phase | Fresh admin login opened Command Center; charts appeared, the scheduling conflict disappeared after approval, and the support review saved. No Phase 4 work starts without a new instruction. |
 
+| 2026-09-23 | User reconfirmed Phase 3 and explicitly authorized Phase 4 | Implement separate offer stages, simulated in-app notifications, about 4,800 synthetic profiles and 40–50 companies, and frozen ten-profile evaluations. Stop before Phase 5. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -117,11 +119,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- None. Phase 3 is complete and accepted.
+- Build Phase 4 offers, simulated notifications, correlated synthetic data and the written matching/readiness/support evaluations.
 
 ### ⏭️ Next Up
-- Wait for the user's explicit instruction to start Phase 4: offers, simulated in-app notifications, data expansion and honestly labeled evaluation reviews.
-- Keep Phase 4 and all later phases unstarted until requested.
+- Complete and verify Phase 4 locally and live, write both evaluation reports, then stop for user acceptance before Phase 5.
 
 ---
 
@@ -273,3 +274,6 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Finished:** User confirmed a fresh login opens Placement Command Center, then answered yes when explicitly asked whether charts appeared, the scheduling conflict disappeared after approval and the support review saved. Phase 3 Definition of Done is accepted. Updated Completed, cleared In Progress and moved Next Up to the Phase 4 instruction gate.
 > **Evidence boundaries:** Twenty-five local backend tests, frontend production build and actual-data React rendering passed. Agent checked live health/database connectivity, API version/routes, deployed bundle and unauthenticated denial. The authenticated dashboard/scheduling/support checks were performed and confirmed by the user. Browser automation and Swagger UI execution were unavailable; no claim that the agent independently performed those checks.
 > **Next:** Wait for an explicit Phase 4 request. Do not start offers, notifications, large-data expansion, evaluations or later phases yet. Future support-classifier upgrades still require SMOTE/class weighting; current implementation remains simple rules only.
+
+
+> **Phase 4 start:** 2026-09-23 — User reconfirmed Phase 3 and authorized Phase 4. Reread PRD, Architecture (including Section 9), Rules, Phases, Design and Memory in order. Freeze manually inspected expected results before running the evaluation engines; identify assistant-authored synthetic judgments honestly and report observed counts/mismatches without real-world accuracy claims.

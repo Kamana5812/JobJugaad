@@ -96,16 +96,18 @@ Build order for the hackathon. Each phase should end with something deployed and
 
 ## Phase 5 — Polish, Docs & Demo Rehearsal (Final Day)
 
-- [ ] UI pass: consistent branding (navy/saffron/green), Hinglish voice per `DESIGN.md`
-- [ ] Lock CORS to the real Vercel origin (remove `allow_origins=["*"]`)
-- [ ] Confirm system architecture diagram and algorithm documentation are ready to present
+- [x] UI pass: consistent branding (navy/saffron/green), Hinglish voice per `DESIGN.md`
+- [x] Lock CORS to the real Vercel origin (remove `allow_origins=["*"]`)
+- [x] Confirm system architecture diagram and algorithm documentation are ready to present
 - [ ] Rehearse the live demo flow in order: Profiling → Matching → Scheduling → Offer → Analytics
 - [ ] Presenter: read `JUDGE_REVIEW.md` out loud before the demo (manual rehearsal; automated checks do not fulfill this)
-- [ ] Write a one-paragraph **Scalability & Deployment Approach** statement (add to `ARCHITECTURE.md` §9 or a new README section) describing the multi-campus design explicitly: every core table carries a `college_id` column enforced by both application-level filtering and a PostgreSQL Row-Level Security policy, so one deployment can serve multiple colleges as isolated tenants without re-architecture. This is an official minimum deliverable ("scalability and deployment approach across multiple campuses") — it must exist as a written statement, not just as implemented code
+- [x] Write a one-paragraph **Scalability & Deployment Approach** statement (add to `ARCHITECTURE.md` §9 or a new README section) describing the multi-campus design explicitly: every core table carries a `college_id` column enforced by both application-level filtering and a PostgreSQL Row-Level Security policy, so one deployment can serve multiple colleges as isolated tenants without re-architecture. This is an official minimum deliverable ("scalability and deployment approach across multiple campuses") — it must exist as a written statement, not just as implemented code
 - [ ] Open the live app ~5 minutes before the demo slot (Render free tier cold-start warm-up)
-- [ ] Update `MEMORY.md` with final state and known limitations
+- [x] Update `MEMORY.md` with final state and known limitations
 
 ---
+
+**Phase 5 release 2026-09-23:** c3d7a57 is live (API 0.6.0); final build, 37 checks across regression/retest, score-card rendering, live 17-table RLS report, exact CORS and protected-route denials passed. See PHASE5_AUDIT.md and DEMO_GUIDE.md. Remaining unchecked items are presenter actions: an actual browser rehearsal, reading aloud and warming before the presentation. Browser automation could not initialize; these actions are not falsely marked complete. Phase 5 implementation is delivered for user review; no stretch work is authorized.
 
 ## 🟢 Stretch Goals (P2 — only after everything above is solid)
 

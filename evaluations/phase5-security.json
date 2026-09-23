@@ -1,0 +1,217 @@
+{
+  "checked_at": "2026-09-23T15:19:27.317217+00:00",
+  "release_commit": "c3d7a57",
+  "api_version": "0.6.0",
+  "health": {
+    "status": "ok",
+    "service": "jobjugaad-api",
+    "database": "connected",
+    "isolation": {
+      "status": "verified",
+      "runtime_role_restricted": true,
+      "tables": [
+        {
+          "table": "certifications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "companies",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "interviews",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "jobs",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "match_overrides",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "matches",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "notifications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "offer_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "offers",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "projects",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "risk_predictions",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "schedule_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "schedules",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "student_skills",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "students",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "support_reviews",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "users",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        }
+      ]
+    }
+  },
+  "cors": [
+    {
+      "origin": "https://jobjugaad.vercel.app",
+      "status": 200,
+      "allow_origin": "https://jobjugaad.vercel.app"
+    },
+    {
+      "origin": "https://evil.example",
+      "status": 400,
+      "allow_origin": null
+    },
+    {
+      "origin": "https://jobjugaad.vercel.app.evil.example",
+      "status": 400,
+      "allow_origin": null
+    },
+    {
+      "origin": "http://localhost:5173",
+      "status": 400,
+      "allow_origin": null
+    }
+  ],
+  "protected_routes": [
+    {
+      "path": "/admin/analytics/overview",
+      "unauthenticated_status": 401
+    },
+    {
+      "path": "/students/4805/readiness",
+      "unauthenticated_status": 401
+    },
+    {
+      "path": "/recruiters/company",
+      "unauthenticated_status": 401
+    },
+    {
+      "path": "/notifications",
+      "unauthenticated_status": 401
+    }
+  ],
+  "frontend": {
+    "url": "https://jobjugaad.vercel.app",
+    "status": 200,
+    "bundle": "/assets/index-CwylAwDS.js",
+    "api_target_verified": true,
+    "phase5_status_styles_present": true
+  },
+  "method": "Public HTTP and read-only PostgreSQL catalog report; not a browser interaction or security penetration test."
+}

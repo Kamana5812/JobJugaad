@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-23
-**Current phase:** Phase 5 — final UI/security/docs verification in progress. Phase 4 explicitly accepted end to end on 2026-09-23.
+**Current phase:** Phase 5 implementation deployed and verified; delivered for user review. Presenter browser rehearsal and pre-demo warm-up remain manual. Phases 0–4 are explicitly accepted.
 
 ---
 
@@ -92,6 +92,11 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] Phase 5 release c3d7a57 deployed: exact DESIGN palette tokens, critical status styling, saffron numbered headings, explainability-first copy, preserved logos and static FAQ-only Jugaad Dost. No AI Mock Interview, live chatbot, trained classifier or embedding dependencies were built.
+- [x] Locked CORS to https://jobjugaad.vercel.app with explicit methods/headers; live preflight accepts only that origin among tested real/foreign/lookalike/local origins. Local development uses the Vite /api proxy.
+- [x] Verified all 17 live tenant tables with college_id, ENABLE/FORCE RLS and college_isolation USING/WITH CHECK predicates, plus a runtime role without superuser/BYPASSRLS. Application college filters and role/ownership controls remain. Per-table evidence: PHASE5_AUDIT.md and evaluations/phase5-security.json.
+- [x] Audited readiness, matching, override-history and support screens: no bare-score failures found; all include factors and explanations. All 37 backend checks passed across the complete run and affected-suite retest; final frontend build and saved-data rendering passed.
+- [x] Added the written Scalability & Deployment Approach in Architecture Section 9, exact named-fixture DEMO_GUIDE.md and implementation-grounded JUDGE_REVIEW.md. Historical overclaims and missing research references are not treated as validated evidence.
 - [x] Phase 4 Definition of Done demonstrated on 2026-09-23: live profiling → matching → approved/selected interview → notifications → all five offer stages → refreshed outcome analytics, plus both written evaluation statements. User explicitly accepted Phase 4 end to end and authorized Phase 5 on 2026-09-23.
 - [x] Delivered Phase 4 offers with five separate stages, audited role-scoped actions, version checks, student/admin views and simulated recipient-only notifications. All three new tables have application college filters and FORCE RLS (17 tenant tables total).
 - [x] Verified the live test lifecycle through student 4805, drive 17, interview 7556 and offer 2385: profiling/matching, confirmed and selected interview, issued letter, student acceptance/document submission, admin verification and joined status. Agent API checks independently confirmed all six offer audit events, nine student notifications and idempotent notification reads; admin UI actions were performed by the user.
@@ -136,10 +141,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- Phase 5: UI/design consistency, exact production CORS, catalog-based RLS audit, scope/explainability/positioning checks and final demo documentation.
+- No implementation work remains in progress. Independent browser/visual rehearsal was unavailable because the browser runtime could not initialize; presenter checks remain explicitly unchecked in PHASES.md.
 
 ### ⏭️ Next Up
-- Complete and deploy Phase 5, list actual RLS statuses and score-screen audit results, write scalability statement and exact demo guide; do not start stretch features.
+- User reviews the deployed Phase 5 handoff and rehearses DEMO_GUIDE.md in their browser, reads JUDGE_REVIEW.md aloud, and warms the app before the actual demo. Do not start any stretch feature without explicit authorization.
 
 ---
 
@@ -148,15 +153,16 @@ _Add a new row every time a meaningful architectural or product decision is made
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
 - Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
-- The rule engines and 34 local rule/PostgreSQL checks have passed across regression and targeted runs; the user confirmed the Phase 3 authenticated live checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
+- All 37 local rule/PostgreSQL checks passed across the complete Phase 5 run and targeted retest; the user confirmed earlier authenticated live lifecycle checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
 - Notifications are implemented as simulated in-app records only; no email or SMS is sent. Offer/document stages record human declarations about external document exchange, not automatic document verification.
-- All seventeen Phase 1–4 tenant tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- All seventeen Phase 1–4 tenant tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live catalog verification now confirms every table and policy; earlier API cross-college denial was verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- The demonstration cohort is synthetic-only: 4,800 seeded students and 45 seeded companies, plus separately labeled synthetic walkthrough accounts. No real outcome validation, independent accuracy percentage, latency benchmark or calibrated confidence exists.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
 - Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
 - Local PostgreSQL test configuration is stored only under ignored .local/. The live Render service uses its existing managed PostgreSQL database.
 - Render's existing free `Job-Jugaad` database expires on **2026-10-21**, as displayed in its dashboard. No paid upgrade was made.
 - The existing database's external IP access rules were preserved; the application uses its internal Render connection. The stricter fresh-environment template in `render.yaml` has not been applied to this existing database.
-- Phase 5 restricts CORS to https://jobjugaad.vercel.app; local development uses Vite's /api proxy. Live verification is pending release.
+- Phase 5 restricts CORS to https://jobjugaad.vercel.app; local development uses Vite's /api proxy. Live allowed/rejected-origin verification passed on 2026-09-23.
 - Render's free tier cold-starts after 15 minutes idle — must warm up before live demos.
 - Simulator (P2) is not implemented. Any future projections must be labeled as hypothetical outputs from the synthetic dataset's conversion model, not validated forecasts.
 - Competing campus placement platforms exist; no first-mover or exclusive-feature claim is made. Demonstrate the implemented explanations, rule-based support and human-reviewed workflow. Historical research files are absent; the simulator is not implemented.
@@ -320,3 +326,7 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Phase 5 authorized:** User explicitly confirmed Phase 4 working end to end and requested the final polish/security/documentation pass. Read the six project documents; JUDGE_REVIEW.md and several historical research-reference files are absent from this checkout. Prepare a new implementation-grounded judge sheet and do not claim those missing sources were read. No trained model, live chatbot, mock interview or semantic-matching upgrade is authorized.
 
 > **Phase 5 local verification:** 2026-09-23 — Exact Vercel CORS, live catalog isolation reporting, DESIGN palette cleanup, critical-status styling and numbered headings are implemented. The complete regression run passed 36/37; the notification assertion counted two different interviews from shared test setup. Scoped it to the baseline interview ID and all 12 affected tests passed on retest, covering 37 checks across runs. Final Vite build, offer/analytics rendering, readiness/10 matching/94 support-card rendering passed. No failed bare-score screen was found. Wrote PHASE5_AUDIT.md, DEMO_GUIDE.md, JUDGE_REVIEW.md and Architecture Section 9 scalability statement; cleaned unsupported active claims. Browser initialization still fails before opening a session, so no visual/Swagger rehearsal is claimed. Next: deploy and read the actual live 17-table policy report plus exact-origin CORS responses; then record final evidence. No stretch features.
+
+> **Phase 5 final handoff:** 2026-09-23 — User Phase 4 acceptance is recorded. Release c3d7a57 is live on https://jobjugaad.vercel.app and https://jobjugaad-api.onrender.com (API 0.6.0). Public HTTP checks verified connected health, all 17 actual ENABLE/FORCE college_isolation policies and non-bypass runtime role, exact-origin CORS, protected-route 401 responses, and the deployed frontend bundle/API target. Saved safe public evidence in evaluations/phase5-security.json and listed each table in PHASE5_AUDIT.md. No private credentials or authenticated profile payloads were published.
+> **Validation:** 36/37 passed in the full run; the notification assertion counted another test's separate booking. Scoped it to its own interview ID, then all 12 affected scheduling/support tests passed: 37 checks covered across runs. Final build and real saved-data rendering (readiness, 10 candidate cards, 94 support cards, student/admin offers and analytics) passed. No failing score screen. No AI Mock Interview/live chatbot/embedding upgrade; supplied tagline and requested Run AI Matching label remain with an explicit rule-based disclosure.
+> **Delivered:** DEMO_GUIDE.md names student 4805 / drive 17 / interview 7556 / joined offer 2385, visible seeded matching candidates 2003 and 4499, the original support-student double-booking fixture, and a fresh-run conflict/lifecycle alternative. JUDGE_REVIEW.md and Architecture Section 9 provide honest evaluation and multi-college deployment explanations. The user accepted Phase 4 browser behavior; browser automation remains unavailable, so a Phase 5 visual/click rehearsal, reading aloud and actual pre-demo warm-up remain presenter actions. Stop here for user review; no stretch work is authorized.

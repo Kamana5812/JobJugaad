@@ -2,7 +2,7 @@
 
 An **explainability-first** campus placement platform for BPUT Hackathon 2026's CampusLink problem statement.
 
-Phases 0–4 are deployed and explicitly accepted. Phase 5 adds the final UI, CORS, isolation audit and presentation documentation; verification status is in [PHASE5_AUDIT.md](PHASE5_AUDIT.md).
+Phases 0–4 are deployed and explicitly accepted. Phase 5 is deployed with final UI, restricted CORS, live isolation auditing and presentation documentation; evidence and remaining presenter actions are in [PHASE5_AUDIT.md](PHASE5_AUDIT.md).
 
 - Frontend: [jobjugaad.vercel.app](https://jobjugaad.vercel.app)
 - Backend: [health](https://jobjugaad-api.onrender.com/health) · [interactive API](https://jobjugaad-api.onrender.com/docs)
@@ -148,3 +148,5 @@ The live sequence completed for student 4805 / drive 17 / interview 7556 / offer
 ## Final demo and honest scope
 
 Follow [DEMO_GUIDE.md](DEMO_GUIDE.md) for the exact Profiling → Matching → Scheduling → Offer → Analytics clicks, named fixtures and fresh-run alternative. [JUDGE_REVIEW.md](JUDGE_REVIEW.md) provides implementation-grounded answers; the written scalability statement is in [Architecture Section 9](ARCHITECTURE.md#9-dataset--evaluation). Competing campus placement platforms exist; no first-mover claim is made. The demonstration dataset is synthetic, scores are unvalidated rules, notifications never deliver email/SMS and document stages are human declarations. Self-selected enrollment, schema-owner runtime privileges, missing rate limiting and absent production backup/migration workflows remain hardening work.
+
+Phase 5 release `c3d7a57` serves API 0.6.0. All 17 actual live tenant policies were verified on 2026-09-23, along with allowed/rejected CORS responses and protected-route authentication. All 37 checks passed across regression/retest; the final production build and explained-score component rendering passed. The [per-table/per-screen audit](PHASE5_AUDIT.md) distinguishes these checks from the presenter's remaining browser rehearsal.

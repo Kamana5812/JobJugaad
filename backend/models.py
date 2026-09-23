@@ -123,3 +123,96 @@ class MatchOverride(TenantRow, Base):
     __table_args__ = (ForeignKeyConstraint(["match_id", "college_id"], ["matches.id", "matches.college_id"]),
         ForeignKeyConstraint(["recruiter_user_id", "college_id"], ["users.id", "users.college_id"]),
         CheckConstraint("action IN ('promote','reject')"))
+
+# Phase 3: proposals are separate from confirmed bookings; all tenant rows get RLS.
+class Schedule(TenantRow, Base):
+    __tablename__ = "schedules"
+    job_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    requested_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    scheduled_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    venue: Mapped[str] = mapped_column(String(100), nullable=False)
+    panel_id: Mapped[str] = mapped_column(String(80), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), default="pending")
+    conflicts: Mapped[list] = mapped_column(JSON, nullable=False)
+    explanation: Mapped[str] = mapped_column(Text, nullable=False)
+    reschedule_interview_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    created_by: Mapped[int] = mapped_column(Integer, nullable=False)
+    reviewed_by: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    review_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (UniqueConstraint("id", "college_id"),
+        ForeignKeyConstraint(["job_id","college_id"], ["jobs.id","jobs.college_id"]),
+        ForeignKeyConstraint(["student_id","college_id"], ["students.id","students.college_id"]),
+        ForeignKeyConstraint(["created_by","college_id"], ["users.id","users.college_id"]),
+        ForeignKeyConstraint(["reviewed_by","college_id"], ["users.id","users.college_id"]),
+        ForeignKeyConstraint(["reschedule_interview_id","college_id"], ["interviews.id","interviews.college_id"],
+            use_alter=True, name="fk_schedule_source_interview_tenant"),
+        CheckConstraint("end_time > scheduled_time"), CheckConstraint("status IN ('pending','scheduled','rejected')"))
+
+class Interview(TenantRow, Base):
+    __tablename__ = "interviews"
+    schedule_id: Mapped[int | None] = mapped_column(Integer, nullable=True, unique=True)
+    job_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    scheduled_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    venue: Mapped[str] = mapped_column(String(100), nullable=False)
+    panel_id: Mapped[str] = mapped_column(String(80), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), default="scheduled")
+    seed_key: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    __table_args__ = (UniqueConstraint("id","college_id"), UniqueConstraint("college_id","seed_key"),
+        ForeignKeyConstraint(["schedule_id","college_id"], ["schedules.id","schedules.college_id"]),
+        ForeignKeyConstraint(["job_id","college_id"], ["jobs.id","jobs.college_id"]),
+        ForeignKeyConstraint(["student_id","college_id"], ["students.id","students.college_id"]),
+        CheckConstraint("end_time > scheduled_time"),
+        CheckConstraint("status IN ('scheduled','completed','selected','rejected','cancelled')"))
+
+class ScheduleEvent(TenantRow, Base):
+    __tablename__ = "schedule_events"
+    schedule_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    interview_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    actor_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    action: Mapped[str] = mapped_column(String(40), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (
+        ForeignKeyConstraint(["schedule_id","college_id"], ["schedules.id","schedules.college_id"]),
+        ForeignKeyConstraint(["interview_id","college_id"], ["interviews.id","interviews.college_id"]),
+        ForeignKeyConstraint(["actor_user_id","college_id"], ["users.id","users.college_id"]),)
+
+class RiskPrediction(TenantRow, Base):
+    __tablename__ = "risk_predictions"
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    job_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    support_priority: Mapped[str] = mapped_column(String(20), nullable=False)
+    score: Mapped[int] = mapped_column(Integer, nullable=False)  # Count of triggered rules /3, NOT probability.
+    contributing_factors: Mapped[list] = mapped_column(JSON, nullable=False)
+    recommendation: Mapped[list] = mapped_column(JSON, nullable=False)
+    explanation: Mapped[str] = mapped_column(Text, nullable=False)
+    flagged: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    assessable: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    evidence_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    review_status: Mapped[str] = mapped_column(String(20), default="active")
+    evaluated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    __table_args__ = (UniqueConstraint("id","college_id"), UniqueConstraint("college_id","student_id","job_id"),
+        ForeignKeyConstraint(["student_id","college_id"], ["students.id","students.college_id"]),
+        ForeignKeyConstraint(["job_id","college_id"], ["jobs.id","jobs.college_id"]),
+        CheckConstraint("score BETWEEN 0 AND 3"), CheckConstraint("support_priority IN ('low','high')"),
+        CheckConstraint("review_status IN ('active','reviewed','dismissed')"))
+
+class SupportReview(TenantRow, Base):
+    __tablename__ = "support_reviews"
+    prediction_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    actor_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    action: Mapped[str] = mapped_column(String(20), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (
+        ForeignKeyConstraint(["prediction_id","college_id"], ["risk_predictions.id","risk_predictions.college_id"]),
+        ForeignKeyConstraint(["actor_user_id","college_id"], ["users.id","users.college_id"]),
+        CheckConstraint("action IN ('active','reviewed','dismissed')"),)

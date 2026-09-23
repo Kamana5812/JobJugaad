@@ -83,7 +83,7 @@ class StudentCoreTests(unittest.TestCase):
                 self.assertEqual(getattr(self.client, method)(f"/students/{other_id}{suffix}", headers=headers, **kwargs).status_code, 404)
         token = account["access_token"]
         claims = jwt.decode(token, signing_secret(), algorithms=["HS256"], audience=AUDIENCE, issuer=ISSUER)
-        for patch, expected in [({"exp": datetime.now(timezone.utc) - timedelta(seconds=5)}, 401), ({"role": "admin"}, 403)]:
+        for patch, expected in [({"exp": datetime.now(timezone.utc) - timedelta(seconds=5)}, 401), ({"role": "admin"}, 401)]:
             forged = jwt.encode({**claims, **patch}, signing_secret(), algorithm="HS256")
             self.assertEqual(self.client.get("/auth/me", headers={"Authorization": "Bearer " + forged}).status_code, expected)
         forged = jwt.encode(claims, "different-signing-secret-at-least-32-characters", algorithm="HS256")

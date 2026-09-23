@@ -7,6 +7,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy import select
 from database import tenant_session
+from admin_access import is_allowed_admin
 from models import User, Student, Company
 from schemas import UserResponse, TokenResponse
 
@@ -31,6 +32,9 @@ def verify_password(password, hashed):
     return passwords.verify(password, hashed)
 
 def user_response(session, user):
+    if user.role == "admin":
+        return UserResponse(user_id=user.id, college_id=user.college_id, role="admin",
+            email=user.email, name="Placement administrator")
     if user.role == "student":
         student = session.scalar(select(Student).where(Student.user_id == user.id, Student.college_id == user.college_id))
         if student is None:
@@ -51,7 +55,7 @@ def issue_token(user, student=None, company=None):
     return TokenResponse(access_token=token, expires_in=TOKEN_SECONDS,
         user=UserResponse(user_id=user.id, student_id=student.id if student else None,
             company_id=company.id if company else None, college_id=user.college_id,
-            role=user.role, email=user.email, name=student.name if student else company.name))
+            role=user.role, email=user.email, name=student.name if student else company.name if company else "Placement administrator"))
 
 def current_identity(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)):
     unauthorized = HTTPException(401, "Please log in again; your session is missing or expired.",
@@ -65,7 +69,7 @@ def current_identity(credentials: HTTPAuthorizationCredentials | None = Depends(
             or type(claims.get("user_id")) is not int or claims["user_id"] < 1
             or claims["sub"] != str(claims["user_id"])):
             raise unauthorized
-        if claims.get("role") not in ("student", "recruiter"):
+        if claims.get("role") not in ("student", "recruiter", "admin"):
             raise HTTPException(403, "This role is not available in the current phase.")
         return claims
     except JWTError:
@@ -77,6 +81,8 @@ def authenticated_session(identity=Depends(current_identity)):
             User.college_id == identity["college_id"], User.role == identity["role"]))
         if user is None:
             raise HTTPException(401, "Your account or role has changed. Please log in again.")
+        if user.role == "admin" and not is_allowed_admin(user):
+            raise HTTPException(403, "Administrator access is not enabled for this account.")
         yield session, user
 
 def student_session(context=Depends(authenticated_session)):
@@ -95,3 +101,8 @@ def owned_student(session, user, student_id):
     if student is None:
         raise HTTPException(404, "Student profile not found.")
     return student
+
+def admin_session(context=Depends(authenticated_session)):
+    if context[1].role != "admin":
+        raise HTTPException(403, "This endpoint is available to placement administrators only.")
+    return context

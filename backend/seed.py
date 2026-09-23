@@ -86,8 +86,67 @@ def seed_companies(college_id=1):
     return created, demonstrations
 
 
+
+def seed_phase3(college_id=1):
+    from datetime import datetime, timedelta, timezone
+    from models import Company, Job, Interview, RiskPrediction
+    from engines.scheduling import lock_calendar
+    from engines.support import run_support
+    created = {"support_students":0, "interviews":0}
+    unused_hash = hash_password(secrets.token_urlsafe(32))
+    with tenant_session(college_id) as session:
+        lock_calendar(session, college_id)
+        recruiter = session.scalar(select(User).where(User.college_id == college_id, User.email == "recruiter01@demo.jobjugaad.test"))
+        company = session.scalar(select(Company).where(Company.college_id == college_id, Company.recruiter_user_id == recruiter.id))
+        job = session.scalar(select(Job).where(Job.college_id == college_id, Job.company_id == company.id, Job.title == "Simulated Cloud Support Track"))
+        if job is None:
+            payload = JobInput(title="Simulated Cloud Support Track", ctc=5, min_cgpa=5, max_backlogs=3,
+                eligible_branches=["CSE","ECE","EE","ME"],
+                required_skills=[dict(skill_name=name,min_proficiency=60) for name in ("python","sql","aws","git")])
+            job = Job(college_id=college_id, company_id=company.id, **payload.model_dump())
+            session.add(job); session.flush()
+        support_students = []
+        for index in range(1,5):
+            email = f"support{index:02d}@demo.jobjugaad.test"
+            user = session.scalar(select(User).where(User.college_id == college_id, User.email == email))
+            if user is None:
+                user = User(college_id=college_id,email=email,password_hash=unused_hash,role="student")
+                session.add(user);session.flush()
+                student = Student(college_id=college_id,user_id=user.id,name=f"Synthetic Support Student {index:02d}")
+                session.add(student);session.flush()
+                save_profile(session,student,ProfileUpdate(name=student.name,branch="CSE",cgpa=6.2,
+                    skills=[SkillInput(skill_name="python",proficiency=20+index)],projects=[],
+                    aptitude_score=35,communication_score=40,interview_score=15+index*5))
+                created["support_students"] += 1
+            else:
+                student = session.scalar(select(Student).where(Student.college_id == college_id,Student.user_id == user.id))
+            support_students.append(student)
+        now = datetime.now(timezone.utc)
+        anchor = (now+timedelta(days=1)).replace(hour=4,minute=30,second=0,microsecond=0)
+        student = support_students[0]  # Never attach demonstration bookings to a real account.
+        demo_jobs = session.scalars(select(Job).where(Job.college_id == college_id,Job.title.in_([d.title for d in DEMO_DRIVES])).order_by(Job.id).limit(2)).all()
+        fixtures = [
+            ("phase3-double-booking-a",student.id,demo_jobs[0].id,anchor,"scheduled","demo hall","demo panel"),
+            ("phase3-double-booking-b",student.id,demo_jobs[1].id,anchor+timedelta(minutes=15),"scheduled","demo hall","demo panel"),
+            ("phase3-participation-a",support_students[3].id,job.id,now-timedelta(days=3),"completed","practice room a","mentor a"),
+            ("phase3-participation-b",support_students[3].id,job.id,now-timedelta(days=6),"completed","practice room b","mentor b"),
+        ]
+        for key, student_id, job_id, start, status, venue, panel in fixtures:
+            if session.scalar(select(Interview.id).where(Interview.college_id == college_id,Interview.seed_key == key)) is None:
+                # Deliberately imported conflict fixture. Normal API confirmations cannot create conflicts.
+                session.add(Interview(college_id=college_id,student_id=student_id,job_id=job_id,scheduled_time=start,
+                    end_time=start+timedelta(minutes=30),status=status,venue=venue,panel_id=panel,seed_key=key))
+                created["interviews"] += 1
+        session.flush()
+        if session.scalar(select(RiskPrediction.id).where(RiskPrediction.college_id == college_id,RiskPrediction.job_id == job.id).limit(1)) is None:
+            report = run_support(session,recruiter,job.id)
+            created["flagged_for_review"] = report.flagged_count
+        created["support_job_id"] = job.id
+    return created
+
+
 if __name__ == "__main__":
     initialize_schema()
     print(f"Created {seed_students()} synthetic students.")
-    companies, demonstrations = seed_companies()
-    print(f"Created {companies} synthetic companies. New demonstration summaries: {demonstrations}")
+    print(seed_companies())
+    print(seed_phase3())

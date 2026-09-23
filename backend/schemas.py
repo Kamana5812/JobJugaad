@@ -48,7 +48,7 @@ class UserResponse(BaseModel):
     student_id: int | None = None
     company_id: int | None = None
     college_id: int
-    role: Literal["student", "recruiter"] = "student"
+    role: Literal["student", "recruiter", "admin"] = "student"
     email: str
     name: str
 
@@ -245,3 +245,181 @@ class MatchResults(MatchSummary):
     candidates: list[CandidateResponse]
     offset: int
     limit: int
+
+# Phase 3 contracts: support numbers are rule counts accompanied by evidence.
+from pydantic import AwareDatetime
+
+class AdminAccountConfig(InputModel):
+    email: str
+    college_id: Literal[1, 2]
+
+class ScheduleInput(InputModel):
+    job_id: int = Field(gt=0)
+    student_id: int = Field(gt=0)
+    scheduled_time: AwareDatetime
+    duration_minutes: int = Field(default=30, ge=5, le=240, strict=True)
+    venue: str = Field(min_length=1, max_length=100)
+    panel_id: str = Field(min_length=1, max_length=80)
+    reschedule_interview_id: int | None = Field(default=None, gt=0)
+
+    @field_validator("venue", "panel_id")
+    @classmethod
+    def normalize_resource(cls, value):
+        return " ".join(value.lower().split())
+
+class ConflictResponse(BaseModel):
+    interview_id: int
+    job_id: int
+    student_id: int
+    scheduled_time: datetime
+    end_time: datetime
+    kinds: list[Literal["student", "venue", "panel", "overlapping_drive"]]
+    explanation: str
+
+class SlotProposal(BaseModel):
+    requested_time: datetime
+    proposed_time: datetime | None
+    proposed_end_time: datetime | None
+    conflicts: list[ConflictResponse]
+    explanation: str
+    requires_approval: Literal[True] = True
+    methodology: str
+
+class ScheduleResponse(BaseModel):
+    id: int
+    college_id: int
+    job_id: int
+    student_id: int
+    requested_time: datetime
+    scheduled_time: datetime
+    end_time: datetime
+    venue: str
+    panel_id: str
+    status: str
+    conflicts: list[ConflictResponse]
+    explanation: str
+    reschedule_interview_id: int | None
+    version: int
+    review_reason: str | None
+    reviewed_by: int | None
+    created_at: datetime
+
+class InterviewResponse(BaseModel):
+    id: int
+    college_id: int
+    schedule_id: int | None
+    job_id: int
+    student_id: int
+    scheduled_time: datetime
+    end_time: datetime
+    venue: str
+    panel_id: str
+    status: str
+    seed_key: str | None
+
+class AuditEventResponse(BaseModel):
+    id: int
+    actor_user_id: int
+    action: str
+    reason: str
+    snapshot: dict
+    created_at: datetime
+
+class ScheduleReviewInput(InputModel):
+    action: Literal["approve","reject"]
+    version: int = Field(ge=1, strict=True)
+    reason: str = Field(min_length=10,max_length=1000)
+
+class ScheduleRecheckInput(InputModel):
+    version: int = Field(ge=1, strict=True)
+
+class InterviewStatusInput(InputModel):
+    status: Literal["completed","selected","rejected","cancelled"]
+    reason: str = Field(min_length=10,max_length=1000)
+
+class NamedOption(BaseModel):
+    id: int
+    name: str
+
+class BookingConflict(BaseModel):
+    interview_id: int
+    other_interview_id: int
+    kinds: list[str]
+    explanation: str
+
+class SchedulingBoard(BaseModel):
+    jobs: list[NamedOption]
+    students: list[NamedOption]
+    interviews: list[InterviewResponse]
+    proposals: list[ScheduleResponse]
+    conflicts: list[BookingConflict]
+    audit: list[AuditEventResponse]
+
+class ConversionRow(BaseModel):
+    name: str
+    total_students: int
+    shortlisted_students: int
+    conversion_percent: float | None
+
+class AnalyticsResponse(BaseModel):
+    students: int
+    recruiters: int
+    drives: int
+    placement_percent: float | None
+    placement_explanation: str
+    branch_conversion: list[ConversionRow]
+    skill_conversion: list[ConversionRow]
+    ctc_min_lpa: float | None
+    ctc_max_lpa: float | None
+    ctc_mean_lpa: float | None
+    methodology: str
+    generated_at: datetime
+
+class SupportFactor(BaseModel):
+    key: str
+    label: str
+    value: float | None
+    threshold: str
+    triggered: bool
+    contribution: Literal[0,1]
+    explanation: str
+
+class Intervention(BaseModel):
+    category: str
+    action: str
+
+class SupportCalculation(BaseModel):
+    score: int
+    score_label: Literal["Support indicators met /3"] = "Support indicators met /3"
+    support_priority: Literal["low","high"]
+    flagged: bool
+    assessable: bool
+    contributing_factors: list[SupportFactor]
+    recommendation: list[Intervention]
+    explanation: str
+    methodology: str
+
+class SupportResponse(SupportCalculation):
+    id: int
+    job_id: int
+    student_id: int
+    student_name: str
+    review_status: Literal["active","reviewed","dismissed"]
+    evaluated_at: datetime
+    audit: list[AuditEventResponse]
+
+class SupportReport(BaseModel):
+    job_id: int
+    total_evaluated: int
+    flagged_count: int
+    active_count: int
+    unknown_interview_score_count: int
+    students: list[SupportResponse]
+    methodology: str
+
+class SupportRunInput(InputModel):
+    job_id: int = Field(gt=0)
+
+class SupportReviewInput(InputModel):
+    action: Literal["active","reviewed","dismissed"]
+    reason: str = Field(min_length=10,max_length=1000)

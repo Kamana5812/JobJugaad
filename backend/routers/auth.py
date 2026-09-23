@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from auth import hash_password, verify_password, issue_token, authenticated_session, user_response
 from database import tenant_session
+from admin_access import is_allowed_admin
 from models import User, Student, Company
 from schemas import SignupRequest, RecruiterSignupRequest, LoginRequest, TokenResponse, UserResponse
 
@@ -57,7 +58,9 @@ def login(payload: LoginRequest):
             if company is None:
                 raise HTTPException(404, "Company profile not found.")
             return issue_token(user, company=company)
-        raise HTTPException(403, "This role is not available in the current phase.")
+        if user.role == "admin" and is_allowed_admin(user):
+            return issue_token(user)
+        raise HTTPException(403, "Administrator access is not enabled for this account.")
 
 @router.get("/me", response_model=UserResponse)
 def me(context=Depends(authenticated_session)):

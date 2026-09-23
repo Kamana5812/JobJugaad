@@ -36,3 +36,19 @@ def upload_resume(student_id: int, file: UploadFile = File(...), context=Depends
     update_fields(session, student, {"resume_text": extracted})
     return ResumeResponse(detail="Resume text saved. Review it and update your profile evidence below.",
         extracted_characters=len(extracted), profile=profile_response(session, student))
+
+from fastapi import Query
+from engines import offers
+from schemas import OfferList, OfferResponse, OfferStudentAction
+
+@router.get("/{student_id}/offers", response_model=OfferList)
+def offer_list(student_id:int,offset:int=Query(0,ge=0),limit:int=Query(20,ge=1,le=50),context=Depends(student_session)):
+    session,user=context
+    owned_student(session,user,student_id)
+    return offers.list_offers(session,user,offset,limit)
+
+@router.post("/{student_id}/offers/{offer_id}/actions", response_model=OfferResponse)
+def offer_action(student_id:int,offer_id:int,payload:OfferStudentAction,context=Depends(student_session)):
+    session,user=context
+    owned_student(session,user,student_id)
+    return offers.student_action(session,user,offer_id,payload)

@@ -152,6 +152,8 @@ class TalentIntegrationTests(unittest.TestCase):
         self.assertEqual(candidate["override_action"], "reject")
         self.assertGreaterEqual(len(candidate["audit"]), 2)
         excluded = self.client.get(path + "/matches?status=excluded&limit=100", headers=headers).json()["candidates"]
+        self.assertTrue(any(not m["eligible"] and m["override_action"] is None for m in excluded),
+            "Excluded results must include ineligible candidates without a manual override")
         low = next(m for m in excluded if not m["eligible"])
         promoted = self.client.post(path + f"/matches/{low['id']}/override", headers=headers,
             json=dict(action="promote", reason="Synthetic documented eligibility exception")).json()
@@ -185,11 +187,11 @@ class TalentIntegrationTests(unittest.TestCase):
         self.assertEqual(seed_companies(), (0, []))
         with tenant_session(1) as session:
             count = session.scalar(select(func.count(Company.id)).where(Company.college_id == 1, Company.name.like("Synthetic Company %")))
-            self.assertEqual(count, 12)
+            self.assertEqual(count, 45)
             for demo in DEMO_DRIVES:
                 job = session.scalar(select(Job).where(Job.college_id == 1, Job.title == demo.title).order_by(Job.id))
                 matches = session.scalars(select(Match).where(Match.college_id == 1, Match.job_id == job.id)).all()
-                self.assertGreaterEqual(len(matches), 300)
+                self.assertGreaterEqual(len(matches), 4800)
                 self.assertTrue(all(m.factor_breakdown and m.explanation for m in matches))
 
 if __name__ == "__main__":

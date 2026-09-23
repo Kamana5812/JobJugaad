@@ -362,6 +362,13 @@ class ConversionRow(BaseModel):
     conversion_percent: float | None
 
 class AnalyticsResponse(BaseModel):
+    accepted_students: int = 0
+    joined_students: int = 0
+    offer_count: int = 0
+    synthetic_offer_count: int = 0
+    accepted_ctc_min_lpa: float | None = None
+    accepted_ctc_max_lpa: float | None = None
+    accepted_ctc_mean_lpa: float | None = None
     students: int
     recruiters: int
     drives: int
@@ -423,3 +430,87 @@ class SupportRunInput(InputModel):
 class SupportReviewInput(InputModel):
     action: Literal["active","reviewed","dismissed"]
     reason: str = Field(min_length=10,max_length=1000)
+
+# Phase 4 lifecycle contracts. These are recorded statuses, not document verification software.
+class OfferCreate(InputModel):
+    interview_id: int = Field(gt=0)
+    ctc: float | None = Field(default=None, gt=0, le=10000, allow_inf_nan=False)
+    reason: str = Field(min_length=10, max_length=1000)
+
+class OfferAdminUpdate(InputModel):
+    stage: Literal["offer_letter_status","documents_status","verification_status","joining_status"]
+    value: str = Field(min_length=1, max_length=24)
+    version: int = Field(ge=1, strict=True)
+    reason: str = Field(min_length=10, max_length=1000)
+
+class OfferStudentAction(InputModel):
+    action: Literal["submit_documents","accept","decline"]
+    version: int = Field(ge=1, strict=True)
+    reason: str = Field(min_length=10, max_length=1000)
+
+class OfferAuditResponse(BaseModel):
+    id: int
+    actor_user_id: int | None
+    action: str
+    reason: str
+    snapshot: dict
+    created_at: datetime
+
+class OfferResponse(BaseModel):
+    id: int
+    student_id: int
+    student_name: str
+    job_id: int
+    job_title: str
+    company_name: str
+    interview_id: int
+    ctc: float
+    offer_letter_status: Literal["draft","issued","withdrawn"]
+    documents_status: Literal["pending","submitted","changes_requested"]
+    verification_status: Literal["pending","verified","rejected"]
+    acceptance_status: Literal["pending","accepted","declined"]
+    joining_status: Literal["pending","joined","not_joined"]
+    version: int
+    is_synthetic: bool
+    created_at: datetime
+    updated_at: datetime
+    next_steps: list[str]
+    audit: list[OfferAuditResponse]
+    methodology: str
+
+class OfferList(BaseModel):
+    offers: list[OfferResponse]
+    total: int
+    offset: int
+    limit: int
+
+class OfferCandidate(BaseModel):
+    interview_id: int
+    student_id: int
+    student_name: str
+    job_title: str
+    ctc: float
+
+class OfferCandidateList(BaseModel):
+    candidates: list[OfferCandidate]
+    total: int
+    offset: int
+    limit: int
+
+class NotificationResponse(BaseModel):
+    id: int
+    kind: str
+    title: str
+    body: str
+    target_path: str
+    read_at: datetime | None
+    created_at: datetime
+    delivery: Literal["simulated_in_app"] = "simulated_in_app"
+
+class NotificationFeed(BaseModel):
+    notifications: list[NotificationResponse]
+    unread_count: int
+    total: int
+    offset: int
+    limit: int
+    explanation: str = "Simulated in-app records only. No email or SMS is sent."

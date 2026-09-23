@@ -145,11 +145,6 @@ def seed_phase3(college_id=1):
     return created
 
 
-if __name__ == "__main__":
-    initialize_schema()
-    print(f"Created {seed_students()} synthetic students.")
-    print(seed_companies())
-    print(seed_phase3())
 
 # Phase 4 population: proposed synthetic distributions, NOT observed placement statistics.
 # Shared preparation influences CGPA/skills/assessments; independent noise leaves realistic exceptions.
@@ -193,3 +188,155 @@ def phase4_profile(index):
     activity=max(0,min(3,round(3*preparation+rng.gauss(0,0.7))))
     outcome_roll=rng.random()
     return profile,dict(track=index%3,selected=selected,activity=activity,outcome_roll=outcome_roll)
+
+
+def seed_phase4_students(college_id=1):
+    from sqlalchemy import insert
+    from models import StudentSkill, Project, Certification
+    from engines.readiness import calculate_readiness
+    unused_hash=hash_password(secrets.token_urlsafe(32))
+    created=0
+    with tenant_session(college_id) as session:
+        session.execute(text("SELECT pg_advisory_xact_lock(20260402, :college)"),{"college":college_id})
+        existing=set(session.scalars(select(User.email).where(User.college_id==college_id)))
+        # 4,796 numbered profiles + the four preserved Phase 3 support profiles = 4,800 synthetic profiles.
+        missing=[i for i in range(301,4797) if f"student{i:02d}@demo.jobjugaad.test" not in existing]
+        for offset in range(0,len(missing),200):
+            indices=missing[offset:offset+200]
+            profiles={i:phase4_profile(i)[0] for i in indices}
+            users=session.execute(insert(User).returning(User.id,User.email),[
+                dict(college_id=college_id,email=f"student{i:02d}@demo.jobjugaad.test",role="student",password_hash=unused_hash) for i in indices]).all()
+            user_ids={u.email:u.id for u in users}
+            student_values=[]
+            for i,p in profiles.items():
+                data=p.model_dump(exclude={"skills","projects","certifications"})
+                data["readiness_score"]=calculate_readiness(p,p.skills,p.projects).score
+                student_values.append(dict(college_id=college_id,user_id=user_ids[f"student{i:02d}@demo.jobjugaad.test"],
+                    resume_text=f"Phase 4 synthetic resume {i}; demonstration only.",**data))
+            students=session.execute(insert(Student).returning(Student.id,Student.user_id),student_values).all()
+            student_ids={s.user_id:s.id for s in students}
+            for model,key in ((StudentSkill,"skills"),(Project,"projects"),(Certification,"certifications")):
+                values=[dict(college_id=college_id,student_id=student_ids[user_ids[f"student{i:02d}@demo.jobjugaad.test"]],**item.model_dump())
+                    for i,p in profiles.items() for item in getattr(p,key)]
+                if values:session.execute(insert(model),values)
+            created+=len(indices)
+    return created
+
+
+def seed_phase4_catalog(college_id=1):
+    from models import Company,Job
+    unused_hash=hash_password(secrets.token_urlsafe(32))
+    created=0
+    with tenant_session(college_id) as session:
+        session.execute(text("SELECT pg_advisory_xact_lock(20260403, :college)"),{"college":college_id})
+        for index in range(13,46):
+            email=f"recruiter{index:02d}@demo.jobjugaad.test"
+            user=session.scalar(select(User).where(User.college_id==college_id,User.email==email))
+            if user is None:
+                user=User(college_id=college_id,email=email,password_hash=unused_hash,role="recruiter")
+                session.add(user);session.flush()
+                session.add(Company(college_id=college_id,recruiter_user_id=user.id,
+                    name=f"Synthetic Company {index:02d}",industry="Simulated technology services"))
+                session.flush();created+=1
+            company=session.scalar(select(Company).where(Company.college_id==college_id,Company.recruiter_user_id==user.id))
+            if index<22:
+                title,ctc,cgpa,threshold,skills=PHASE4_ROLES[index-13]
+                job=session.scalar(select(Job).where(Job.college_id==college_id,Job.company_id==company.id,Job.title==title))
+                if job is None:
+                    payload=JobInput(title=title,ctc=ctc,min_cgpa=cgpa,min_match_score=threshold,
+                        max_backlogs=3 if threshold==45 else 1,eligible_branches=["CSE","ECE","EE","ME"],
+                        required_skills=[dict(skill_name=skill,min_proficiency=target) for skill,target in skills])
+                    session.add(Job(college_id=college_id,company_id=company.id,**payload.model_dump()))
+    return created
+
+
+def seed_phase4_outcomes(college_id=1):
+    from datetime import datetime,timedelta,timezone
+    from sqlalchemy import insert
+    from models import Job,Interview,Offer,OfferEvent,Notification,Company
+    from engines.scheduling import lock_calendar
+    created=dict(interviews=0,offers=0)
+    with tenant_session(college_id) as session:
+        lock_calendar(session,college_id)
+        session.execute(text("SELECT pg_advisory_xact_lock(20260401, :college)"),{"college":college_id})
+        jobs={j.title:j for j in session.scalars(select(Job).join(Company,Company.id==Job.company_id).join(User,User.id==Company.recruiter_user_id).where(
+            Job.college_id==college_id,Company.college_id==college_id,User.college_id==college_id,
+            User.email.in_([f"recruiter{i:02d}@demo.jobjugaad.test" for i in range(13,22)])))}
+        titles=("Simulated Backend Apprentice","Simulated Web Apprentice","Simulated General Support Trainee")
+        anchor=min(jobs[title].created_at for title in titles)
+        student_rows=session.execute(select(User.email,Student.id,Student.user_id,Student.resume_text)
+            .join(Student,Student.user_id==User.id).where(User.college_id==college_id,Student.college_id==college_id)).all()
+        students={row.email:row for row in student_rows}
+        existing_interviews={r.seed_key:r.id for r in session.scalars(select(Interview).where(
+            Interview.college_id==college_id,Interview.seed_key.startswith("phase4:")))}
+        existing_offers=set(session.scalars(select(Offer.seed_key).where(Offer.college_id==college_id,Offer.seed_key.startswith("phase4:"))))
+        for offset in range(301,4797,200):
+            pending_interviews=[];specs=[]
+            for i in range(offset,min(offset+200,4797)):
+                student=students.get(f"student{i:02d}@demo.jobjugaad.test")
+                if student is None or student.resume_text!=f"Phase 4 synthetic resume {i}; demonstration only.":
+                    continue  # Never fabricate outcomes on a real/pre-existing profile.
+                p,meta=phase4_profile(i);job=jobs[titles[meta["track"]]]
+                for n in range(max(meta["activity"],int(meta["selected"]))):
+                    key=f"phase4:interview:{i}:{n}"
+                    if key not in existing_interviews:
+                        start=anchor-timedelta(days=3+i%12+n)
+                        pending_interviews.append(dict(college_id=college_id,student_id=student.id,job_id=job.id,
+                            scheduled_time=start,end_time=start+timedelta(minutes=30),venue=f"synthetic room {i}",panel_id=f"synthetic panel {i}",
+                            status="selected" if meta["selected"] and n==0 else "completed",seed_key=key))
+                if meta["selected"] and f"phase4:offer:{i}" not in existing_offers:
+                    specs.append((i,student,job,meta))
+            if pending_interviews:
+                inserted=session.execute(insert(Interview).returning(Interview.id,Interview.seed_key),pending_interviews).all()
+                existing_interviews.update({row.seed_key:row.id for row in inserted})
+                created["interviews"]+=len(inserted)
+            offer_values=[]
+            for i,student,job,meta in specs:
+                roll=meta["outcome_roll"]
+                issued=roll>=0.12;accepted=roll>=0.35
+                offer_values.append(dict(college_id=college_id,student_id=student.id,job_id=job.id,
+                    interview_id=existing_interviews[f"phase4:interview:{i}:0"],ctc=job.ctc,is_synthetic=True,seed_key=f"phase4:offer:{i}",
+                    offer_letter_status="issued" if issued else "draft",documents_status="submitted" if accepted else "pending",
+                    verification_status="verified" if accepted else "pending",acceptance_status="accepted" if accepted else "declined" if roll>=0.25 else "pending",
+                    joining_status="not_joined" if roll>=0.93 else "joined" if roll>=0.65 else "pending"))
+            if offer_values:
+                inserted=session.execute(insert(Offer).returning(Offer),offer_values).scalars().all()
+                from engines.offers import snapshot
+                session.execute(insert(OfferEvent),[dict(college_id=college_id,offer_id=o.id,actor_user_id=None,action="synthetic_import",
+                    reason="Synthetic outcome sampled from proposed correlated data-generation assumptions; not a human decision or observed placement.",
+                    snapshot={"before":None,"after":snapshot(o)}) for o in inserted])
+                recipients={student.id:student.user_id for _,student,_,_ in specs}
+                session.execute(insert(Notification),[dict(college_id=college_id,recipient_user_id=recipients[o.student_id],
+                    event_key=f"offer:{o.id}:version:1",kind="offer",title="Synthetic offer tracking example",
+                    body="Simulated offer history is available. These are fictional outcomes, not an actual employer offer.",
+                    target_path="/student/offers") for o in inserted])
+                created["offers"]+=len(inserted)
+    return created
+
+
+def seed_phase4(college_id=1):
+    from sqlalchemy import func
+    from models import Job,Match,Company
+    from engines.talent import run_matching
+    result=dict(students=seed_phase4_students(college_id),companies=seed_phase4_catalog(college_id))
+    result.update(seed_phase4_outcomes(college_id))
+    # Bring the original three drive snapshots up to the full population, preserving recruiter overrides.
+    with tenant_session(college_id) as session:
+        total=session.scalar(select(func.count()).select_from(Student).where(Student.college_id==college_id))
+        jobs=session.scalars(select(Job).join(Company,Company.id==Job.company_id).join(User,User.id==Company.recruiter_user_id).where(
+            Job.college_id==college_id,Company.college_id==college_id,User.college_id==college_id,
+            User.email.in_([f"recruiter{i:02d}@demo.jobjugaad.test" for i in range(1,4)]),Job.title.in_([d.title for d in DEMO_DRIVES]))
+            .order_by(Job.id).with_for_update(of=Job)).all()
+        result["matching_runs"]=[]
+        for job in jobs:
+            covered=session.scalar(select(func.count()).select_from(Match).where(Match.college_id==college_id,Match.job_id==job.id))
+            if covered<total:result["matching_runs"].append(run_matching(session,job).model_dump())
+    return result
+
+
+if __name__ == "__main__":
+    initialize_schema()
+    print(f"Created {seed_students()} synthetic students.")
+    print(seed_companies())
+    print(seed_phase3())
+    print(seed_phase4())

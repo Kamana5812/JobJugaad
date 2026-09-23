@@ -4,7 +4,8 @@ import json
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
-from sqlalchemy import select, update, text
+from sqlalchemy import select, update, text, case
+from sqlalchemy.dialects.postgresql import insert
 from models import Job, Student, StudentSkill, Interview, RiskPrediction, SupportReview
 from schemas import SupportCalculation, SupportResponse, SupportReport, AuditEventResponse
 from engines.risk import evaluate_support, METHOD
@@ -38,19 +39,23 @@ def run_support(session, user, job_id):
             Interview.status.in_(["completed","selected","rejected"]), Interview.end_time >= now-timedelta(days=30),
             Interview.end_time <= now)):
         attendance[booking.student_id] += 1
-    rows = {r.student_id:r for r in session.scalars(select(RiskPrediction).where(RiskPrediction.college_id == college, RiskPrediction.job_id == job_id))}
+    values = []
     for student in students:
         result = evaluate_support(student, skills[student.id], job, attendance[student.id])
         data = result.model_dump(exclude={"methodology","score_label"})
         digest = hashlib.sha256(json.dumps(data,sort_keys=True).encode()).hexdigest()
-        row = rows.get(student.id)
-        if row is None:
-            session.add(RiskPrediction(college_id=college, student_id=student.id, job_id=job_id,
-                **data, evidence_hash=digest, evaluated_at=now, review_status="active"))
-        else:
-            session.execute(update(RiskPrediction).where(RiskPrediction.college_id == college, RiskPrediction.id == row.id,
-                RiskPrediction.job_id == job_id).values(**data, evidence_hash=digest, evaluated_at=now,
-                review_status=row.review_status if row.evidence_hash == digest else "active"))
+        values.append(dict(college_id=college, student_id=student.id, job_id=job_id,
+            **data, evidence_hash=digest, evaluated_at=now, review_status="active"))
+    # Batch writes for the full demonstration cohort; the college advisory lock serializes reviews.
+    for offset in range(0, len(values), 100):
+        statement = insert(RiskPrediction).values(values[offset:offset+100])
+        incoming = statement.excluded
+        changes = {key:getattr(incoming,key) for key in values[offset] if key not in ("college_id","student_id","job_id","review_status")}
+        changes["review_status"] = case((RiskPrediction.evidence_hash == incoming.evidence_hash,
+            RiskPrediction.review_status), else_="active")
+        session.execute(statement.on_conflict_do_update(
+            index_elements=["college_id","student_id","job_id"],set_=changes,
+            where=(RiskPrediction.college_id == college) & (RiskPrediction.job_id == job_id)))
     session.flush()
     return report(session, user, job_id)
 

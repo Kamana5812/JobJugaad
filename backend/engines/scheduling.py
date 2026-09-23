@@ -5,6 +5,7 @@ from sqlalchemy import select, update, text
 from models import Job, Student, Schedule, Interview, ScheduleEvent
 from schemas import ScheduleInput, ScheduleResponse, InterviewResponse, AuditEventResponse, SchedulingBoard, NamedOption, BookingConflict
 from engines.scheduler import propose_slot, conflicts_for
+from engines.notifications import notify_student
 
 
 def lock_calendar(session, college):
@@ -12,8 +13,11 @@ def lock_calendar(session, college):
     session.execute(text("SELECT pg_advisory_xact_lock(20260301, :college)"), {"college": college})
 
 
-def all_bookings(session, college):
-    return session.scalars(select(Interview).where(Interview.college_id == college).order_by(Interview.scheduled_time, Interview.id)).all()
+def all_bookings(session, college, since=None):
+    query=select(Interview).where(Interview.college_id==college)
+    if since is not None:
+        query=query.where(Interview.end_time>since,Interview.status!="cancelled")
+    return session.scalars(query.order_by(Interview.scheduled_time,Interview.id)).all()
 
 
 def owned_interview(session, college, interview_id):
@@ -38,7 +42,7 @@ def check_schedule(session, user, payload):
     validate_references(session, user.college_id, payload)
     if payload.scheduled_time <= datetime.now(timezone.utc):
         raise HTTPException(422, "Choose a future interview time.")
-    return propose_slot(payload, all_bookings(session, user.college_id))
+    return propose_slot(payload, all_bookings(session, user.college_id, payload.scheduled_time))
 
 
 def event(session, user, action, reason, snapshot, schedule_id=None, interview_id=None):
@@ -108,7 +112,7 @@ def review_proposal(session, user, schedule_id, payload):
         validate_references(session, user.college_id, request)
         if request.scheduled_time <= datetime.now(timezone.utc):
             raise HTTPException(409, "This proposed time has passed. Recheck the proposal before approval.")
-        if conflicts_for(request, all_bookings(session, user.college_id)):
+        if conflicts_for(request, all_bookings(session, user.college_id, request.scheduled_time)):
             raise HTTPException(409, "The proposed slot is now occupied. Recheck for a new proposal; no booking was changed.")
         if row.reschedule_interview_id:
             session.execute(update(Interview).where(Interview.id == row.reschedule_interview_id,
@@ -123,6 +127,10 @@ def review_proposal(session, user, schedule_id, payload):
         reviewed_by=user.id, review_reason=payload.reason, version=row.version+1))
     event(session, user, payload.action, payload.reason, {"before":before,"after":response(row).model_dump(mode="json")},
         schedule_id=row.id, interview_id=interview.id if interview else None)
+    if interview:
+        notify_student(session,user.college_id,interview.student_id,f"interview:{interview.id}:confirmed",
+            "Interview confirmed",f"Interview #{interview.id} for drive #{interview.job_id} is confirmed at {interview.scheduled_time.isoformat()} in {interview.venue}, panel {interview.panel_id}. "
+            + (f"It replaces interview #{row.reschedule_interview_id}. " if row.reschedule_interview_id else "") + row.explanation)
     return response(row)
 
 
@@ -137,12 +145,17 @@ def change_interview_status(session, user, interview_id, payload):
     session.execute(update(Interview).where(Interview.id == row.id, Interview.college_id == user.college_id).values(status=payload.status))
     result = InterviewResponse.model_validate(row, from_attributes=True)
     event(session, user, "interview_status", payload.reason, {"before":before,"after":result.model_dump(mode="json")}, interview_id=row.id)
+    notify_student(session,user.college_id,row.student_id,f"interview:{row.id}:status:{payload.status}",
+        "Interview status recorded",f"Interview #{row.id} for drive #{row.job_id}: {payload.status}. Reason: {payload.reason}")
     return result
 
 
 def calendar_board(session, user):
     college = user.college_id
-    bookings = all_bookings(session, college)
+    bookings=session.scalars(select(Interview).where(Interview.college_id==college,Interview.status=="scheduled")
+        .order_by(Interview.scheduled_time,Interview.id)).all()
+    history=session.scalars(select(Interview).where(Interview.college_id==college,Interview.status!="scheduled")
+        .order_by(Interview.id.desc()).limit(50)).all()
     conflicts = []
     seen = set()
     for booking in bookings:
@@ -163,6 +176,6 @@ def calendar_board(session, user):
     audit = session.scalars(select(ScheduleEvent).where(ScheduleEvent.college_id == college).order_by(ScheduleEvent.id.desc()).limit(50)).all()
     return SchedulingBoard(jobs=[NamedOption(id=j.id,name=j.title) for j in jobs],
         students=[NamedOption(id=s.id,name=s.name) for s in students],
-        interviews=[InterviewResponse.model_validate(b,from_attributes=True) for b in bookings],
+        interviews=[InterviewResponse.model_validate(b,from_attributes=True) for b in bookings+history],
         proposals=[response(p) for p in proposals], conflicts=conflicts,
         audit=[AuditEventResponse.model_validate(a,from_attributes=True) for a in audit])

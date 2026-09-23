@@ -74,6 +74,10 @@ Living record of project state and decisions. Update this file whenever a major 
 
 | 2026-09-23 | User reconfirmed Phase 3 and explicitly authorized Phase 4 | Implement separate offer stages, simulated in-app notifications, about 4,800 synthetic profiles and 40–50 companies, and frozen ten-profile evaluations. Stop before Phase 5. |
 
+| 2026-09-23 | Phase 4 uses five distinct offer stages, versioned role-scoped actions, audit snapshots and recipient-only simulated notifications | Student acceptance remains student-owned; document exchange/verification occurs externally. New tenant tables retain application filters and FORCE RLS. |
+| 2026-09-23 | Expand to 4,800 synthetic students/45 companies using noisy correlated preparation and fictional outcomes | Preserve earlier fixtures and human changes; label synthetic offers. Accepted offers and joining remain distinct analytics measures. |
+| 2026-09-23 | Freeze assistant-authored evaluation expectations before execution in c2748bf | Reproduced 25/30 expected matches; readiness/support each agree on 10/10. Keep disagreements and sample limitations; no validated accuracy claim. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -119,7 +123,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- Build Phase 4 offers, simulated notifications, correlated synthetic data and the written matching/readiness/support evaluations.
+- Phase 4 implementation is local: offers/audit/feed with FORCE RLS, student/admin views, 4,800 synthetic students and 45 companies, and frozen written evaluations. Production build and six offer integration tests passed; full regression, deployment and live lifecycle checks remain pending.
 
 ### ⏭️ Next Up
 - Complete and verify Phase 4 locally and live, write both evaluation reports, then stop for user acceptance before Phase 5.
@@ -131,7 +135,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
 - Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
-- The rule engines and 25 local rule/PostgreSQL tests are implemented and pass; the user confirmed the Phase 3 authenticated live checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 matching sanity checks and scoring face-validity review remain pending; no real-world accuracy is claimed.
+- The rule engines and 25 local rule/PostgreSQL tests are implemented and pass; the user confirmed the Phase 3 authenticated live checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
 - Notifications are planned as simulated in-app only; they are not implemented in Phase 0.
 - All fourteen Phase 1–3 tenant tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live initialization and API cross-college denial were verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
@@ -277,3 +281,6 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 
 
 > **Phase 4 start:** 2026-09-23 — User reconfirmed Phase 3 and authorized Phase 4. Reread PRD, Architecture (including Section 9), Rules, Phases, Design and Memory in order. Freeze manually inspected expected results before running the evaluation engines; identify assistant-authored synthetic judgments honestly and report observed counts/mismatches without real-world accuracy claims.
+
+
+> **Phase 4 local progress:** 2026-09-23 — Implemented offers, audit events and simulated recipient feeds with RLS; added student/admin views, correlated seed expansion and written evaluation reports. Six offer tests and production build passed. Actual-data React rendering checks all five stages/history and outcome analytics; this does not replace browser interactions. Full regression rerun includes batched support persistence and dataset integrity checks. Browser automation still fails initialization (missing kernel-assets path), so Swagger UI and live authenticated UI checks remain unverified. Next: complete regression checks, deploy tested code, verify live lifecycle, then stop for Phase 4 acceptance. Do not start Phase 5.

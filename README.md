@@ -29,7 +29,7 @@ This is a **proposed weighted rule**, not a trained model or a validated placeme
 
 Unrecorded factors contribute zero and are explicitly marked missing. Factor values and weighted contributions are rounded half-up to two decimals. Contributions are summed and the total rounded half-up to an integer before applying the official bands: 0–40 Not Ready, 41–65 Developing, 66–85 Ready, 86–100 Highly Employable. Certifications, backlogs, and resume prose are retained but do not add points to this formula.
 
-No accuracy benchmark or real-world outcome validation has been performed. Phase 4's planned face-validity review remains pending.
+No accuracy benchmark or real-world outcome validation has been performed. The assistant-authored synthetic face-validity review is documented in [evaluations/phase4-report.md](evaluations/phase4-report.md); it is not independent validation.
 
 ## Recruiter flow and matching
 
@@ -49,7 +49,7 @@ Recruiters can promote or reject any candidate with a reason. The audit records 
 | React Frontend Engineer | 301 | 8 | 293 |
 | Java Graduate Engineer | 301 | 26 | 275 |
 
-These are actual live outputs before manual smoke-test overrides: 300 seeded students plus one earlier synthetic check profile. They are **not accuracy or benchmark claims**. The self-labeled matching sanity evaluation remains scheduled for Phase 4. Seed-company passwords are unshared; create drives under your own recruiter account to run the same workflow.
+These are actual live outputs before manual smoke-test overrides: 300 seeded students plus one earlier synthetic check profile. They are **not accuracy or benchmark claims**. The later Phase 4 self-labeled sanity evaluation is documented in [evaluations/phase4-report.md](evaluations/phase4-report.md). Seed-company passwords are unshared; create drives under your own recruiter account to run the same workflow.
 
 Live checks verified all three candidate lists, five factor sums per result, descending order, explanations, promote/reject audit snapshots, persistence after rerun, HTTP 401 without authentication and HTTP 404 across colleges. All new endpoints were also exercised via local Swagger before frontend integration.
 
@@ -117,6 +117,17 @@ Placement support prediction, mock interview, live chatbot, embedding libraries,
 
 The Command Center is available at `/admin` after logging in with an allowlisted account. Register the intended account through the normal signup first. In the backend environment, set `ADMIN_ACCOUNTS` to a JSON array such as `[{"email":"admin@example.test","college_id":1}]`, using the exact existing account and demo college. Do not commit real account details or passwords. Startup promotes the selected account; log in again after deployment. No public admin signup or default admin password exists. Removing an allowlist entry denies subsequent admin logins and requests.
 
-Phase 3 adds deterministic scheduling proposals with explicit admin approval, branch/skill **shortlist** conversion charts, advertised package statistics and rule-based placement support review. Placement percentage remains unavailable until offers are tracked. Support scores count three proposed indicators and always include factors, explanations and interventions; they are not risk probabilities. See `ARCHITECTURE.md` Section 5 for exact thresholds and scheduling semantics.
+Phase 3 adds deterministic scheduling proposals with explicit admin approval, branch/skill **shortlist** conversion charts, advertised package statistics and rule-based placement support review. Phase 4 adds an accepted-offer placement proxy with separately recorded joining. Support scores count three proposed indicators and always include factors, explanations and interventions; they are not risk probabilities. See `ARCHITECTURE.md` Section 5 for exact thresholds and scheduling semantics.
 
-For the synthetic demo, open Scheduling to inspect the deliberately imported overlap, propose a resolution and approve it with a reason. Open Placement support and select Simulated Cloud Support Track to inspect the support evidence. Resolved fixtures are not recreated on restart. Phase 3 live/browser verification status is tracked in `MEMORY.md`; Phase 4 remains gated.
+For the synthetic demo, open Scheduling to inspect the deliberately imported overlap, propose a resolution and approve it with a reason. Open Placement support and select Simulated Cloud Support Track to inspect the support evidence. Resolved fixtures are not recreated on restart. Phase 3 live/browser verification status is tracked in `MEMORY.md`; Phase 4 is authorized; its live verification status is tracked there too.
+
+
+## Phase 4 offers and notifications
+
+Students open **My offers** to inspect letter, documents, verification, acceptance and joining separately. Administrators open **Command Center → Offers**, choose a selected interview and create a draft; issue the letter before the student records a response. Students exchange documents through the college's agreed external channel and record submission here. Administrators verify externally and record verification before joining. Reasons and before/after stages remain in history; stale concurrent changes are rejected.
+
+**Notifications** is a recipient-scoped simulated feed. Interview and offer actions create in-app records; no email/SMS is sent. Offer records are paginated and synthetic examples are labeled. Accepted-offer statistics include synthetic records and do not prove joining; joining has its own count.
+
+Startup expands the idempotent demo to 4,800 synthetic students and 45 companies. Shared preparation plus noise creates correlated profiles/outcomes; these are proposed generation assumptions, not real placement data. Matching demonstrations retain the original three drives; the evaluation considers 13 simulated roles.
+
+Frozen expectations and limitations: [protocol](EVALUATION_PROTOCOL.md). Actual results and disagreements: [written report](evaluations/phase4-report.md) and [full evidence](evaluations/phase4-results.json). Matching reproduced 25/30 expected roles; readiness bands and support flags agreed on 10/10 each. These counts describe an assistant-authored synthetic sanity check against our own assumptions, never validated accuracy.

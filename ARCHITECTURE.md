@@ -171,6 +171,14 @@ risk_predictions, simulations
 
 **Phase 3 implemented support extensions:** `risk_predictions` is unique per college/student/target job and stores the rule count (0–3), low/high support priority, flagged/assessable state, full factors/recommendations/explanation, evidence hash, evaluation time and active/reviewed/dismissed status. `support_reviews` stores the actor, action, reason and explained evidence snapshot. Both tables have college filters, composite tenant foreign keys and ENABLE/FORCE RLS. The historical table name does not imply a trained risk predictor.
 
+### Phase 4 offer lifecycle and notifications
+
+`offers` includes tenant/student/job/interview references, CTC, five separate stage fields, version, synthetic marker, optional seed key and timestamps. `offer_events` records actor (null only for synthetic imports), action, reason and before/after stage snapshots. `notifications` records tenant, recipient, deduplication event key, kind, title, body, target path, read time and creation time. All three tables receive ENABLE/FORCE RLS atomically with schema creation; every application query retains college filters. Composite foreign keys prevent cross-college references. Recipient/ownership checks additionally restrict access within a college.
+
+Administrators create draft offers only after a selected interview, issue or withdraw letters, request document corrections, record verification and record joining. Only the owning student submits their document-status declaration or accepts/declines. Versions and row locks reject concurrent stale actions. Joining requires issued letter + student acceptance + verified submitted documents. Declined, withdrawn and joined/non-joined offers are closed. Every successful action adds an audit event and a simulated in-app notification in the same transaction; no email/SMS is sent. Student responses also notify college administrators.
+
+This prototype tracks declarations about documents exchanged through the college's external channel. It does not store offer-letter/document files, perform automatic document validation or track post-joining careers. Notification reads are idempotent and recipient-scoped. Offer lists and eligible-interview choices are paginated; the calendar contains all scheduled bookings and the latest 50 other records. Matching and support persistence uses batches without changing formulas or discarding human reviews/overrides.
+
 ### Relationships
 ```
 STUDENT ──< Skills
@@ -290,7 +298,7 @@ Implemented as **deterministic rule-based conflict checking**, not an LLM call �
 
 Pending proposals do not reserve resources. A college-scoped PostgreSQL transaction advisory lock serializes confirmation/rescheduling/status changes; approval checks current availability again. Stale versions or newly occupied slots return 409 for recheck. Rescheduling cancels the old interview and inserts the replacement atomically only after approval, retaining history and audit evidence. Outcomes cannot be recorded before the interview ends. The seed deliberately imports two overlapping synthetic bookings; normal API confirmation cannot introduce that overlap. Seed keys preserve resolved fixtures across restarts.
 
-**Phase 3 analytics:** branch/skill conversion is distinct students shortlisted for any drive divided by recorded students in that group. It uses saved match snapshots and human overrides; it is not offer/placement conversion. Advertised CTC min/mean/max come from jobs. Placement percentage is null with an explanation until Phase 4 implements offers. No fabricated outcomes or benchmark metrics appear.
+**Phase 3 analytics:** branch/skill conversion is distinct students shortlisted for any drive divided by recorded students in that group. It uses saved match snapshots and human overrides; it is not offer/placement conversion. Advertised CTC min/mean/max come from jobs. Phase 4 adds an accepted-offer placement proxy: distinct students with an issued, accepted offer not marked not joined / recorded students. Joining is counted separately; synthetic offers are included and explicitly labeled. Advertised CTC remains per drive, while accepted CTC is per qualifying offer, so multiple offers for one student count separately in package statistics. No fabricated outcomes or benchmark metrics appear.
 
 ### Simulator (P2)
 ```
@@ -329,7 +337,15 @@ PUT    /admin/interviews/{interview_id}/status
 GET    /admin/support?job_id=...
 POST   /admin/support/run
 POST   /admin/support/{prediction_id}/review
-POST   /admin/simulate
+GET    /admin/offers
+GET    /admin/offers/eligible-interviews
+POST   /admin/offers
+PUT    /admin/offers/{offer_id}
+GET    /students/{id}/offers
+POST   /students/{id}/offers/{offer_id}/actions
+GET    /notifications
+PUT    /notifications/{notification_id}/read
+POST   /admin/simulate                  (P2, not implemented)
 
 GET    /health
 ```
@@ -378,3 +394,12 @@ All authenticated endpoints require a `Bearer <JWT>` header; the token payload i
 - Matching Engine: precision/recall against a small, self-labeled synthetic ground truth — label clearly as a sanity check.
 - Readiness Engine: face-validity review against manually inspected sample profiles.
 - At-Risk classifier (if built past P0 rules): ROC/precision-recall evaluation with class-imbalance-aware methodology (SMOTE or class weighting) — never report raw accuracy alone on an imbalanced classification task.
+
+
+### Phase 4 observed synthetic evaluation — 2026-09-23
+
+The local dataset contains 4,800 synthetic students (4,796 numbered profiles plus four preserved support cases), 45 synthetic companies and 13 simulated role specifications. A shared noisy preparation factor correlates CGPA, skills, projects and assessments with fictional selection/outcome imports; random variation preserves exceptions. Earlier seed records and human changes are not overwritten. Synthetic offer records are explicitly marked; their counts are not observed placements or model predictions.
+
+[EVALUATION_PROTOCOL.md](EVALUATION_PROTOCOL.md) and `backend/evaluation_expected.json` were frozen in commit `c2748bf` before engine evaluation. Ten manually inspected profiles have assistant-authored expected top-three roles, readiness bands and support flags, with input hashes and written reasons. [The report](evaluations/phase4-report.md) records **25 of 30 expected matches reproduced**, synthetic precision 25/30 and recall 25/30, **10/10 readiness-band agreements** and **10/10 support-flag agreements**. All five missing expected matches and full evidence are retained in the report and companion JSON. No weights, profiles or labels were tuned after observing results.
+
+These are synthetic sanity checks against our own assumptions and a face-validity review, not validated accuracy or independent human validation. The convenience sample lacks a Not Ready example and contains only one flagged support case. No generalization, calibrated confidence, latency benchmark or causal outcome claim follows. Requirement-coverage scoring may favor easier role targets over specialist fit. Re-running `backend/evaluate.py` refuses changed input/activity hashes rather than silently comparing different profiles; activity is time-sensitive and will age out of its 30-day window.

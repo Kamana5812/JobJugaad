@@ -216,3 +216,59 @@ class SupportReview(TenantRow, Base):
         ForeignKeyConstraint(["prediction_id","college_id"], ["risk_predictions.id","risk_predictions.college_id"]),
         ForeignKeyConstraint(["actor_user_id","college_id"], ["users.id","users.college_id"]),
         CheckConstraint("action IN ('active','reviewed','dismissed')"),)
+
+# Phase 4: distinct lifecycle stages, recipient-scoped feeds and retained change history.
+class Offer(TenantRow, Base):
+    __tablename__ = "offers"
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    job_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    interview_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    ctc: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    offer_letter_status: Mapped[str] = mapped_column(String(24), default="draft")
+    documents_status: Mapped[str] = mapped_column(String(24), default="pending")
+    verification_status: Mapped[str] = mapped_column(String(24), default="pending")
+    acceptance_status: Mapped[str] = mapped_column(String(24), default="pending")
+    joining_status: Mapped[str] = mapped_column(String(24), default="pending")
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    is_synthetic: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    seed_key: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (UniqueConstraint("id","college_id"), UniqueConstraint("college_id","student_id","job_id"),
+        UniqueConstraint("college_id","seed_key"),
+        ForeignKeyConstraint(["student_id","college_id"],["students.id","students.college_id"]),
+        ForeignKeyConstraint(["job_id","college_id"],["jobs.id","jobs.college_id"]),
+        ForeignKeyConstraint(["interview_id","college_id"],["interviews.id","interviews.college_id"]),
+        CheckConstraint("ctc > 0"),
+        CheckConstraint("offer_letter_status IN ('draft','issued','withdrawn')"),
+        CheckConstraint("documents_status IN ('pending','submitted','changes_requested')"),
+        CheckConstraint("verification_status IN ('pending','verified','rejected')"),
+        CheckConstraint("acceptance_status IN ('pending','accepted','declined')"),
+        CheckConstraint("joining_status IN ('pending','joined','not_joined')"),
+        CheckConstraint("verification_status != 'verified' OR documents_status = 'submitted'"),
+        CheckConstraint("joining_status != 'joined' OR (offer_letter_status = 'issued' AND acceptance_status = 'accepted' AND verification_status = 'verified')"))
+
+class OfferEvent(TenantRow, Base):
+    __tablename__ = "offer_events"
+    offer_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    actor_user_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    action: Mapped[str] = mapped_column(String(80), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (
+        ForeignKeyConstraint(["offer_id","college_id"],["offers.id","offers.college_id"]),
+        ForeignKeyConstraint(["actor_user_id","college_id"],["users.id","users.college_id"]),)
+
+class Notification(TenantRow, Base):
+    __tablename__ = "notifications"
+    recipient_user_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    event_key: Mapped[str] = mapped_column(String(160), nullable=False)
+    kind: Mapped[str] = mapped_column(String(40), nullable=False)
+    title: Mapped[str] = mapped_column(String(160), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    target_path: Mapped[str] = mapped_column(String(160), nullable=False)
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (UniqueConstraint("college_id","recipient_user_id","event_key"),
+        ForeignKeyConstraint(["recipient_user_id","college_id"],["users.id","users.college_id"]),)

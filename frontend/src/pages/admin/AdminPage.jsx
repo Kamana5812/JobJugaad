@@ -6,6 +6,7 @@ import { Message, secondaryStyle } from '../../components/FormField'
 import AnalyticsPanel from './AnalyticsPanel'
 import SchedulingPanel from './SchedulingPanel'
 import SupportPanel from './SupportPanel'
+import OffersPanel from './OffersPanel'
 export default function AdminPage() {
   const { user } = useAuth()
   const [tab, setTab] = useState('overview')
@@ -35,7 +36,7 @@ export default function AdminPage() {
     </header>
     <Message error>{error}</Message>
     <nav aria-label="Command Center sections" className="flex flex-wrap gap-2 rounded-2xl border border-line bg-white p-2">
-      {[['overview', 'Overview'], ['scheduling', 'Scheduling' + (board?.conflicts.length ? ' · ' + board.conflicts.length + ' conflict(s)' : '')], ['support', 'Placement support']].map(([key, label]) =>
+      {[['overview', 'Overview'], ['scheduling', 'Scheduling' + (board?.conflicts.length ? ' · ' + board.conflicts.length + ' conflict(s)' : '')], ['support', 'Placement support'], ['offers', 'Offers']].map(([key, label]) =>
         <button key={key} onClick={() => setTab(key)} aria-current={tab === key ? 'page' : undefined}
           className={'rounded-xl px-5 py-3 text-sm font-bold ' + (tab === key ? 'bg-navy text-white' : 'text-navy hover:bg-paper')}>{label}</button>)}
     </nav>
@@ -43,12 +44,13 @@ export default function AdminPage() {
       {tab === 'overview' && <AnalyticsPanel data={data} />}
       {tab === 'scheduling' && <SchedulingPanel board={board} refresh={refresh} />}
       {tab === 'support' && <SupportPanel jobs={board.jobs} />}
+      {tab === 'offers' && <OffersPanel refreshAnalytics={refresh} />}
     </>}
     <details className="rounded-2xl border border-line bg-white p-5 text-sm">
       <summary className="cursor-pointer font-bold text-navy">Jugaad Dost 🤝 · Quick help</summary>
       <div className="mt-4 space-y-3 text-muted"><p><strong>Who confirms a schedule?</strong> An administrator approves a proposal with a reason. Availability is checked again, so a stale proposal can be refused.</p>
         <p><strong>What do support indicators mean?</strong> They are proposed rule thresholds using recorded skills, self-reported interview scores and recent completed interview records. Review opportunity and missing records before acting.</p>
-        <p><strong>Why is placement percentage empty?</strong> Offer and joining outcomes are not tracked in this phase. Shortlist conversion uses match records and manual overrides.</p>
+        <p><strong>What does placement percentage mean?</strong> It counts students with an issued, accepted offer, excluding recorded non-joining. Joining is reported separately. Synthetic offers are included and labeled; branch and skill charts still show shortlist conversion.</p>
         <p>This is a static help panel.</p></div>
     </details>
   </div>

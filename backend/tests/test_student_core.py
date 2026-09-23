@@ -144,7 +144,7 @@ class StudentCoreTests(unittest.TestCase):
         self.assertEqual(seed_students(), 0)
         with tenant_session(1) as session:
             count = session.scalar(select(func.count(User.id)).where(User.college_id == 1, User.email.like("student%@demo.jobjugaad.test")))
-            self.assertEqual(count, 300)
+            self.assertEqual(count, 4796)
 
     def test_band_boundaries_missing_and_maximum(self):
         # Set all factors except projects to a chosen value and solve for total;

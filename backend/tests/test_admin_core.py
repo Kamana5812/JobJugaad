@@ -228,7 +228,7 @@ class AdminIntegrationTests(unittest.TestCase):
         a,b=self.accounts;headers=a["headers"]
         self.assertEqual(self.client.get("/docs").status_code,200)
         paths=self.client.get("/openapi.json").json()["paths"]
-        self.assertEqual(sum(len([m for m in methods if m in ("get","post","put")]) for path,methods in paths.items() if path.startswith("/admin/")),10)
+        self.assertEqual(sum(len([m for m in methods if m in ("get","post","put")]) for path,methods in paths.items() if path.startswith("/admin/")),14)
         payload={**a["slot"],"scheduled_time":(self.start+timedelta(days=30)).isoformat()}
         proposal=self.client.post("/admin/schedules",headers=headers,json=payload).json()
         approved=self.client.post(f"/admin/schedules/{proposal['id']}/review",headers=headers,
@@ -256,8 +256,8 @@ class AdminIntegrationTests(unittest.TestCase):
     def test_analytics_and_seed_idempotence(self):
         headers=self.accounts[0]["headers"]
         result=self.client.get("/admin/analytics/overview",headers=headers).json()
-        self.assertIsNone(result["placement_percent"])
-        self.assertIn("not tracked",result["placement_explanation"])
+        self.assertIsNotNone(result["placement_percent"])
+        self.assertIn("accepted offer",result["placement_explanation"])
         self.assertTrue(result["branch_conversion"] and result["skill_conversion"])
         for row in result["branch_conversion"]+result["skill_conversion"]:
             self.assertLessEqual(row["shortlisted_students"],row["total_students"])

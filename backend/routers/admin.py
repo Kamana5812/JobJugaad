@@ -47,3 +47,24 @@ def support_run(payload: SupportRunInput, context=Depends(admin_session)):
 @router.post("/support/{prediction_id}/review", response_model=SupportReport)
 def support_review(prediction_id: int, payload: SupportReviewInput, context=Depends(admin_session)):
     return support.review_support(*context, prediction_id, payload)
+
+# Offer issuance and verification remain explicit human actions.
+from engines import offers
+from schemas import OfferCreate, OfferAdminUpdate, OfferResponse, OfferList, OfferCandidateList
+
+@router.get("/offers", response_model=OfferList)
+def offer_list(offset:int=Query(0,ge=0),limit:int=Query(20,ge=1,le=50),context=Depends(admin_session)):
+    return offers.list_offers(*context,offset,limit)
+
+@router.get("/offers/eligible-interviews", response_model=OfferCandidateList)
+def offer_candidates(search:str=Query("",max_length=100),offset:int=Query(0,ge=0),
+                     limit:int=Query(20,ge=1,le=50),context=Depends(admin_session)):
+    return offers.candidates(*context,search,offset,limit)
+
+@router.post("/offers", response_model=OfferResponse,status_code=201)
+def create_offer(payload:OfferCreate,context=Depends(admin_session)):
+    return offers.create_offer(*context,payload)
+
+@router.put("/offers/{offer_id}", response_model=OfferResponse)
+def update_offer(offer_id:int,payload:OfferAdminUpdate,context=Depends(admin_session)):
+    return offers.admin_update(*context,offer_id,payload)

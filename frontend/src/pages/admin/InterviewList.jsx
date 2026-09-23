@@ -28,7 +28,7 @@ function InterviewRow({ item, names, onResolve, busy, perform }) {
   </article>
 }
 export default function InterviewList(props) {
-  return <DashboardCard title="04 Interview calendar" label="Confirmed bookings and retained history">
+  return <DashboardCard title="04 Interview calendar" label="All scheduled bookings · latest 50 other records">
     {!props.items.length && <p className="text-sm text-muted">No confirmed interviews yet.</p>}
     {props.items.map(item => <InterviewRow key={item.id} item={item} {...props} />)}
   </DashboardCard>

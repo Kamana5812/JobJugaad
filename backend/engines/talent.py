@@ -2,7 +2,8 @@
 from collections import defaultdict
 from datetime import datetime, timezone
 from fastapi import HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func, or_, and_
+from sqlalchemy.dialects.postgresql import insert
 from models import Company, Job, Match, MatchOverride, Student, StudentSkill, Project, Certification
 from schemas import CompanyResponse, JobResponse, MatchCalculation, CandidateResponse, OverrideResponse, MatchSummary, MatchResults
 from engines.matching import calculate_match
@@ -56,17 +57,17 @@ def run_matching(session, job):
         for row in session.scalars(select(model).where(model.college_id == college)):
             rows[row.student_id].append(row)
         grouped.append(rows)
-    existing = {m.student_id: m for m in session.scalars(select(Match).where(Match.college_id == college, Match.job_id == job.id))}
     now = datetime.now(timezone.utc)
-    for student in students:
-        calculation = calculate_match(student, *(items[student.id] for items in grouped), job).model_dump()
-        row = existing.get(student.id)
-        if row is None:
-            session.add(Match(college_id=college, job_id=job.id, student_id=student.id, calculated_at=now, **calculation))
-        else:
-            # Loaded with both tenant and job filters; keep manual decision and audit.
-            session.execute(update(Match).where(Match.id == row.id, Match.college_id == college,
-                Match.job_id == job.id).values(**calculation, calculated_at=now))
+    for offset in range(0,len(students),100):
+        values=[dict(college_id=college,job_id=job.id,student_id=student.id,calculated_at=now,
+            **calculate_match(student,*(items[student.id] for items in grouped),job).model_dump())
+            for student in students[offset:offset+100]]
+        statement=insert(Match).values(values)
+        # Only computed evidence changes on conflict. Human override and creation time are retained.
+        computed=set(values[0]) - {"college_id","job_id","student_id"}
+        session.execute(statement.on_conflict_do_update(index_elements=["job_id","student_id","college_id"],
+            set_={name:getattr(statement.excluded,name) for name in computed},
+            where=and_(Match.college_id==college,Match.job_id==job.id)))
     session.flush()
     return summary(session, job)
 
@@ -80,11 +81,19 @@ def all_matches(session, job):
         .order_by(Match.match_score.desc(), Match.student_id)).all()
 
 
+def shortlist_filter():
+    return or_(func.coalesce(Match.override_action=="promote",False),and_(Match.override_action.is_(None),Match.eligible.is_(True)))
+
+
 def summary(session, job, rows=None):
-    rows = all_matches(session, job) if rows is None else rows
-    accepted = sum(shortlisted(m) for m in rows)
-    return MatchSummary(job_id=job.id, total=len(rows), shortlisted=accepted, excluded=len(rows)-accepted,
-        overridden=sum(m.override_action is not None for m in rows))
+    if rows is not None:
+        total=len(rows);accepted=sum(shortlisted(m) for m in rows);overridden=sum(m.override_action is not None for m in rows)
+    else:
+        scope=(Match.college_id==job.college_id,Match.job_id==job.id)
+        total=session.scalar(select(func.count()).select_from(Match).where(*scope))
+        accepted=session.scalar(select(func.count()).select_from(Match).where(*scope,shortlist_filter()))
+        overridden=session.scalar(select(func.count()).select_from(Match).where(*scope,Match.override_action.is_not(None)))
+    return MatchSummary(job_id=job.id,total=total,shortlisted=accepted,excluded=total-accepted,overridden=overridden)
 
 
 def candidate_response(row, student, audit):
@@ -96,10 +105,11 @@ def candidate_response(row, student, audit):
 
 
 def match_results(session, job, status, offset, limit):
-    rows = all_matches(session, job)  # Simple descending sort, no secondary ranking algorithm.
-    totals = summary(session, job, rows)
-    selected = [m for m in rows if status == "all" or shortlisted(m) == (status == "shortlisted")]
-    page = selected[offset:offset+limit]
+    totals=summary(session,job)
+    query=select(Match).where(Match.college_id==job.college_id,Match.job_id==job.id)
+    if status!="all":query=query.where(shortlist_filter() if status=="shortlisted" else ~shortlist_filter())
+    # Same descending score and student-ID tie-breaker; pagination happens in PostgreSQL.
+    page=session.scalars(query.order_by(Match.match_score.desc(),Match.student_id).offset(offset).limit(limit)).all()
     ids = [m.student_id for m in page]
     students = {s.id: s for s in session.scalars(select(Student).where(Student.college_id == job.college_id, Student.id.in_(ids)))}
     audit = defaultdict(list)

@@ -123,7 +123,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- Phase 4 implementation is local: offers/audit/feed with FORCE RLS, student/admin views, 4,800 synthetic students and 45 companies, and frozen written evaluations. Production build and six offer integration tests passed; full regression, deployment and live lifecycle checks remain pending.
+- Phase 4 implementation is local: offers/audit/feed with FORCE RLS, student/admin views, 4,800 synthetic students and 45 companies, and frozen written evaluations. Production build, actual-data React rendering and 33 backend checks passed across the full run and targeted matching retest after fixing null-override exclusion filtering. Deployment and live lifecycle checks remain pending.
 
 ### ⏭️ Next Up
 - Complete and verify Phase 4 locally and live, write both evaluation reports, then stop for user acceptance before Phase 5.
@@ -284,3 +284,5 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 
 
 > **Phase 4 local progress:** 2026-09-23 — Implemented offers, audit events and simulated recipient feeds with RLS; added student/admin views, correlated seed expansion and written evaluation reports. Six offer tests and production build passed. Actual-data React rendering checks all five stages/history and outcome analytics; this does not replace browser interactions. Full regression rerun includes batched support persistence and dataset integrity checks. Browser automation still fails initialization (missing kernel-assets path), so Swagger UI and live authenticated UI checks remain unverified. Next: complete regression checks, deploy tested code, verify live lifecycle, then stop for Phase 4 acceptance. Do not start Phase 5.
+
+> **Phase 4 release preparation:** Implementation committed as `753da3c`. The 33-check regression run passed 32 checks and caught SQL null handling in excluded candidate filtering; after correction all eight matching checks passed, including that regression and override preservation. Final frontend production build passed. Browser initialization still fails after reset. Generated live synthetic-test credentials will remain under ignored `.local/`; never commit or print them. Deploy next, then verify live records and obtain the user's authenticated admin/student walkthrough before claiming the Phase 4 Definition of Done.

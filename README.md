@@ -8,6 +8,12 @@ Phases 0–4 are deployed and explicitly accepted. Phase 5 is deployed with fina
 - Backend: [health](https://jobjugaad-api.onrender.com/health) · [interactive API](https://jobjugaad-api.onrender.com/docs)
 - Repository: [Kamana5812/JobJugaad](https://github.com/Kamana5812/JobJugaad)
 
+## Portal navigation
+
+Open the landing page → **Get Started** or **Login** → choose **Student**, **Recruiter**, or **Admin**. Existing JWT authentication opens the account's verified portal. Admin remains sign-in only. All three dashboards have dedicated illustrations and role navigation. See [navigation flow](NAVIGATION_PREVIEW.md) and [live verification](evaluations/navigation-live-security.json) for release 4b58105/API 0.9.0.
+
+Student **Skill gaps** and **Opportunities** compare the saved profile with recorded college drives using the same explained weighted rule as Talent Finder. Eligible and excluded views remain separate; these read-only comparisons do not submit applications or alter recruiter decisions.
+
 ## Student flow
 
 Create a student account using synthetic details and Demo College 1 or 2. Use the same college when logging in. Upload a text-based resume PDF, review the extracted text, then record skills, projects, CGPA, and existing assessment results. Save to recalculate readiness. Every response and score display includes six factors and an explanation.

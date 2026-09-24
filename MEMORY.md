@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-24
-**Current phase:** User approved landing/auth on 2026-09-24. Completing three dashboard layouts and read-only student opportunity comparisons on `feature/role-navigation`. Production remains BTech / BE + MBA (API 0.8.0, application release bb3f743); all 19 tenant policies verified.
+**Current phase:** Approved landing, role-first auth and all three illustrated dashboards are live (application release 4b58105, API 0.9.0). Student skill gaps/opportunities, both models and all 19 tenant policies verified on 2026-09-24.
 
 ---
 
@@ -101,6 +101,9 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] User approved the landing/role-selection preview; deployed the full navigation and three illustrated dashboards in 4b58105/API 0.9.0. All four generated hero assets, original supplied branding and role guards are connected.
+- [x] Added owned student skill-gap and ranked-opportunity views using the unchanged weighted matching engine, explicit college filters and existing FORCE RLS. No applications, recruiter snapshots or overrides are changed by these comparisons.
+- [x] Passed all 55 backend tests, 18 navigation checks, 19 real-record dashboard-rendering checks, production build and 16 live HTTP/API checks. Safe evidence: evaluations/navigation-live-security.json.
 - [x] 2026-09-24: BTech / BE extension deployed as bb3f743/API 0.8.0. Publisher-reported engineering dataset v6 (2,966 rows; 181 modeled profiles), fixed group-disjoint training/evaluation, four-field explained signal, no MBA requirement, nineteenth tenant table with application filters/ownership/FORCE RLS.
 - [x] BTech verification: all 51 backend tests passed in one run; production frontend build and actual-output rendering passed. Live checks verified both models ready, all 19 policies, four additive factors, save/reload, unchanged MBA/readiness, missing/outside-source no score, access denials, restored original inputs and deployed frontend.
 - [x] 2026-09-24: Integrated and deployed the public Campus Recruitment Placement Likelihood Model (e6eba59/API 0.7.0). Startup-only trusted loading; optional validated academic inputs with ownership/college filters and 18th FORCE RLS table; separate score, baseline, all 12 factors, explanation and measured evaluation panel. No weighted-rule, matching or support changes.
@@ -157,10 +160,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- No implementation or deployment work remains for the authorized BTech extension. Interactive browser automation remains unavailable; HTTP/API, regression and component-render evidence is recorded separately.
+- No implementation or deployment work remains for the approved navigation/dashboard update. Interactive browser automation remains unavailable; HTTP/API, regression and component-render evidence is recorded separately.
 
 ### ⏭️ Next Up
-- User can sign in as a student and open Profile → BTech Placement Likelihood Model → Add or edit BTech model inputs. No further feature is started. Preserve separate BTech, MBA and weighted-readiness outputs; support-classifier upgrades still require class imbalance handling.
+- User can review the live flow: Landing → Get Started / Login → choose role → verified dashboard. Student: Readiness → Skill gaps → Opportunities; Recruiter: Your drives → Matching; Admin: Overview / Scheduling / Placement support / Offers. No further feature is started. Preserve separate BTech, MBA and weighted-readiness outputs; support-classifier upgrades still require class imbalance handling.
 
 ---
 
@@ -168,10 +171,12 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
+- Student opportunities are current saved-profile comparisons with recorded college drives. They are not applications or recruiter shortlist decisions; recruiter snapshots may differ until rerun. The small college drive catalog is evaluated per request, without a production-scale performance claim. Dashboard visual/click rehearsal remains manual because browser automation cannot initialize.
+
 - Matching and Weighted Readiness Score remain rule-based. The distinct public-data BTech and MBA Random Forests have their own input APIs and frontend cards; no merged score is claimed. Four BTech or twelve MBA contributions plus a training baseline explain uncalibrated scores, not personal placement probabilities. Original collections are publisher-reported; fairness, calibration and external validity are unverified. Inputs are not imputed. BTech requires no MBA data, but covers only six streams, semester-6 CGPA 5–9 and 0–3 internships.
 - All 37 local rule/PostgreSQL checks passed across the complete Phase 5 run and targeted retest; the user confirmed earlier authenticated live lifecycle checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
 - Notifications are implemented as simulated in-app records only; no email or SMS is sent. Offer/document stages record human declarations about external document exchange, not automatic document verification.
-- The original seventeen Phase 1–4 tenant tables plus placement_model_profiles and btech_model_profiles (19 total) have college filters and FORCE RLS, with independent local cross-tenant tests. The API 0.8.0 live catalog verifies all 19 policies and the non-bypass runtime role; current evidence is in evaluations/btech-live-security.json. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- The original seventeen Phase 1–4 tenant tables plus placement_model_profiles and btech_model_profiles (19 total) have college filters and FORCE RLS, with independent local cross-tenant tests. The API 0.9.0 live catalog verifies all 19 policies and the non-bypass runtime role; current evidence is in evaluations/navigation-live-security.json. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
 - The application demo cohort remains synthetic: 4,800 seeded students and 45 companies plus synthetic walkthrough accounts. The separate classifier uses 215 imported public labeled records (172 train / 43 test), with measured internal holdout results. No external/BPUT validation, production-scale accuracy, latency benchmark or calibrated confidence is established.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
 - Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
@@ -379,3 +384,8 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Read-only comparison boundary:** New owned student endpoint reuses `calculate_match`, with explicit student/college ownership and filtered jobs/companies beneath existing FORCE RLS. Results are current profile comparisons, not applications or recruiter decisions. Excluded roles remain separately reviewable with reasons; no match/override writes, new tables, or trained-model changes. Initial new test run had three passes and a typo in the tie-order assertion; corrected it, then started full regression. Production release is pending checks.
 
 > **Portal verification ready:** All 55 backend tests passed in one full run (324.584 seconds), including four new PostgreSQL opportunity cases. All 18 navigation checks and 19 real-record dashboard rendering checks passed. Production Vite build passed with all four generated hero assets. No browser interaction claim: automation remains unavailable. Next: commit the approved navigation/dashboard flow, publish to main, verify API 0.9.0, all 19 policies, live student comparisons, role restrictions and deployed assets.
+
+
+> **Navigation/dashboard final handoff:** 2026-09-24 — User approved the landing and role-selector preview, then requested continuation. Application 4b58105 is live at https://jobjugaad.vercel.app (API 0.9.0 at https://jobjugaad-api.onrender.com). All three portals have their generated banner, consistent navigation/logout and preserved workflows. Student adds current-profile skill gaps and explained opportunities without writing recruiter matches/overrides. All four generated assets and exact prompts are documented in frontend/src/assets/hero/README.md.
+> **Final evidence:** All 55 backend tests passed in one run; 18 navigation checks, 19 actual-record dashboard rendering checks and final production build passed. Vercel reports success. Sixteen live checks passed: owned comparisons, full five-factor explanations, named gaps, additive score reconciliation, eligible/excluded separation, descending pagination, selected drive, unauthenticated/other-student/recruiter denials, unchanged profile, both models ready, all 19 verified policies, deployed role-flow bundle, four served hero images and SPA routes. Safe public record: evaluations/navigation-live-security.json. Live checks were read-only except existing JWT login; no profiles, offers, matches or overrides were edited.
+> **Boundary:** Browser automation cannot initialize, so no independent click/visual rehearsal is claimed. The user approved the initial landing/auth visuals. No additional stretch feature is started; remaining next action is user review of the live dashboards.

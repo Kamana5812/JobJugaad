@@ -1,6 +1,6 @@
 # Approved portal navigation
 
-The user approved the landing and role-selection design on 2026-09-24. Dashboard continuation is implemented on `feature/role-navigation`; release verification is recorded in MEMORY.md.
+The user approved the landing and role-selection design on 2026-09-24. All three dashboard updates are deployed in application release 4b58105/API 0.9.0 at https://jobjugaad.vercel.app. All 55 backend tests, 18 navigation checks, 19 dashboard rendering checks and 16 live checks passed; public evidence is in `evaluations/navigation-live-security.json`.
 
 ## Flow
 

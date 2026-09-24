@@ -1,0 +1,210 @@
+{
+  "checked_at": "2026-09-24T13:20:23.678573+00:00",
+  "release": "4b58105",
+  "api_version": "0.9.0",
+  "frontend": "https://jobjugaad.vercel.app",
+  "backend": "https://jobjugaad-api.onrender.com",
+  "health": {
+    "status": "ok",
+    "service": "jobjugaad-api",
+    "database": "connected",
+    "isolation": {
+      "status": "verified",
+      "runtime_role_restricted": true,
+      "tables": [
+        {
+          "table": "btech_model_profiles",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "certifications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "companies",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "interviews",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "jobs",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "match_overrides",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "matches",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "notifications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "offer_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "offers",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "placement_model_profiles",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "projects",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "risk_predictions",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "schedule_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "schedules",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "student_skills",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "students",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "support_reviews",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "users",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        }
+      ]
+    },
+    "placement_model": "ready",
+    "btech_model": "ready"
+  },
+  "checks": {
+    "owned_student_comparison": true,
+    "all_five_factors_and_explanations": true,
+    "named_skill_gaps": true,
+    "factor_contributions_reconcile": true,
+    "eligible_and_excluded_views": true,
+    "descending_ranking_and_pagination": true,
+    "selected_target_drive": true,
+    "unauthenticated_denied": true,
+    "other_student_denied": true,
+    "recruiter_denied": true,
+    "profile_unchanged": true,
+    "nineteen_policies_verified": true,
+    "both_models_ready": true,
+    "frontend_role_flow_bundle": true,
+    "four_hero_assets": true,
+    "spa_routes_available": true
+  },
+  "note": "Read-only live smoke test with the previously authorized synthetic accounts. No profiles, matches, overrides or offers changed. No credentials or private record payloads are included. Frontend checks are HTTP/bundle checks, not browser interaction."
+}

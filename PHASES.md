@@ -162,3 +162,13 @@ The initial offline milestone preserved the deployed app. The user subsequently 
 - [x] Train one BTech model; report actual held-out metrics before frontend integration, retaining MBA and synthetic rule evaluations separately.
 - [x] Implement BTech evidence storage, ownership/college filters/FORCE RLS, startup-only trusted loading, separate explained signal and frontend panel.
 - [x] All 51 regression tests, build and model-card rendering passed; bb3f743/API 0.8.0 deployed, both models ready, owned BTech flow and all 19 policies verified live. Browser automation remains unavailable.
+
+
+## User-approved navigation and dashboard refresh — 2026-09-24
+
+- [x] Scrolling landing with supplied branding, generated hero, three portal links and complete saved synthetic matching explanation.
+- [x] Role-first auth through existing JWT endpoints; public admin signup stays unavailable and verified roles control dashboard access.
+- [x] User explicitly approved landing/role selection before dashboard continuation.
+- [x] All three illustrated, scrollable dashboards; all four generated banner assets saved and imported.
+- [x] Student skill-gap and ranked-opportunity view reuses existing rules, ownership, college filters and FORCE RLS without modifying recruiter decisions.
+- [x] Deployed 4b58105/API 0.9.0. All 55 backend tests, 37 frontend component/routing checks, build and 16 live checks passed. Browser click/visual rehearsal remains manual.

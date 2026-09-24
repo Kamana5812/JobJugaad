@@ -67,3 +67,9 @@ See [DEMO_GUIDE.md](DEMO_GUIDE.md), [JUDGE_REVIEW.md](JUDGE_REVIEW.md), [scalabi
 - Admin analytics, student readiness, recruiter company and notifications each return 401 without authentication.
 - No failing score screen was found; no prohibited interview/chatbot feature was found. No new live demo records were created during Phase 5; synthetic account reads confirmed the named guide fixtures.
 - Remaining presenter actions: read the judge sheet aloud, rehearse the exact clicks in your browser, and warm the service before the actual presentation. Browser automation failed before session creation, so no independent visual/browser-interaction completion is claimed.
+
+## Public-data model extension — 2026-09-24
+
+The Phase 5 17-table evidence above is historical. The authorized extension adds placement_model_profiles (18 total): college_id present, college_isolation policy verified, ENABLE/FORCE RLS and read/write predicates verified live, with non-bypass runtime role. Ownership, explicit college filters and a composite student/college foreign key also apply. [Current live catalog evidence](evaluations/placement-live-security.json).
+
+The added Placement Likelihood Model screen shows an uncalibrated score with a baseline, all 12 local contributions and a fixed explanation; missing evidence shows no score. It is separate from Weighted Readiness Score and exposes actual held-out evaluation with sample sizes and a confusion matrix. Model-card component rendering and the live explained API were verified; interactive browser automation remains unavailable. No failed bare-score screen was found in these checks.

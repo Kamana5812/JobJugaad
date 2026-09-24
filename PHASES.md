@@ -151,6 +151,6 @@ This explicit user instruction authorizes only the hybrid-data experiment, not u
 - [x] Add pandas, scikit-learn and joblib; freeze a leakage-safe 80/20 stratified training protocol.
 - [x] Train one fixed Random Forest, save the evaluated artifact and actual held-out metrics, preserving the separate synthetic evaluations.
 - [x] Metrics shown; user explicitly authorized integration/deployment on 2026-09-24 and clarified that the public dataset need not originate from BPUT.
-- [ ] Subsequent stage: compatible profile fields, startup-only model loading, separate explained API output and frontend display; retain all tenant filters/RLS.
+- [x] Compatible profile fields, startup-only model loading, separate explained API output and frontend display; retain all tenant filters/RLS. Deployed e6eba59/API 0.7.0 on 2026-09-24; live model, 18-table isolation and owned student flow verified.
 
 The initial offline milestone preserved the deployed app. The user subsequently authorized integration and deployment; current verification is recorded in [integration evidence](evaluations/placement-integration.md). Results: [model evaluation](backend/ml/EVALUATION.md).

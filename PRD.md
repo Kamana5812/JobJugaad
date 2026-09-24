@@ -47,7 +47,7 @@ These are product targets, not measured benchmarks.
 
 ---
 
-**Current boundary:** Students have profile/readiness, offers and notifications. Recruiters manage company/drives/matching; admins manage scheduling/offers/support/analytics. Student opportunities/applications, recruiter scheduling, automatic JD extraction, simulator and deployed model predictions remain roadmap items. Offline public-data training is separately authorized and must pass the metric-review gate.
+**Current boundary:** Students have profile/readiness, offers and notifications. Recruiters manage company/drives/matching; admins manage scheduling/offers/support/analytics. Student opportunities/applications, recruiter scheduling, automatic JD extraction and simulator remain roadmap items. A public-data MBA placement signal is deployed; the user also authorized a separate BTech / BE signal using compatible engineering records. Both remain distinct from weighted readiness.
 
 ## 4. Target Users
 
@@ -181,3 +181,5 @@ Readiness/fit level should also map to the official four-band scale:
 ## Authorized hybrid-data experiment — 2026-09-24
 
 Accuracy **88.37%**, precision **93.10%**, recall **90.00%**, F1 **91.53%** (positive class: Placed; **43 held-out records**, 172 training, 215 total). This separate Random Forest uses the imported public Campus Recruitment status labels; it is not validation of weighted readiness, matching or support rules. Only the dataset's academic/test/work-experience and categorical fields are modeled; source collection is publisher-reported and the small MBA-oriented sample is not a BPUT outcome benchmark. [Measured report](backend/ml/EVALUATION.md). The user authorized integration after reviewing these metrics. The public dataset need not come from BPUT. Missing compatible academic fields produce no model score.
+
+**BTech extension:** separate optional four-field public-data Random Forest (semester-6 CGPA, engineering stream, internships, ever-backlog history), no MBA requirement. Six represented engineering streams only, with full local model contributions and explanations. The public source is publisher-reported 2013–2014 data; grouped held-out evaluation and limits are documented in [the BTech report](backend/ml/engineering/EVALUATION.md). No changes to rule-based matching, readiness, support or offers.

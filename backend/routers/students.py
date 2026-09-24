@@ -66,3 +66,17 @@ def get_placement_model(student_id: int, context=Depends(student_session)):
 def save_placement_model(student_id: int, payload: PlacementModelInput, context=Depends(student_session)):
     session, user = context
     return placement_model.profile_response(session, owned_student(session, user, student_id), payload)
+
+
+from engines import btech_model
+from schemas import BTechModelInput, BTechModelResponse
+
+@router.get("/{student_id}/btech-placement-model", response_model=BTechModelResponse)
+def get_btech_model(student_id: int, context=Depends(student_session)):
+    session, user = context
+    return btech_model.profile_response(session, owned_student(session,user,student_id))
+
+@router.put("/{student_id}/btech-placement-model", response_model=BTechModelResponse)
+def save_btech_model(student_id: int, payload: BTechModelInput, context=Depends(student_session)):
+    session, user = context
+    return btech_model.profile_response(session, owned_student(session,user,student_id),payload)

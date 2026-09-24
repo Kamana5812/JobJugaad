@@ -29,6 +29,7 @@ class HealthResponse(BaseModel):
     database: Literal["connected", "not_configured"]
     isolation: IsolationResponse
     placement_model: Literal["ready", "unavailable", "not_loaded"] = "not_loaded"
+    btech_model: Literal["ready", "unavailable", "not_loaded"] = "not_loaded"
 
 class LoginRequest(InputModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=False)
@@ -579,3 +580,21 @@ class PlacementModelResponse(BaseModel):
     inputs: PlacementModelInput
     signal: PlacementModelSignal
     evaluation: PlacementModelEvaluation | None = None
+
+
+class BTechModelInput(InputModel):
+    cgpa: float | None = Field(default=None, ge=0, le=10, allow_inf_nan=False)
+    stream: Literal["Civil", "Computer Science", "Electrical", "Electronics And Communication", "Information Technology", "Mechanical"] | None = None
+    internships: int | None = Field(default=None, ge=0, le=100, strict=True)
+    history_of_backlogs: int | None = Field(default=None, ge=0, le=1, strict=True)
+
+class BTechModelEvaluation(PlacementModelEvaluation):
+    distinct_profiles: int
+    train_groups: int
+    test_groups: int
+    baseline_accuracy: float
+
+class BTechModelResponse(BaseModel):
+    inputs: BTechModelInput
+    signal: PlacementModelSignal
+    evaluation: BTechModelEvaluation | None = None

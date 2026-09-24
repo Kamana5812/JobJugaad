@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { getProfile, saveProfile, errorMessage } from '../../api/student'
 import { FormField, buttonStyle, secondaryStyle, Message } from '../../components/FormField'
+import BTechModelPanel from './BTechModelPanel'
 import PlacementModelPanel from './PlacementModelPanel'
 import ReadinessCard from '../../components/ReadinessCard'
 import EvidenceEditor from '../../components/EvidenceEditor'
@@ -87,11 +88,12 @@ export default function ProfilePage() {
           <span className="text-sm text-muted">{dirty ? 'You have unsaved changes.' : 'Your profile is up to date.'}</span></div>
       </form>
     </section>
+    <BTechModelPanel studentId={profile.id} onExpired={logout} />
     <PlacementModelPanel studentId={profile.id} onExpired={logout} />
     <aside className="rounded-2xl bg-navy p-6 text-white"><h2 className="font-bold">Jugaad Dost 🤝</h2>
       <p className="mt-1 text-xs text-white/70">Quick help · static FAQ</p>
       <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">Why did uploading my resume not change my score?</summary><p className="mt-2 text-sm leading-6 text-white/80">Uploading stores readable text for your review. Add skills, projects, academics, and existing assessment scores to your profile, then save to recalculate.</p></details>
-      <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">How do the two scores differ?</summary><p className="mt-2 text-sm leading-6 text-white/80">Weighted Readiness Score is a proposed rule based on your profile evidence, without real-outcome validation. Placement Likelihood Model is a separate Random Forest trained on public MBA placement data. Its output is uncalibrated and does not decide eligibility or offers. A person should review the evidence before making any decision.</p></details>
+      <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">How do readiness and the placement models differ?</summary><p className="mt-2 text-sm leading-6 text-white/80">Weighted Readiness Score is a proposed rule based on your profile evidence, without real-outcome validation. The BTech and MBA Placement Likelihood Models are separate Random Forests trained on their respective public placement datasets. Their outputs are uncalibrated and do not decide eligibility or offers. Use only the model whose fields match your recorded studies. A person should review the evidence before making any decision.</p></details>
     </aside>
   </div>
 }

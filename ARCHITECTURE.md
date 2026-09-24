@@ -133,7 +133,7 @@ notifications
 risk_predictions, simulations
 ```
 
-**Implemented tenant tables (17):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications. All include college_id. Jobs represent drives; several conceptual entities above have no separate table.
+**Implemented tenant tables (19):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles. All include college_id. Jobs represent drives; several conceptual entities above have no separate table.
 
 ### Key Tables (fields)
 
@@ -414,7 +414,7 @@ These are synthetic sanity checks against our own assumptions and a face-validit
 
 ### Phase 5 deployment verification
 
-`/health` checks actual PostgreSQL catalogs for all 18 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
+`/health` checks actual PostgreSQL catalogs for all 19 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
 
 ### Public-data placement classifier — measured evaluation (2026-09-24)
 
@@ -425,3 +425,11 @@ User authorized API/frontend integration after reviewing these metrics on 2026-0
 ### Optional academic-input persistence
 
 `placement_model_profiles`: id, college_id, student_id, inputs (JSON with exactly the 12 validated model fields; nullable values retained), updated_at. Unique (student_id, college_id), composite foreign key to students(id, college_id). Application college filters, student ownership and the same ENABLE/FORCE college_isolation policy apply. This additive table is created in the schema/RLS transaction before serving; it does not alter or backfill existing student fields. The immutable public CSV and trained model are non-tenant artifacts, not student accounts.
+
+### BTech / BE public-data placement extension — 2026-09-24
+
+User authorized a BTech-specific model alongside the existing MBA signal. Source is Tejashvi/Kaggle Engineering Placements Prediction version 6 (CC0), with publisher-reported 2013–2014 university records; original collection is not independently audited. The BTech artifact uses semester-6 CGPA, stream, internships and ever-backlog history. Exclude Age, Gender, Hostel and the target from predictors; this is a predeclared design choice, not a fairness result. Preserve the MBA and six-factor weighted-readiness outputs unchanged.
+
+Dataset 2,966 rows / 181 distinct modeled profiles. First fixed five-fold StratifiedGroupKFold split (shuffle true, seed 42): train 2,374 rows / 140 groups, test 592 rows / 41 groups; identical modeled inputs never cross splits. One 300-tree balanced-class Random Forest, train-only encoding, no test tuning or holdout refit. Accuracy 83.95%, Placed precision 96.77%, recall 73.39%, F1 83.48%; matrix [[257,8],[87,240]] (actual rows/predicted columns [Not Placed,Placed]). Majority baseline 55.24%. [Full evaluation](backend/ml/engineering/EVALUATION.md). The 87 missed placed records and older repeated-input dataset limit interpretation; this is not calibrated individual likelihood or current-college validation.
+
+`btech_model_profiles`: id, college_id, student_id, inputs JSON (four optional validated fields), updated_at; unique (student_id,college_id), composite foreign key to students(id,college_id). Created atomically with ENABLE/FORCE college_isolation RLS; GET/PUT /students/{student_id}/btech-placement-model also enforce ownership and explicit college filters. Total tenant tables: 19. Six source streams only; CGPA outside 5–9 or internships above 3 yield no model score, preserving submitted evidence. Backlog history is collected explicitly rather than inferred from active backlogs. Trusted checksum/version-checked artifact loads once per process; /health reports btech_model separately from the MBA placement_model status. Both use a shared exact original-field tree-path attribution helper; a score is returned only with its baseline, full factors and fixed explanation. No new packages or automatic recruitment decisions.

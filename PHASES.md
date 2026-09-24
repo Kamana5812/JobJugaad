@@ -154,3 +154,11 @@ This explicit user instruction authorizes only the hybrid-data experiment, not u
 - [x] Compatible profile fields, startup-only model loading, separate explained API output and frontend display; retain all tenant filters/RLS. Deployed e6eba59/API 0.7.0 on 2026-09-24; live model, 18-table isolation and owned student flow verified.
 
 The initial offline milestone preserved the deployed app. The user subsequently authorized integration and deployment; current verification is recorded in [integration evidence](evaluations/placement-integration.md). Results: [model evaluation](backend/ml/EVALUATION.md).
+
+
+## User-authorized BTech extension — 2026-09-24
+
+- [x] Verify public engineering source/license and freeze a repeated-profile-safe training protocol before fitting.
+- [x] Train one BTech model; report actual held-out metrics before frontend integration, retaining MBA and synthetic rule evaluations separately.
+- [x] Implement BTech evidence storage, ownership/college filters/FORCE RLS, startup-only trusted loading, separate explained signal and frontend panel.
+- [ ] Complete regression/rendering checks and verify the deployed BTech flow and all 19 policies.

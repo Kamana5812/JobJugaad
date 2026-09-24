@@ -283,3 +283,14 @@ class PlacementModelProfile(TenantRow, Base):
         onupdate=lambda: datetime.now(timezone.utc))
     __table_args__ = (UniqueConstraint("student_id", "college_id"),
         ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),)
+
+
+class BTechModelProfile(TenantRow, Base):
+    """Optional engineering evidence, independent of MBA and weighted-rule inputs."""
+    __tablename__ = "btech_model_profiles"
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    inputs: Mapped[dict] = mapped_column(JSON, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc))
+    __table_args__ = (UniqueConstraint("student_id", "college_id"),
+        ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),)

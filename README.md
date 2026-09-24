@@ -65,7 +65,7 @@ py -3.12 -m venv backend/venv
 ./backend/venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
 ```
 
-The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 18 tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all.
+The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 19 tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all.
 
 Startup also runs seed.py idempotently, creating 4,800 named synthetic profiles, 45 companies and simulated drives in Demo College 1. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
 
@@ -80,7 +80,7 @@ Set VITE_API_URL=/api for local development. Vite proxies /api to http://127.0.0
 
 ## Tenant enforcement
 
-The original 17 tenant tables listed in [PHASE5_AUDIT.md](PHASE5_AUDIT.md), plus placement_model_profiles (18 total), carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
+The original 17 tenant tables listed in [PHASE5_AUDIT.md](PHASE5_AUDIT.md), plus placement_model_profiles and btech_model_profiles (19 total), carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
 
 RLS is the second tenant enforcement layer, not a replacement for application authorization. The runtime role owns the initial schema for startup DDL; FORCE RLS ensures normal owner queries are still restricted. Future production deployment should separate migrations from the runtime role.
 
@@ -160,3 +160,11 @@ Accuracy **88.37%**, precision **93.10%**, recall **90.00%**, F1 **91.53%** (pos
 **Integration:** the user reviewed metrics and authorized deployment. Student profile → Placement Likelihood Model → Add or edit academic model inputs collects the 12 optional compatible fields. The API loads the saved model once at startup, with checksum and pinned-version checks; it never trains on a request. Missing records produce no score. Available signals show the baseline, all 12 local contributions and an explanation alongside a separately labeled Weighted Readiness Score. The new placement_model_profiles table has application college filters, ownership checks and ENABLE/FORCE RLS. Public source rows are not turned into fictional tenant accounts. See [integration verification and demo steps](evaluations/placement-integration.md) for release evidence.
 
 **Public-model deployment verified 2026-09-24:** release e6eba59, API 0.7.0, model ready on Render, all 18 actual tenant policies verified, owned-profile inference/persistence and missing-input behavior passed, Vercel production bundle verified. See [safe live evidence](evaluations/placement-live-security.json). Interactive browser automation remains unavailable; API/component rendering checks are not presented as a click-through test.
+
+## BTech / BE placement signal
+
+Student profile → **BTech Placement Likelihood Model** → **Add or edit BTech model inputs**. Record semester-6 CGPA, one of the six supported engineering streams, completed internship count and whether any backlog ever occurred. No MBA details are required. The MBA panel remains separately labeled. Missing evidence or values outside source coverage return no prediction, with a reason; do not invent inputs.
+
+The new model uses Engineering Placements Prediction (Tejashvi/Kaggle v6, CC0): 2,966 publisher-reported 2013–2014 records, with only 181 distinct modeled profiles. A fixed split keeping repeated profiles together trained on 2,374 rows and tested on 592: accuracy 83.95%, Placed precision 96.77%, recall 73.39%, F1 83.48%, matrix [[257,8],[87,240]]. These are measured historical internal results, not current-student placement odds. [BTech source](backend/data/engineering/README.md) · [Evaluation and reproduction](backend/ml/engineering/EVALUATION.md).
+
+Startup loads each trusted model once; no training on requests. The BTech endpoint persists its four inputs in the nineteenth tenant table with ownership, college filters, composite foreign key and FORCE RLS. Shared tree-path attribution provides the baseline, signed factors and fixed explanation. Readiness, matching, support, existing MBA data and synthetic demo records remain separate. Live release evidence is recorded in MEMORY.md.

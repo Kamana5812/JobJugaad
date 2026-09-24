@@ -21,3 +21,6 @@ export function errorMessage(error) {
 
 export const getPlacementModel = async (id) => (await api.get(`/students/${id}/placement-model`)).data
 export const savePlacementModel = async (id, input) => (await api.put(`/students/${id}/placement-model`, input)).data
+
+export const getBTechModel = async (id) => (await api.get(`/students/${id}/btech-placement-model`)).data
+export const saveBTechModel = async (id, input) => (await api.put(`/students/${id}/btech-placement-model`, input)).data

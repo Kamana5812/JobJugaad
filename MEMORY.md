@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-24
-**Current phase:** Offline public placement model trained and evaluated; awaiting user metric review before API/frontend integration. Deployed Phase 5 workflow remains unchanged.
+**Current phase:** Public-data placement model integration and deployment authorized on 2026-09-24; implementation and verification in progress. The public dataset need not originate from BPUT.
 
 ---
 
@@ -21,6 +21,7 @@ Living record of project state and decisions. Update this file whenever a major 
 
 | Date | Decision | Reason |
 |---|---|---|
+| 2026-09-24 | Integrate the public Campus Recruitment model; the source need not be BPUT data | User approved after seeing metrics. Optional 12-field academic profile, load-once trusted artifact, separate explained score, 18th RLS table; no automatic hiring decisions or changes to weighted readiness |
 | — | Stack: React + Tailwind (frontend), FastAPI (backend), PostgreSQL (DB) | Free-tier deployable on Vercel + Render; matches team's existing React/JS skills |
 | — | Rule-based scoring for MVP, not black-box ML | Problem statement explicitly requires explainability; rule-based is transparent and easy to justify to judges |
 | — | Deployment target: Vercel (frontend) + Render (backend + DB) | Both have generous free tiers, GitHub auto-deploy, beginner-friendly |
@@ -149,10 +150,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- No offline implementation remains in progress. API/frontend integration is pending the user's metric review, as explicitly requested.
+- Public-data model integration is implemented and locally checked; production deployment and final live verification are in progress.
 
 ### ⏭️ Next Up
-- Show actual held-out accuracy, precision, recall, F1 and confusion matrix, then wait for the user before frontend integration. Do not broaden this dataset to skills/projects/matching or change support flags.
+- Deploy the verified integration and check model readiness, all 18 RLS policies, owned-profile save/read, missing-input behavior and the deployed frontend. Keep public-model evaluation separate from synthetic matching and rule-score checks.
 
 ---
 
@@ -160,10 +161,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
-- Matching and Weighted Readiness Score remain rule-based. A distinct public-data Random Forest placement classifier is trained/evaluated offline and is not yet used by the API/frontend; no merged score is claimed.
+- Matching and Weighted Readiness Score remain rule-based. The distinct public-data Random Forest has its own academic-input API and frontend card; no merged score is claimed. Its 12 local contributions and training baseline explain an uncalibrated score, not a personal placement probability. Original collection is publisher-reported, fairness and external validity are unverified, and compatible MBA academic records are required without imputation.
 - All 37 local rule/PostgreSQL checks passed across the complete Phase 5 run and targeted retest; the user confirmed earlier authenticated live lifecycle checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
 - Notifications are implemented as simulated in-app records only; no email or SMS is sent. Offer/document stages record human declarations about external document exchange, not automatic document verification.
-- All seventeen Phase 1–4 tenant tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live catalog verification now confirms every table and policy; earlier API cross-college denial was verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- The original seventeen Phase 1–4 tenant tables and the new placement_model_profiles table (18 total) have college filters and FORCE RLS, with independent local cross-tenant tests. Phase 5 recorded live catalog evidence for the original 17; the new release must verify all 18 live. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
 - The application demo cohort remains synthetic: 4,800 seeded students and 45 companies plus synthetic walkthrough accounts. The separate classifier uses 215 imported public labeled records (172 train / 43 test), with measured internal holdout results. No external/BPUT validation, production-scale accuracy, latency benchmark or calibrated confidence is established.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
 - Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
@@ -185,7 +186,7 @@ _Track unresolved questions here so they don't get lost between sessions._
 - [x] Use plain JavaScript for the frontend (Phase 0 decision).
 - [ ] Do we attempt the pgvector semantic-matching stretch goal, or stop at keyword matching? (Default per `ARCHITECTURE.md`: stop at keyword matching for P0/P1, attempt only if time remains.)
 - [x] Phase 4 seed.py implements 4,800 synthetic profiles and 45 companies, preserving earlier records and three matching demonstration drives.
-- [ ] Do we attempt the Random Forest upgrade to the Readiness Engine using the public Kaggle dataset, or stay with the weighted rule for the whole hackathon?
+- [x] User authorized a separate Campus Recruitment Random Forest signal on 2026-09-24, reviewed measured metrics, and requested integration/deployment. Weighted readiness remains unchanged.
 
 ---
 
@@ -344,3 +345,9 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Public-model metric-review handoff:** 2026-09-24 — Trained once using the cde4998 frozen source/protocol. Measured held-out results: 38/43 correct, accuracy 88.37%, Placed precision 93.10%, recall 90.00%, F1 91.53%. Matrix rows actual / columns predicted, order [Not Placed, Placed]: [[11,2],[3,27]]. Dataset n=215; train=172 (118 Placed/54 Not Placed), test=43 (30/13). Majority baseline 69.77%. No test-set tuning, synthetic labels, salary/ID predictors or refit on the holdout.
 > **Saved:** backend/data/Placement_Data_Full_Class.csv and source/license/checksum notes; backend/ml/train_readiness_model.py, training_protocol.json, readiness_model.joblib, evaluation_report.json and readable EVALUATION.md. pandas/scikit-learn/joblib and transitive versions are pinned. Five offline tests and pip dependency check passed. Saved model predictions independently reproduced the reported metrics.
 > **Boundary:** Public labeled data is publisher-described campus recruitment data, not independently audited. Small MBA-oriented cohort and 43-case internal holdout do not establish BPUT, external or production-grade performance; probabilities are uncalibrated, and gender/education predictors need bias review before operational use. Weighted readiness, rule-based support, matching/skills/projects/certifications, tenant data and all prior synthetic evaluation artifacts remain unchanged. No frontend/API/schema/startup integration or production deployment was performed. Work stays on feature/public-placement-model for metric review. Next: show actual numbers and stop; subsequent integration must collect compatible fields, load once at startup and return separate explained outputs.
+
+> **Integration authorization:** 2026-09-24 — User requested integration for deployment after the measured metrics were shown, and clarified that a real public dataset need not be from BPUT. Proceed with the existing Campus Recruitment artifact and optional compatible academic fields. Keep weighted readiness separate, expose local model-factor explanations, retain synthetic workflow records and all RLS/ownership rules. No newly collected BPUT dataset is required.
+
+> **Public-model integration local handoff:** Optional academic profile persistence, GET/PUT placement-model endpoints, trusted startup loading, health status and separate frontend card are implemented. Exact tree-path contributions reconstruct forest predictions for all 215 source rows; missing inputs and failed checksum checks produce no score. Four new integration tests passed, production Vite build and available/missing/dirty card rendering passed, and pip check found no conflicts. Browser automation still fails before session initialization, so no click or Swagger UI verification is claimed. The long-interrupted full regression passed 45/46; its final matching case is being rerun in a fresh authenticated session. Automatic review initially could not run Git fetch because of its usage limit; the normal approval path was retried after the user said continue. No bypass was attempted.
+
+> **Integration ready for deployment:** All 46 cases passed across full/targeted runs: 45/46 in the six-hour-interrupted regression, all eight matching cases in a fresh run, and all four model cases after the explicit update-filter improvement. Frontend build, actual-output card rendering, pip check and whitespace checks passed. Git fetch through the normal approval path succeeded after the review-service interruption; origin/main has no divergent changes. Next: fast-forward main, push and verify API 0.7.0/model ready/all 18 policies plus the deployed form, then record actual live evidence.

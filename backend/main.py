@@ -10,12 +10,14 @@ from auth import signing_secret
 from database import check_database, initialize_schema, isolation_report
 from routers import auth, students, recruiters, admin, notifications
 from schemas import HealthResponse
+from engines.placement_model import load_model, model_status
 from seed import seed_students, seed_companies, seed_phase3, seed_phase4
 from admin_access import provision_admin_accounts
 
 @asynccontextmanager
 async def lifespan(app):
     signing_secret()
+    load_model()
     initialize_schema()  # Tables and FORCE RLS are committed atomically before serving.
     created = seed_students()
     companies, demonstrations = seed_companies()
@@ -27,8 +29,8 @@ async def lifespan(app):
     logging.getLogger("uvicorn.error").info("Phase 3 FORCE RLS initialized; fixtures: %s; admin accounts provisioned: %s", phase3, admins)
     yield
 
-app = FastAPI(title="JobJugaad API", version="0.6.0",
-    description="Explainability-first Student Core, Talent Finder and Placement Command Center. Proposed weighted rules; no trained model.",
+app = FastAPI(title="JobJugaad API", version="0.7.0",
+    description="Explainability-first Student Core, Talent Finder and Placement Command Center. Weighted rules plus a separate public-data Random Forest placement signal.",
     lifespan=lifespan)
 # Exact production origin. CORS is a browser boundary, not a substitute for JWT/RBAC/RLS.
 app.add_middleware(CORSMiddleware, allow_origins=["https://jobjugaad.vercel.app"], allow_credentials=False,
@@ -52,6 +54,6 @@ async def database_error(request: Request, error: SQLAlchemyError):
 @app.get("/health", response_model=HealthResponse, tags=["Health"])
 def health():
     try:
-        return HealthResponse(database=check_database(), isolation=isolation_report())
+        return HealthResponse(database=check_database(), isolation=isolation_report(), placement_model=model_status())
     except (SQLAlchemyError, RuntimeError):
         raise HTTPException(503, "The database health or isolation check failed.") from None

@@ -52,3 +52,17 @@ def offer_action(student_id:int,offer_id:int,payload:OfferStudentAction,context=
     session,user=context
     owned_student(session,user,student_id)
     return offers.student_action(session,user,offer_id,payload)
+
+
+from engines import placement_model
+from schemas import PlacementModelInput, PlacementModelResponse
+
+@router.get("/{student_id}/placement-model", response_model=PlacementModelResponse)
+def get_placement_model(student_id: int, context=Depends(student_session)):
+    session, user = context
+    return placement_model.profile_response(session, owned_student(session, user, student_id))
+
+@router.put("/{student_id}/placement-model", response_model=PlacementModelResponse)
+def save_placement_model(student_id: int, payload: PlacementModelInput, context=Depends(student_session)):
+    session, user = context
+    return placement_model.profile_response(session, owned_student(session, user, student_id), payload)

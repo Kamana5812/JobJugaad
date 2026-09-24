@@ -28,6 +28,7 @@ class HealthResponse(BaseModel):
     service: Literal["jobjugaad-api"] = "jobjugaad-api"
     database: Literal["connected", "not_configured"]
     isolation: IsolationResponse
+    placement_model: Literal["ready", "unavailable", "not_loaded"] = "not_loaded"
 
 class LoginRequest(InputModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=False)
@@ -529,3 +530,52 @@ class NotificationFeed(BaseModel):
     offset: int
     limit: int
     explanation: str = "Simulated in-app records only. No email or SMS is sent."
+
+
+class PlacementModelInput(InputModel):
+    # Missing evidence stays missing. No CGPA conversion or assessment substitution.
+    ssc_p: Score | None = None
+    hsc_p: Score | None = None
+    degree_p: Score | None = None
+    etest_p: Score | None = None
+    mba_p: Score | None = None
+    gender: Literal["F", "M"] | None = None
+    ssc_b: Literal["Central", "Others"] | None = None
+    hsc_b: Literal["Central", "Others"] | None = None
+    hsc_s: Literal["Arts", "Commerce", "Science"] | None = None
+    degree_t: Literal["Comm&Mgmt", "Sci&Tech", "Others"] | None = None
+    workex: Literal["No", "Yes"] | None = None
+    specialisation: Literal["Mkt&Fin", "Mkt&HR"] | None = None
+
+class PlacementModelFactor(BaseModel):
+    key: str
+    label: str
+    value: float | str
+    contribution: float
+
+class PlacementModelSignal(BaseModel):
+    available: bool
+    score: float | None = None
+    baseline: float | None = None
+    breakdown: list[PlacementModelFactor] = Field(default_factory=list)
+    explanation: str
+    missing_fields: list[str] = Field(default_factory=list)
+    methodology: str
+    limitations: list[str]
+    model_version: str | None = None
+
+class PlacementModelEvaluation(BaseModel):
+    dataset_rows: int
+    train_rows: int
+    test_rows: int
+    accuracy: float
+    precision: float
+    recall: float
+    f1: float
+    confusion_matrix: list[list[int]]
+    source_url: str
+
+class PlacementModelResponse(BaseModel):
+    inputs: PlacementModelInput
+    signal: PlacementModelSignal
+    evaluation: PlacementModelEvaluation | None = None

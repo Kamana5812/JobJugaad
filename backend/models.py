@@ -272,3 +272,14 @@ class Notification(TenantRow, Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     __table_args__ = (UniqueConstraint("college_id","recipient_user_id","event_key"),
         ForeignKeyConstraint(["recipient_user_id","college_id"],["users.id","users.college_id"]),)
+
+
+class PlacementModelProfile(TenantRow, Base):
+    """Optional, student-supplied academic inputs; never populated from synthetic seeds."""
+    __tablename__ = "placement_model_profiles"
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    inputs: Mapped[dict] = mapped_column(JSON, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc))
+    __table_args__ = (UniqueConstraint("student_id", "college_id"),
+        ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),)

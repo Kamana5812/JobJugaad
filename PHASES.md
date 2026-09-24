@@ -150,7 +150,7 @@ This explicit user instruction authorizes only the hybrid-data experiment, not u
 - [x] Import the pinned public Campus Recruitment dataset with source and license notes.
 - [x] Add pandas, scikit-learn and joblib; freeze a leakage-safe 80/20 stratified training protocol.
 - [x] Train one fixed Random Forest, save the evaluated artifact and actual held-out metrics, preserving the separate synthetic evaluations.
-- [ ] User reviews measured metrics before frontend integration.
+- [x] Metrics shown; user explicitly authorized integration/deployment on 2026-09-24 and clarified that the public dataset need not originate from BPUT.
 - [ ] Subsequent stage: compatible profile fields, startup-only model loading, separate explained API output and frontend display; retain all tenant filters/RLS.
 
-No current API/frontend or synthetic seed records were changed for this offline milestone. Results: [model evaluation](backend/ml/EVALUATION.md).
+The initial offline milestone preserved the deployed app. The user subsequently authorized integration and deployment; current verification is recorded in [integration evidence](evaluations/placement-integration.md). Results: [model evaluation](backend/ml/EVALUATION.md).

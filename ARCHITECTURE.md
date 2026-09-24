@@ -53,7 +53,7 @@ Reference implementation architecture for the JobJugaad platform. See `PRD.md` f
 | Validation | Pydantic |
 | Auth | JWT (python-jose) + passlib (password hashing) |
 | Resume parsing | pdfplumber / PyMuPDF, optionally LLM-assisted for free-text section extraction only (see §5, Profile AI) — this is the one place in the pipeline an LLM is justified |
-| ML — **authorized offline experiment** | pandas + scikit-learn RandomForestClassifier + joblib for the separate public-data placement signal; integration awaits metric review |
+| ML — **public-data placement signal** | pandas + scikit-learn RandomForestClassifier + joblib for the separate public-data placement signal; separate from weighted readiness; user-authorized integration |
 | ML — **P2, conditional** | sentence-transformers (semantic matching) — do not install until the P1 rule-based Matching Engine works end-to-end |
 
 ### Database
@@ -197,7 +197,7 @@ RECRUITER ──> COMPANY ──< JOBS ──< MATCHES ──> STUDENTS
 
 ## 5. Explainable Engine Architecture
 
-The architecture separates seven responsibilities. The deployed workflow is rule-based. The user authorized a separate public-data placement classifier on 2026-09-24, with metrics reviewed before frontend integration; other model extensions still require explicit authorization. Each layer uses the simplest technique that satisfies the requirement, and every layer that produces a judgment about a student ends in human review, not an autonomous decision.
+The architecture separates seven responsibilities. The placement workflow uses rules plus a separate public-data placement classifier. The user reviewed metrics and authorized its integration on 2026-09-24; other model extensions still require explicit authorization. Each layer uses the simplest technique that satisfies the requirement, and every layer that produces a judgment about a student ends in human review, not an autonomous decision.
 
 ### Layer 1 — Rule Engine
 Implemented hard constraints are branch eligibility, minimum CGPA and maximum backlog count. They run before shortlist ranking; the score cannot override them. Graduation-year filtering is not collected in this prototype. A separately logged human override may change shortlist status without changing the calculation.
@@ -250,11 +250,11 @@ The rule engine (Layer 1) decides *who is eligible*; this layer only *ranks who 
 - Promote/reject is a human shortlist override, not a score modification. Audit rows retain reviewer, timestamp, reason, previous decision, and the full score/evidence snapshot. Reruns preserve manual decisions. Audit records have no edit/delete API; database-owner tamper resistance is not claimed.
 - Demo data is generated in seed.py: 300 deterministic synthetic students, 12 synthetic companies, and three simulated drives. Existing profiles are preserved; unshared random passwords prevent public login to seed accounts. Startup runs a seeded drive only when it has no saved matches. Synthetic outputs do not establish real-world accuracy.
 
-### Separate Placement Likelihood Model (authorized offline milestone)
+### Separate Placement Likelihood Model (public-data integration)
 
 The public-data classifier predicts `Placed` / `Not Placed` from five academic/test percentages and seven categorical academic/work-experience fields, including gender and MBA specialisation. It is distinct from the unchanged six-factor weighted readiness formula. The CSV has no skills, projects, certifications or resume text, so it cannot validate those engines. Dataset provenance: [data notes](backend/data/README.md); frozen split/model/preprocessing choices: [training protocol](backend/ml/training_protocol.json). A Random Forest is used as requested; no unverified paper citation or claim of superiority to other trained models is asserted.
 
-The 80/20 stratified split happens before fitting a one-hot encoder; class weights use training labels only. Salary and status are outcomes and sl_no is an identifier, all excluded from features. The persisted pipeline is trained on 172 records, tested on 43, with no holdout refit. Any future signal must carry local contributing factors and an explanation, identify uncalibrated model output, and require compatible recorded fields; missing MBA fields or degree percentages must not be fabricated from current engineering profiles. The API will load the trusted artifact once at startup after integration is authorized, never retrain per request. The existing At-Risk/support engine is unchanged and remains simple rules.
+The 80/20 stratified split happens before fitting a one-hot encoder; class weights use training labels only. Salary and status are outcomes and sl_no is an identifier, all excluded from features. The persisted pipeline is trained on 172 records, tested on 43, with no holdout refit. The signal carries all 12 local contributing factors, a training-root baseline and a fixed explanation. It identifies uncalibrated model output and requires compatible recorded fields; missing MBA fields or degree percentages are not fabricated. The API loads the checksum-verified trusted artifact once per process at startup using pinned library versions, never retraining per request. A failed load disables only the model signal, with its status reported by /health. The existing At-Risk/support engine is unchanged and remains simple rules.
 
 ### Layer 4 — Explanation Engine
 Every score from Layer 3 passes through a template-based explanation generator before reaching a student or recruiter — never a bare score. It states matching factors, missing requirements, and evidence drawn from the profile, in the format the problem statement requires:
@@ -393,8 +393,8 @@ Every core table carries a `college_id` column enforced by both application-leve
 
 | Category | Status |
 |---|---|
-| **Real/public labeled data** | Imported Campus Recruitment records, publisher-described anonymized campus data; collection not independently audited. Used only for the separate offline placement-status model. |
-| **Public model training** | `backend/data/Placement_Data_Full_Class.csv`: 215 records, status labels; 172 training / 43 held-out test records. pandas + Random Forest + joblib; no salary or ID predictors. API/frontend integration pending metric review. |
+| **Real/public labeled data** | Imported Campus Recruitment records, publisher-described anonymized campus data; collection not independently audited. Used to train the separate placement-status model exposed alongside weighted readiness. |
+| **Public model training** | `backend/data/Placement_Data_Full_Class.csv`: 215 records, status labels; 172 training / 43 held-out test records. pandas + Random Forest + joblib; no salary or ID predictors. Student-owned academic inputs and an explained model signal are integrated separately from the weighted rule. |
 | **Synthetic data** | ~4,800-student demo dataset (see `seed.py`) — for UI/scale demonstration only, never described as validating model accuracy |
 | **Simulated workflow data** | Scheduling, offers and notifications in the demo are fictional. Jugaad Simulator is not implemented. |
 
@@ -414,10 +414,14 @@ These are synthetic sanity checks against our own assumptions and a face-validit
 
 ### Phase 5 deployment verification
 
-`/health` checks actual PostgreSQL catalogs for all 17 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
+`/health` checks actual PostgreSQL catalogs for all 18 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
 
 ### Public-data placement classifier — measured evaluation (2026-09-24)
 
 Accuracy **88.37%**, precision **93.10%**, recall **90.00%**, F1 **91.53%** (positive class: Placed; **43 held-out records**, 172 training, 215 total). Confusion matrix (actual rows / predicted columns, order Not Placed, Placed): `[[11, 2], [3, 27]]`. Majority-class baseline accuracy is 69.77%. These are measured results on imported public labels, not synthetic expected labels. The fixed stratified split and parameters were committed before training; no test-set tuning or refit was performed. See [full measured report](backend/ml/evaluation_report.json), [readable evaluation](backend/ml/EVALUATION.md) and [dataset provenance](backend/data/README.md).
 
-This is an offline trained artifact, awaiting metric review before API/frontend integration. Its 215-record source and 43-case holdout do not establish external validity for BPUT or calibrated individual likelihoods. The saved model was fitted on 172 records; do not imply all 215 were used for training. No skills/project/certification/resume labels exist in this public dataset. Existing weighted readiness and rule-based support remain unchanged, and Phase 4 matching/readiness/support evaluations retain their synthetic sanity-check framing. Future inference must load the trusted pipeline once at startup, collect compatible fields, and return distinct explained outputs; it is not wired into this release's API or UI.
+User authorized API/frontend integration after reviewing these metrics on 2026-09-24; the public dataset is not required to originate from BPUT. Its 215-record source and 43-case holdout do not establish external validity for BPUT or calibrated individual likelihoods. The saved model was fitted on 172 records; do not imply all 215 were used for training. No skills/project/certification/resume labels exist in this public dataset. Existing weighted readiness and rule-based support remain unchanged, and Phase 4 matching/readiness/support evaluations retain their synthetic sanity-check framing. Inference loads the trusted pipeline once at startup, collects optional compatible fields and returns distinct explained outputs. GET/PUT /students/{student_id}/placement-model uses JWT ownership, college_id filters and ENABLE/FORCE RLS on placement_model_profiles. The new one-to-one table has a composite student/college foreign key; no existing rows or seed outcomes are rewritten. Its inputs JSON contains only the 12 validated predictors. Per-tree parent-to-child changes in the Placed score are averaged and aggregated across one-hot columns into original fields; baseline plus signed contributions exactly reconstructs the forest output. This is model-path attribution, not causality or SHAP.
+
+### Optional academic-input persistence
+
+`placement_model_profiles`: id, college_id, student_id, inputs (JSON with exactly the 12 validated model fields; nullable values retained), updated_at. Unique (student_id, college_id), composite foreign key to students(id, college_id). Application college filters, student ownership and the same ENABLE/FORCE college_isolation policy apply. This additive table is created in the schema/RLS transaction before serving; it does not alter or backfill existing student fields. The immutable public CSV and trained model are non-tenant artifacts, not student accounts.

@@ -17,7 +17,7 @@ class Phase5SecurityTests(unittest.TestCase):
     def test_actual_catalog_and_health(self):
         with engine.connect() as connection:
             report = require_isolation(connection)
-        self.assertEqual(len(report['tables']), 17)
+        self.assertEqual(len(report['tables']), 18)
         self.assertTrue(report['runtime_role_restricted'])
         response = TestClient(app).get('/health')
         self.assertEqual(response.status_code, 200)

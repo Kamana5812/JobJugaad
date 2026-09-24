@@ -3,7 +3,7 @@ export default function ReadinessCard({ readiness, dirty }) {
   return <section aria-labelledby="readiness-title" className="overflow-hidden rounded-3xl border border-line bg-white shadow-sm">
     <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[240px_1fr]">
       <div>
-        <p className="text-xs font-bold uppercase tracking-widest text-muted">Career Copilot · Readiness</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-muted">Weighted Readiness Score · rule-based</p>
         <h2 id="readiness-title" className="mt-2 text-2xl font-bold text-navy">Kitne Ready Ho?</h2>
         <p className="mt-4 text-6xl font-bold tracking-tight text-navy">{readiness.score}<span className="text-xl font-medium text-muted"> / 100</span></p>
         <span className={`mt-4 inline-block rounded-full px-3 py-1 text-sm font-semibold ${healthy ? 'bg-growth-soft text-navy' : 'bg-warning-soft text-navy'}`}>{readiness.band}</span>

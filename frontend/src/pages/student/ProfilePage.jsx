@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { getProfile, saveProfile, errorMessage } from '../../api/student'
 import { FormField, buttonStyle, secondaryStyle, Message } from '../../components/FormField'
+import PlacementModelPanel from './PlacementModelPanel'
 import ReadinessCard from '../../components/ReadinessCard'
 import EvidenceEditor from '../../components/EvidenceEditor'
 import ResumeUpload from '../../components/ResumeUpload'
@@ -86,10 +87,11 @@ export default function ProfilePage() {
           <span className="text-sm text-muted">{dirty ? 'You have unsaved changes.' : 'Your profile is up to date.'}</span></div>
       </form>
     </section>
+    <PlacementModelPanel studentId={profile.id} onExpired={logout} />
     <aside className="rounded-2xl bg-navy p-6 text-white"><h2 className="font-bold">Jugaad Dost 🤝</h2>
       <p className="mt-1 text-xs text-white/70">Quick help · static FAQ</p>
       <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">Why did uploading my resume not change my score?</summary><p className="mt-2 text-sm leading-6 text-white/80">Uploading stores readable text for your review. Add skills, projects, academics, and existing assessment scores to your profile, then save to recalculate.</p></details>
-      <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">Is this a placement prediction?</summary><p className="mt-2 text-sm leading-6 text-white/80">No. It is a proposed weighted rule based on self-reported evidence. It has not been validated against real placement outcomes. A person should review the evidence before making any decision.</p></details>
+      <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">How do the two scores differ?</summary><p className="mt-2 text-sm leading-6 text-white/80">Weighted Readiness Score is a proposed rule based on your profile evidence, without real-outcome validation. Placement Likelihood Model is a separate Random Forest trained on public MBA placement data. Its output is uncalibrated and does not decide eligibility or offers. A person should review the evidence before making any decision.</p></details>
     </aside>
   </div>
 }

@@ -18,3 +18,6 @@ export function errorMessage(error) {
   const detail = error.response?.data?.detail
   return typeof detail === 'string' ? detail : 'Could not reach JobJugaad. Please retry; the demo server may be waking up.'
 }
+
+export const getPlacementModel = async (id) => (await api.get(`/students/${id}/placement-model`)).data
+export const savePlacementModel = async (id, input) => (await api.put(`/students/${id}/placement-model`, input)).data

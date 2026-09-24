@@ -65,7 +65,7 @@ py -3.12 -m venv backend/venv
 ./backend/venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
 ```
 
-The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 17 tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all.
+The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 18 tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all.
 
 Startup also runs seed.py idempotently, creating 4,800 named synthetic profiles, 45 companies and simulated drives in Demo College 1. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
 
@@ -80,7 +80,7 @@ Set VITE_API_URL=/api for local development. Vite proxies /api to http://127.0.0
 
 ## Tenant enforcement
 
-All 17 tenant tables listed in [PHASE5_AUDIT.md](PHASE5_AUDIT.md) carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
+The original 17 tenant tables listed in [PHASE5_AUDIT.md](PHASE5_AUDIT.md), plus placement_model_profiles (18 total), carry college_id. Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
 
 RLS is the second tenant enforcement layer, not a replacement for application authorization. The runtime role owns the initial schema for startup DDL; FORCE RLS ensures normal owner queries are still restricted. Future production deployment should separate migrations from the runtime role.
 
@@ -110,7 +110,7 @@ Vercel: root frontend/, Vite, build npm run build, output dist. Include source f
 
 CORS permits exactly https://jobjugaad.vercel.app with explicit GET/POST/PUT/OPTIONS methods and Authorization/Content-Type headers; no cookies or wildcard configuration. Resume parsing accepts up to 5 MB, 20 pages, and 200,000 extracted characters, with a 20-second subprocess timeout. Scanned/encrypted/unreadable PDFs return a readable error. The raw PDF is not persisted.
 
-Placement support uses simple thresholds. A trained support classifier, mock interview, live chatbot, embedding libraries and pgvector are not implemented. A separate public-data placement classifier is trained offline, awaiting metric review before application integration. Jugaad Dost is a static FAQ.
+Placement support uses simple thresholds. A trained support classifier, mock interview, live chatbot, embedding libraries and pgvector are not implemented. A separate public-data placement classifier now has its own academic-input form and explained signal alongside weighted readiness. Jugaad Dost is a static FAQ.
 
 
 ## Phase 3 administrator setup
@@ -147,14 +147,14 @@ The live sequence completed for student 4805 / drive 17 / interview 7556 / offer
 
 ## Final demo and honest scope
 
-Follow [DEMO_GUIDE.md](DEMO_GUIDE.md) for the exact Profiling → Matching → Scheduling → Offer → Analytics clicks, named fixtures and fresh-run alternative. [JUDGE_REVIEW.md](JUDGE_REVIEW.md) provides implementation-grounded answers; the written scalability statement is in [Architecture Section 9](ARCHITECTURE.md#9-dataset--evaluation). Competing campus placement platforms exist; no first-mover claim is made. The application demonstration dataset remains synthetic and its displayed scores remain unvalidated rules; a separate public-data placement classifier is evaluated offline. Notifications never deliver email/SMS and document stages are human declarations. Self-selected enrollment, schema-owner runtime privileges, missing rate limiting and absent production backup/migration workflows remain hardening work.
+Follow [DEMO_GUIDE.md](DEMO_GUIDE.md) for the exact Profiling → Matching → Scheduling → Offer → Analytics clicks, named fixtures and fresh-run alternative. [JUDGE_REVIEW.md](JUDGE_REVIEW.md) provides implementation-grounded answers; the written scalability statement is in [Architecture Section 9](ARCHITECTURE.md#9-dataset--evaluation). Competing campus placement platforms exist; no first-mover claim is made. The workflow demonstration dataset remains synthetic and weighted scores remain proposed rules; the separate placement signal is backed by a trained public-data classifier. Notifications never deliver email/SMS and document stages are human declarations. Self-selected enrollment, schema-owner runtime privileges, missing rate limiting and absent production backup/migration workflows remain hardening work.
 
 Phase 5 release `c3d7a57` serves API 0.6.0. All 17 actual live tenant policies were verified on 2026-09-23, along with allowed/rejected CORS responses and protected-route authentication. All 37 checks passed across regression/retest; the final production build and explained-score component rendering passed. The [per-table/per-screen audit](PHASE5_AUDIT.md) distinguishes these checks from the presenter's remaining browser rehearsal.
 
-## Hybrid real + synthetic data — metrics-first milestone
+## Hybrid real + synthetic data
 
 Campus Recruitment (`backend/data/Placement_Data_Full_Class.csv`, Ben Roshan/Kaggle via a pinned public GitHub mirror) trains a separate **Placement Likelihood Model** from real/public labels. Its original collection is publisher-reported, not independently audited. It contains no skill/project/certification/resume evidence, so the existing 4,800-student workflow demo and matching evaluation remain synthetic. Weighted readiness and support rules are unchanged.
 
 Accuracy **88.37%**, precision **93.10%**, recall **90.00%**, F1 **91.53%** (positive class: Placed; **43 held-out records**, 172 training, 215 total). Confusion matrix, with actual rows / predicted columns ordered Not Placed then Placed: `[[11, 2], [3, 27]]`. These are measured internal held-out results, not a synthetic sanity check and not a claim of production-grade or BPUT accuracy. The persisted forest is trained on 172 records, not all 215; its probabilities are uncalibrated. [Evaluation and limits](backend/ml/EVALUATION.md) · [Reproduce training](backend/ml/README.md) · [Source/license](backend/data/README.md).
 
-**Integration gate:** training, model persistence and evaluation are complete locally on the feature branch; neither the API nor frontend uses the artifact yet. Review the actual metrics before the next integration stage. No additional tenant table or application record was created.
+**Integration:** the user reviewed metrics and authorized deployment. Student profile → Placement Likelihood Model → Add or edit academic model inputs collects the 12 optional compatible fields. The API loads the saved model once at startup, with checksum and pinned-version checks; it never trains on a request. Missing records produce no score. Available signals show the baseline, all 12 local contributions and an explanation alongside a separately labeled Weighted Readiness Score. The new placement_model_profiles table has application college filters, ownership checks and ENABLE/FORCE RLS. Public source rows are not turned into fictional tenant accounts. See [integration verification and demo steps](evaluations/placement-integration.md) for release evidence.

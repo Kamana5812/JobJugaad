@@ -1,41 +1,52 @@
-import { lazy, Suspense } from 'react'
-import { Link, Navigate, Route, Routes } from 'react-router-dom'
-import horizontalLogo from '../../assets/logo_horizontal.png'
+import { lazy, Suspense, useEffect } from 'react'
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
-import LandingPage from './pages/student/LandingPage'
-import AuthPage from './pages/student/AuthPage'
+import LandingPage from './pages/public/LandingPage'
+import AuthPage from './pages/public/AuthPage'
 import ProfilePage from './pages/student/ProfilePage'
 import OffersPage from './pages/student/OffersPage'
 import NotificationsPage from './components/NotificationsPage'
-import RecruiterSignup from './pages/recruiter/RecruiterSignup'
 import TalentPage from './pages/recruiter/TalentPage'
+import RoleGuard from './components/RoleGuard'
+import SiteHeader from './components/SiteHeader'
+import SiteFooter from './components/SiteFooter'
 const AdminPage = lazy(() => import('./pages/admin/AdminPage'))
-import { roleHome } from './context/roleHome'
-import { secondaryStyle } from './components/FormField'
 
+function PageFocus() {
+  const { pathname, search, hash } = useLocation()
+  useEffect(() => {
+    const titles = { '/': 'Placement ka Jugaad', '/auth': 'Choose your portal', '/student': 'Career Copilot', '/recruiter': 'Talent Finder', '/admin': 'Placement Command Center' }
+    document.title = `JobJugaad | ${titles[pathname] || 'Campus placement'}`
+    if (!hash) { window.scrollTo(0, 0); document.getElementById('main')?.focus({ preventScroll: true }) }
+  }, [pathname, search, hash])
+  return null
+}
+export function AppRoutes() {
+  const { user } = useAuth()
+  return <Routes>
+    <Route path="/" element={<LandingPage />} /><Route path="/auth" element={<AuthPage />} />
+    <Route path="/login" element={<Navigate to="/auth" replace />} /><Route path="/signup" element={<Navigate to="/auth?mode=signup" replace />} />
+    <Route path="/recruiter/login" element={<Navigate to="/auth?role=recruiter&mode=login" replace />} />
+    <Route path="/recruiter/signup" element={<Navigate to="/auth?role=recruiter&mode=signup" replace />} />
+    <Route path="/student" element={<RoleGuard role="student"><ProfilePage /></RoleGuard>} />
+    <Route path="/student/profile" element={<Navigate to="/student" replace />} />
+    <Route path="/student/offers" element={<RoleGuard role="student"><OffersPage /></RoleGuard>} />
+    <Route path="/notifications" element={user ? <NotificationsPage /> : <Navigate to="/auth" replace />} />
+    <Route path="/recruiter" element={<RoleGuard role="recruiter"><TalentPage /></RoleGuard>} />
+    <Route path="/admin" element={<RoleGuard role="admin"><Suspense fallback={<p role="status">Loading Command Center…</p>}><AdminPage /></Suspense></RoleGuard>} />
+    <Route path="*" element={<div className="rounded-2xl bg-white p-8"><h1 className="text-2xl font-bold text-navy">Page not found</h1><Link className="mt-4 inline-block underline" to="/">Back to JobJugaad</Link></div>} />
+  </Routes>
+}
 function Layout() {
   const { user, loading, logout } = useAuth()
+  const { pathname } = useLocation()
+  const publicPage = ['/', '/auth', '/login', '/signup', '/recruiter/signup', '/recruiter/login'].includes(pathname)
   return <div className="min-h-screen bg-paper font-sans leading-relaxed text-ink">
     <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-10 focus:bg-white focus:p-4">Skip to content</a>
-    <header className="border-b border-line bg-white"><nav aria-label="Main navigation" className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-6">
-      <Link to="/" aria-label="JobJugaad home"><img src={horizontalLogo} alt="JobJugaad — Placement ka Jugaad, AI ke Saath." width="1600" height="533" className="h-auto w-48 rounded-md sm:w-56" /></Link>
-      <div className="flex flex-wrap items-center gap-4 text-sm font-semibold text-navy">{user ? <><Link to={roleHome(user.role)}>{user.role === "admin" ? "Command Center" : user.role === "recruiter" ? "Talent Finder" : "My profile"}</Link>{user.role === "student" && <Link to="/student/offers">My offers</Link>}<Link to="/notifications">Notifications</Link><button onClick={logout} className={secondaryStyle}>Log out</button></>
-        : <><Link to="/recruiter/signup">For recruiters</Link><Link to="/login">Log in</Link><Link to="/signup" className={secondaryStyle}>Get started</Link></>}</div>
-    </nav></header>
-    <main id="main" className="mx-auto max-w-6xl px-5 py-8 sm:px-6 sm:py-12">
-      {loading ? <p role="status">Restoring your session…</p> : <Routes>
-        <Route path="/" element={<LandingPage />} /><Route path="/signup" element={<AuthPage key="signup" signup />} />
-        <Route path="/login" element={<AuthPage key="login" />} />
-        <Route path="/student/profile" element={user?.role === "student" ? <ProfilePage /> : <Navigate to={roleHome(user?.role)} replace />} />
-        <Route path="/student/offers" element={user?.role === "student" ? <OffersPage /> : <Navigate to={roleHome(user?.role)} replace />} />
-        <Route path="/notifications" element={user ? <NotificationsPage /> : <Navigate to="/login" replace />} />
-        <Route path="/recruiter/signup" element={<RecruiterSignup />} />
-        <Route path="/recruiter" element={user?.role === "recruiter" ? <TalentPage /> : <Navigate to={roleHome(user?.role)} replace />} />
-        <Route path="/admin" element={user?.role === "admin" ? <Suspense fallback={<p role="status">Loading Command Center…</p>}><AdminPage /></Suspense> : <Navigate to={roleHome(user?.role)} replace />} />
-        <Route path="*" element={<div className="rounded-2xl bg-white p-8"><h1 className="text-2xl font-bold text-navy">Page not found</h1><Link className="mt-4 inline-block underline" to="/">Back to JobJugaad</Link></div>} />
-      </Routes>}
-    </main>
-    <footer className="border-t border-line px-6 py-6 text-center text-xs text-muted">JobJugaad · Explainability-first CampusLink prototype · Career Copilot · Talent Finder · Command Center</footer>
+    <SiteHeader user={user} logout={logout} /><PageFocus />
+    <main id="main" tabIndex="-1" className={publicPage ? 'outline-none' : 'mx-auto max-w-6xl px-5 py-8 outline-none sm:px-6 sm:py-12'}>
+      {loading && pathname !== '/' ? <p role="status" className="px-5 py-16 text-center">Restoring your session…</p> : <AppRoutes />}
+    </main><SiteFooter />
   </div>
 }
 export default function App() { return <AuthProvider><Layout /></AuthProvider> }

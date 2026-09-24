@@ -14,6 +14,8 @@ The Indian identity should feel modern and authentic — not like an Independenc
 
 ---
 
+Current navigation preview uses the user-supplied light/dark wordmarks in `frontend/src/assets/brand/`, the supplied favicon in `frontend/public/`, and a generated mascot journey in `frontend/src/assets/hero/`. Original root logos remain available. Dashboard illustration work waits for approval of the landing and role-selection preview.
+
 ## 2. Color Palette
 
 | Color | Hex | Usage |

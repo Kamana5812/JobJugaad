@@ -1,0 +1,82 @@
+{
+  "student": "Synthetic Student 301",
+  "job_title": "Simulated Python Backend Engineer",
+  "catalog_order": 0,
+  "match_score": 30.42,
+  "factor_breakdown": [
+    {
+      "key": "skills",
+      "label": "Skill compatibility",
+      "value": 0.0,
+      "weight": 40,
+      "contribution": 0.0,
+      "evidence": "Mean capped proficiency/target across 2 exact skill names; 0 targets met.",
+      "missing": false
+    },
+    {
+      "key": "projects",
+      "label": "Project relevance",
+      "value": 0.0,
+      "weight": 20,
+      "contribution": 0.0,
+      "evidence": "0/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+      "missing": false
+    },
+    {
+      "key": "academics",
+      "label": "Academics",
+      "value": 79.0,
+      "weight": 20,
+      "contribution": 15.8,
+      "evidence": "CGPA 7.9/10 multiplied by 10.",
+      "missing": false
+    },
+    {
+      "key": "assessments",
+      "label": "Assessment performance",
+      "value": 72.45,
+      "weight": 15,
+      "contribution": 10.87,
+      "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+      "missing": false
+    },
+    {
+      "key": "certifications",
+      "label": "Certifications",
+      "value": 75.0,
+      "weight": 5,
+      "contribution": 3.75,
+      "evidence": "3 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+      "missing": false
+    }
+  ],
+  "missing_requirements": [
+    "python proficiency 0/100 is below target 60/100",
+    "sql proficiency 0/100 is below target 50/100",
+    "weighted match score 30.42/100 is below the 60/100 threshold"
+  ],
+  "skill_gaps": [
+    {
+      "skill_name": "python",
+      "proficiency": 0.0,
+      "required": 60.0,
+      "shortfall": 60.0,
+      "status": "critical",
+      "explanation": "python: recorded proficiency 0/100; role target 60/100. No recorded skill evidence; treated as zero.",
+      "next_step": "Add a practical python project and review proficiency against 60/100."
+    },
+    {
+      "skill_name": "sql",
+      "proficiency": 0.0,
+      "required": 50.0,
+      "shortfall": 50.0,
+      "status": "critical",
+      "explanation": "sql: recorded proficiency 0/100; role target 50/100. No recorded skill evidence; treated as zero.",
+      "next_step": "Add a practical sql project and review proficiency against 50/100."
+    }
+  ],
+  "eligible": false,
+  "explanation": "Below Threshold: The student's CGPA meets the eligibility criteria, but the required skill set shows a gap in python and the weighted match score 30.42/100 is below the required 60/100 threshold.",
+  "next_step": "Add a practical python project and review proficiency against 60/100.",
+  "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+}

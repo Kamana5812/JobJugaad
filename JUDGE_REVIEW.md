@@ -4,7 +4,7 @@ Lead with: **JobJugaad is an explainability-first campus placement workflow: eve
 
 | Judge question | Implementation-grounded answer |
 |---|---|
-| Where is the AI? | No trained model or LLM exists in this prototype. pdfplumber extracts text, weighted rules score profiles and a greedy checker proposes interview slots. The user-specified Run AI Matching label has an adjacent no-trained-model disclosure. |
+| Where is the AI? | The deployed workflow uses pdfplumber, weighted rules and a greedy scheduler. A separate Random Forest has now been evaluated offline on 215 public placement records (172 training / 43 held out); integration awaits metric review. No LLM is used. The user-specified Run AI Matching label has an adjacent no-trained-model disclosure. |
 | Why these weights? | Readiness uses the requested 30/20/15/15/10/10 proposal. Matching defaults to 40/20/20/15/5 with configurable role weights and normalized 0–100 inputs. These are unvalidated assumptions. |
 | Why exclude a candidate? | CGPA/branch/backlog rules and the default 60 threshold are shown with factors, missing requirements, fixed explanations and a next step. There is no numeric confidence score. |
 | Can a recruiter disagree? | Promote or reject with a reason; original scoring evidence, reviewer and time remain in audit history. |
@@ -18,3 +18,5 @@ Lead with: **JobJugaad is an explainability-first campus placement workflow: eve
 | How would a trained support model be added? | Only with explicit authorization, suitable real labeled data, SMOTE or class weighting in leakage-safe training splits and independent evaluation. Synthetic demo data cannot validate real-world predictions. |
 
 Read [the demo guide](DEMO_GUIDE.md), [evaluation limitations](evaluations/phase4-report.md), [security audit](PHASE5_AUDIT.md) and [Architecture Section 9](ARCHITECTURE.md#9-dataset--evaluation). This is a new implementation-grounded sheet; missing historical research documents were not reconstructed or claimed as reviewed. The presenter should rehearse aloud and warm the live app before the actual demo slot; automated checks cannot perform those actions.
+
+**2026-09-24 model update:** Accuracy **88.37%**, precision **93.10%**, recall **90.00%**, F1 **91.53%** (positive class: Placed; **43 held-out records**, 172 training, 215 total). These held-out numbers belong only to the separate public-data placement classifier; see [its report and limitations](backend/ml/EVALUATION.md). Keep the prior synthetic matching/readiness/support evaluation distinct. The model is not yet exposed in the live app.

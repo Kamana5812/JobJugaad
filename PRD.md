@@ -15,7 +15,7 @@ Profile → Readiness → Skill Gap → Opportunity → Matching → Shortlistin
 Scheduling → Interview → Offer → Documentation → Joining → Analytics
 ```
 
-**Core positioning:** JobJugaad connects readiness, keyword/weighted matching, conflict-aware scheduling, rule-based support, offers and analytics. This prototype uses deterministic calculations and fixed explanations with human review; no trained model or LLM calls.
+**Core positioning:** JobJugaad connects readiness, keyword/weighted matching, conflict-aware scheduling, rule-based support, offers and analytics. The deployed workflow uses deterministic calculations and fixed explanations with human review. A separately authorized public-data Random Forest placement-status experiment has been trained and evaluated offline; API/frontend integration awaits the user's metric review. No LLM is used.
 
 > **Honest competitive framing:** Campus placement platforms already exist; no first-mover or exclusive-feature claim is made. Demonstrate visible factor-level evidence, named support indicators, human overrides and the connected workflow. The simulator is future work. Historical research files are absent from this checkout; their competitor counts and uniqueness assertions are not evidence for the final pitch.
 
@@ -35,8 +35,6 @@ Scheduling → Interview → Offer → Documentation → Joining → Analytics
 
 ## 3. Goals & Success Metrics
 
-These are product targets, not measured benchmark results.
-
 These are product targets, not measured benchmarks.
 
 | Goal | Metric |
@@ -49,9 +47,7 @@ These are product targets, not measured benchmarks.
 
 ---
 
-**Current implementation boundary:** Students have profile/readiness, offer tracking and notifications. Recruiters manage their own companies/drives and matching; admins manage scheduling/offers/support/analytics. A student opportunities/application portal, recruiter scheduling UI, automatic JD extraction, simulator and trained prediction are roadmap items, not delivered features.
-
-**Current boundary:** Students have profile/readiness, offers and notifications. Recruiters manage company/drives/matching; admins manage scheduling/offers/support/analytics. Student opportunities/applications, recruiter scheduling, automatic JD extraction, simulator and trained prediction remain roadmap items.
+**Current boundary:** Students have profile/readiness, offers and notifications. Recruiters manage company/drives/matching; admins manage scheduling/offers/support/analytics. Student opportunities/applications, recruiter scheduling, automatic JD extraction, simulator and deployed model predictions remain roadmap items. Offline public-data training is separately authorized and must pass the metric-review gate.
 
 ## 4. Target Users
 
@@ -163,7 +159,7 @@ Readiness/fit level should also map to the official four-band scale:
 
 ## 10. Assumptions & Constraints
 
-- No real student/recruiter data is available — a synthetic dataset (~4,800 students, 40–50 companies) will be generated.
+- Hybrid data: imported public Campus Recruitment placement labels (215 records) are reserved for a separate academic/work-experience placement classifier. The 4,800 student / 45 company application demo, skills, projects, certifications and workflow records remain synthetic. The source has no resume/skills/project evidence; its labels do not validate matching or readiness rules.
 - Team has React/JS experience; Python/FastAPI is the backend learning curve.
 - Deployment target: **Vercel** (frontend) + **Render** (backend + PostgreSQL).
 - Timeline: hackathon-length (days, not months) — see `PHASES.md`.
@@ -181,3 +177,7 @@ Readiness/fit level should also map to the official four-band scale:
 - `TECHNICAL_VALIDATION.md` — research-backed validation of the AI/ML, matching, and scheduling design
 - `REVISED_DOCUMENTATION.md` — the full before/after refinement log behind this document's changes
 - `JUDGE_REVIEW.md` — hard questions judges will ask, answered honestly — read before your demo
+
+## Authorized hybrid-data experiment — 2026-09-24
+
+Accuracy **88.37%**, precision **93.10%**, recall **90.00%**, F1 **91.53%** (positive class: Placed; **43 held-out records**, 172 training, 215 total). This separate Random Forest uses the imported public Campus Recruitment status labels; it is not validation of weighted readiness, matching or support rules. Only the dataset's academic/test/work-experience and categorical fields are modeled; source collection is publisher-reported and the small MBA-oriented sample is not a BPUT outcome benchmark. [Measured report](backend/ml/EVALUATION.md). The artifact is offline; integration remains pending user review of these metrics.

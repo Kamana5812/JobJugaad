@@ -53,7 +53,7 @@ Reference implementation architecture for the JobJugaad platform. See `PRD.md` f
 | Validation | Pydantic |
 | Auth | JWT (python-jose) + passlib (password hashing) |
 | Resume parsing | pdfplumber / PyMuPDF, optionally LLM-assisted for free-text section extraction only (see §5, Profile AI) — this is the one place in the pipeline an LLM is justified |
-| ML — **P1, conditional** | scikit-learn (At-Risk classifier only, with class-imbalance handling — see §5) |
+| ML — **authorized offline experiment** | pandas + scikit-learn RandomForestClassifier + joblib for the separate public-data placement signal; integration awaits metric review |
 | ML — **P2, conditional** | sentence-transformers (semantic matching) — do not install until the P1 rule-based Matching Engine works end-to-end |
 
 ### Database
@@ -197,7 +197,7 @@ RECRUITER ──> COMPANY ──< JOBS ──< MATCHES ──> STUDENTS
 
 ## 5. Explainable Engine Architecture
 
-The architecture separates seven responsibilities. The deployed prototype is rule-based; optional model-based extensions below require explicit authorization. Each layer uses the simplest technique that satisfies the requirement, and every layer that produces a judgment about a student ends in human review, not an autonomous decision.
+The architecture separates seven responsibilities. The deployed workflow is rule-based. The user authorized a separate public-data placement classifier on 2026-09-24, with metrics reviewed before frontend integration; other model extensions still require explicit authorization. Each layer uses the simplest technique that satisfies the requirement, and every layer that produces a judgment about a student ends in human review, not an autonomous decision.
 
 ### Layer 1 — Rule Engine
 Implemented hard constraints are branch eligibility, minimum CGPA and maximum backlog count. They run before shortlist ranking; the score cannot override them. Graduation-year filtering is not collected in this prototype. A separately logged human override may change shortlist status without changing the calculation.
@@ -220,7 +220,7 @@ The six-factor calculation is a proposed weighted rule over self-reported eviden
 
 The six weights above are unchanged. Since the source formula does not prescribe component normalization, this implementation uses mean recorded skill proficiency, 25 points per recorded project capped at 100, CGPA x 10, and existing self-reported assessment scores on the 0-100 scale. Project count is a simple proxy, not a quality assessment. Missing factors contribute zero and are explicitly marked missing. Values and contributions are rounded half-up to two decimals; summed contributions are rounded half-up to a whole number before official band mapping. Every response includes score, raw total, six contributions with evidence, band, explanation, methodology, and a next step.
 
-This is a proposed weighted rule with unvalidated normalization assumptions. Resume extraction stores text for human review; it does not infer skills, assign proficiency, or change readiness automatically. Certifications and backlogs are retained without adding factors to the fixed formula. No trained model or new assessment/interview feature is introduced.
+This is a proposed weighted rule with unvalidated normalization assumptions. Resume extraction stores text for human review; it does not infer skills, assign proficiency, or change readiness automatically. Certifications and backlogs are retained without adding factors to the fixed formula. This weighted rule introduces no trained model or new assessment/interview feature; the separately authorized public-data model is documented below.
 ### Layer 3 — Matching / Ranking Engine
 ```
 Eligible Candidates (from Layer 1) → Skill Matching (keyword/weighted,
@@ -249,6 +249,12 @@ The rule engine (Layer 1) decides *who is eligible*; this layer only *ranks who 
 - Recruiter signup creates a user and company atomically. Recruiters see their own company's drives and candidate snapshots within their selected demo college. The four new tables (companies, jobs, matches, match_overrides) receive ENABLE/FORCE RLS in the same transaction as table creation; application queries and updates also carry college filters, alongside composite tenant foreign keys.
 - Promote/reject is a human shortlist override, not a score modification. Audit rows retain reviewer, timestamp, reason, previous decision, and the full score/evidence snapshot. Reruns preserve manual decisions. Audit records have no edit/delete API; database-owner tamper resistance is not claimed.
 - Demo data is generated in seed.py: 300 deterministic synthetic students, 12 synthetic companies, and three simulated drives. Existing profiles are preserved; unshared random passwords prevent public login to seed accounts. Startup runs a seeded drive only when it has no saved matches. Synthetic outputs do not establish real-world accuracy.
+
+### Separate Placement Likelihood Model (authorized offline milestone)
+
+The public-data classifier predicts `Placed` / `Not Placed` from five academic/test percentages and seven categorical academic/work-experience fields, including gender and MBA specialisation. It is distinct from the unchanged six-factor weighted readiness formula. The CSV has no skills, projects, certifications or resume text, so it cannot validate those engines. Dataset provenance: [data notes](backend/data/README.md); frozen split/model/preprocessing choices: [training protocol](backend/ml/training_protocol.json). A Random Forest is used as requested; no unverified paper citation or claim of superiority to other trained models is asserted.
+
+The 80/20 stratified split happens before fitting a one-hot encoder; class weights use training labels only. Salary and status are outcomes and sl_no is an identifier, all excluded from features. The persisted pipeline is trained on 172 records, tested on 43, with no holdout refit. Any future signal must carry local contributing factors and an explanation, identify uncalibrated model output, and require compatible recorded fields; missing MBA fields or degree percentages must not be fabricated from current engineering profiles. The API will load the trusted artifact once at startup after integration is authorized, never retrain per request. The existing At-Risk/support engine is unchanged and remains simple rules.
 
 ### Layer 4 — Explanation Engine
 Every score from Layer 3 passes through a template-based explanation generator before reaching a student or recruiter — never a bare score. It states matching factors, missing requirements, and evidence drawn from the profile, in the format the problem statement requires:
@@ -387,10 +393,10 @@ Every core table carries a `college_id` column enforced by both application-leve
 
 | Category | Status |
 |---|---|
-| **Real data** | Not used — no real student/recruiter data available or appropriate for a hackathon |
-| **Public data** | `Placement_Data_Full_Class.csv` (Ben Roshan's "Campus Recruitment" dataset, Kaggle) — recommended as a real empirical anchor for Readiness Engine weight validation if pursued; confirmed used across 5+ independent public projects |
+| **Real/public labeled data** | Imported Campus Recruitment records, publisher-described anonymized campus data; collection not independently audited. Used only for the separate offline placement-status model. |
+| **Public model training** | `backend/data/Placement_Data_Full_Class.csv`: 215 records, status labels; 172 training / 43 held-out test records. pandas + Random Forest + joblib; no salary or ID predictors. API/frontend integration pending metric review. |
 | **Synthetic data** | ~4,800-student demo dataset (see `seed.py`) — for UI/scale demonstration only, never described as validating model accuracy |
-| **Simulated data** | Jugaad Simulator outputs — generated from the synthetic dataset's own conversion model, explicitly labeled as projections, not forecasts |
+| **Simulated workflow data** | Scheduling, offers and notifications in the demo are fictional. Jugaad Simulator is not implemented. |
 
 **Evaluation protocol (do not skip, do not fabricate):**
 - Matching Engine: precision/recall against a small, self-labeled synthetic ground truth — label clearly as a sanity check.
@@ -409,3 +415,9 @@ These are synthetic sanity checks against our own assumptions and a face-validit
 ### Phase 5 deployment verification
 
 `/health` checks actual PostgreSQL catalogs for all 17 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
+
+### Public-data placement classifier — measured evaluation (2026-09-24)
+
+Accuracy **88.37%**, precision **93.10%**, recall **90.00%**, F1 **91.53%** (positive class: Placed; **43 held-out records**, 172 training, 215 total). Confusion matrix (actual rows / predicted columns, order Not Placed, Placed): `[[11, 2], [3, 27]]`. Majority-class baseline accuracy is 69.77%. These are measured results on imported public labels, not synthetic expected labels. The fixed stratified split and parameters were committed before training; no test-set tuning or refit was performed. See [full measured report](backend/ml/evaluation_report.json), [readable evaluation](backend/ml/EVALUATION.md) and [dataset provenance](backend/data/README.md).
+
+This is an offline trained artifact, awaiting metric review before API/frontend integration. Its 215-record source and 43-case holdout do not establish external validity for BPUT or calibrated individual likelihoods. The saved model was fitted on 172 records; do not imply all 215 were used for training. No skills/project/certification/resume labels exist in this public dataset. Existing weighted readiness and rule-based support remain unchanged, and Phase 4 matching/readiness/support evaluations retain their synthetic sanity-check framing. Future inference must load the trusted pipeline once at startup, collect compatible fields, and return distinct explained outputs; it is not wired into this release's API or UI.

@@ -142,3 +142,15 @@ Cross-referenced against the CampusLink problem statement's 12 minimum deliverab
 | 10 | Demonstration using simulated/public datasets | Synthetic dataset in `seed.py` (no external validation dataset used) |
 | 11 | Accuracy/performance evaluation of matching **and scoring** | Phase 4 (both evaluation bullets) |
 | 12 | Scalability/deployment approach across multiple campuses | Phase 5 (written statement) |
+
+## User-authorized extension — public placement model (2026-09-24)
+
+This explicit user instruction authorizes only the hybrid-data experiment, not unrelated stretch features.
+
+- [x] Import the pinned public Campus Recruitment dataset with source and license notes.
+- [x] Add pandas, scikit-learn and joblib; freeze a leakage-safe 80/20 stratified training protocol.
+- [x] Train one fixed Random Forest, save the evaluated artifact and actual held-out metrics, preserving the separate synthetic evaluations.
+- [ ] User reviews measured metrics before frontend integration.
+- [ ] Subsequent stage: compatible profile fields, startup-only model loading, separate explained API output and frontend display; retain all tenant filters/RLS.
+
+No current API/frontend or synthetic seed records were changed for this offline milestone. Results: [model evaluation](backend/ml/EVALUATION.md).

@@ -70,7 +70,7 @@ Conventions and guardrails for anyone (human or AI agent) working on this codeba
 
 - **Never claim a rule-based score is a trained ML model.** Document actual logic honestly in code comments and in `ARCHITECTURE.md` — judges will ask (see `JUDGE_REVIEW.md`).
 - Any weighting scheme (e.g. readiness formula) must be clearly labeled as a **proposed implementation**, not a fixed external standard.
-- Synthetic data generation lives in one script (`seed.py`) — don't hand-write JSON fixtures scattered across the codebase.
+- Synthetic application data generation lives in `seed.py`. Imported public data stays in `backend/data/` with source, license and checksum; never relabel generated skills/projects as real data. Public model training must remain separate from tenant demo records.
 - Any number presented in a demo (e.g. simulator projections) must come from the actual synthetic dataset/model — never a hardcoded fictional number in the UI.
 - **Never fabricate an accuracy, benchmark, or performance number.** If asked for one and no real evaluation has been run, say so and define the evaluation protocol instead (see `ARCHITECTURE.md` §9) — this applies to code comments, UI copy, and spoken pitch material equally.
 - **The Explanation Generator is template-based, never an LLM call.** An LLM can hallucinate an incorrect reason for a score, which is worse than no explanation at all. The only place an LLM use is justified anywhere in this system is free-text resume section extraction — nowhere else.
@@ -79,11 +79,15 @@ Conventions and guardrails for anyone (human or AI agent) working on this codeba
 
 ---
 
+### Public-data model evaluation (authorized 2026-09-24)
+
+The Campus Recruitment Random Forest experiment uses imported public placement labels, not generated labels. Keep weighted readiness and the trained placement signal distinct. Exclude status, salary and identifiers from features; preserve structural salary nulls by excluding salary. Fit preprocessing only on training rows, use the frozen stratified 80/20 split, report measured accuracy/precision/recall/F1 and the explicitly ordered confusion matrix, and retain both class results. Do not tune on the test set or claim production-grade accuracy from 215 records. Keep matching and rule-score evaluations labeled synthetic. Report metrics to the user before frontend integration; no number-only model signal may be exposed later.
+
 ## 6b. Responsible Language Rules
 
 These apply everywhere the product speaks to a user — UI copy, API response messages, pitch material, and documentation alike.
 
-- **Never say an AI "understands" or "completely knows" a student.** Use "rule-based, structured view of the student's profile" for this implementation; no trained model is present.
+- **Never say an AI "understands" or "completely knows" a student.** Use "rule-based, structured view" for weighted readiness/matching/support. Only the separately trained public-data placement classifier may be described as ML; name its dataset, training/test sample sizes and limitations.
 - **Never label a student outcome as "at risk" without qualification, and never imply failure.** The correct framing is: "a student who may require additional placement support based on measurable indicators." Support categories (Technical / Aptitude / Communication / Resume-Profile / Mentoring) are always preferred over a single risk label.
 - **Never present a rejection as a dead end.** Every "not eligible" or "below threshold" output must be paired with the specific gap and, where feasible, a suggested next step — per the "Reject Less → Identify the Gap → Help Improve" philosophy in `PRD.md` §1.
 - **Never claim an academic-performance ranking is fair to all recruiters' priorities.** Different recruiters weight academics, skills, projects, certifications, and communication differently — never hardcode CGPA as the dominant or sole ranking factor; the weighting must remain configurable per role.

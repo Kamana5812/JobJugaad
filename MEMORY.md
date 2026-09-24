@@ -2,8 +2,8 @@
 
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
-**Last updated:** 2026-09-23
-**Current phase:** Phase 5 implementation deployed and verified; delivered for user review. Presenter browser rehearsal and pre-demo warm-up remain manual. Phases 0–4 are explicitly accepted.
+**Last updated:** 2026-09-24
+**Current phase:** Offline public placement model trained and evaluated; awaiting user metric review before API/frontend integration. Deployed Phase 5 workflow remains unchanged.
 
 ---
 
@@ -85,6 +85,11 @@ Living record of project state and decisions. Update this file whenever a major 
 | 2026-09-23 | Exact Vercel CORS with a local Vite /api proxy | Remove production wildcards without trusting arbitrary preview/local origins. |
 | 2026-09-23 | Write implementation-grounded audit, judge sheet and click-by-click demo | Separate synthetic evidence, prior user browser acceptance and automated checks; do not reconstruct missing research or claim unsupported uniqueness. |
 
+| 2026-09-24 | User authorized a hybrid public + synthetic data strategy and a metrics-first gate | Campus Recruitment public labels train a separate Random Forest placement-status signal; existing weighted readiness, matching and support remain separate. No frontend integration before reporting actual held-out results. |
+| 2026-09-24 | Freeze source and training choices in cde4998 before the first run | Pinned Ben Roshan dataset mirror at ShuklaPrashant21/Campus_Recruitment, 215 rows; seed 42 stratified 80/20, 300 trees, leaf minimum 2 and balanced training class weights. No salary/ID/label leakage or test tuning. |
+
+| 2026-09-24 | Measured public-data holdout results: 38/43 correct; accuracy 88.37%, Placed precision 93.10%, recall 90.00%, F1 91.53%; matrix [[11,2],[3,27]] | One frozen split/configuration on Campus Recruitment, not a synthetic sanity check. Small MBA cohort, 43 test cases, no external validation; source https://www.kaggle.com/datasets/benroshan/factors-affecting-campus-placement via pinned ShuklaPrashant21/Campus_Recruitment mirror. |
+
 _Add a new row every time a meaningful architectural or product decision is made._
 
 ---
@@ -92,6 +97,9 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] Five offline public-model validation checks passed: pinned source/structural salary, stratified disjoint split, excluded predictors/training-only encoding, saved-artifact metric reproduction and modified-source refusal. Dependency check passed; existing package versions, application code and synthetic evaluations are unchanged.
+- [x] Imported the public Campus Recruitment CSV from a pinned GitHub revision with source/license/checksum: 215 rows, 148 Placed / 67 Not Placed. Kept it separate from all synthetic tenant records.
+- [x] Trained the predeclared offline Random Forest on 172 rows and evaluated 43 stratified held-out rows. Actual metrics: accuracy 88.37%, Placed precision 93.10%, recall 90.00%, F1 91.53%; confusion matrix [[11, 2], [3, 27]] in Not Placed / Placed order. Saved the exact evaluated pipeline and full report under backend/ml/. No tuning or holdout refit.
 - [x] Phase 5 release c3d7a57 deployed: exact DESIGN palette tokens, critical status styling, saffron numbered headings, explainability-first copy, preserved logos and static FAQ-only Jugaad Dost. No AI Mock Interview, live chatbot, trained classifier or embedding dependencies were built.
 - [x] Locked CORS to https://jobjugaad.vercel.app with explicit methods/headers; live preflight accepts only that origin among tested real/foreign/lookalike/local origins. Local development uses the Vite /api proxy.
 - [x] Verified all 17 live tenant tables with college_id, ENABLE/FORCE RLS and college_isolation USING/WITH CHECK predicates, plus a runtime role without superuser/BYPASSRLS. Application college filters and role/ownership controls remain. Per-table evidence: PHASE5_AUDIT.md and evaluations/phase5-security.json.
@@ -141,10 +149,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- No implementation work remains in progress. Independent browser/visual rehearsal was unavailable because the browser runtime could not initialize; presenter checks remain explicitly unchecked in PHASES.md.
+- No offline implementation remains in progress. API/frontend integration is pending the user's metric review, as explicitly requested.
 
 ### ⏭️ Next Up
-- User reviews the deployed Phase 5 handoff and rehearses DEMO_GUIDE.md in their browser, reads JUDGE_REVIEW.md aloud, and warms the app before the actual demo. Do not start any stretch feature without explicit authorization.
+- Show actual held-out accuracy, precision, recall, F1 and confusion matrix, then wait for the user before frontend integration. Do not broaden this dataset to skills/projects/matching or change support flags.
 
 ---
 
@@ -152,11 +160,11 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
-- Matching and readiness scoring are rule-based (weighted sums / keyword matching) for the MVP, not a trained ML model — documented deliberately for explainability (see `RULES.md` §6).
+- Matching and Weighted Readiness Score remain rule-based. A distinct public-data Random Forest placement classifier is trained/evaluated offline and is not yet used by the API/frontend; no merged score is claimed.
 - All 37 local rule/PostgreSQL checks passed across the complete Phase 5 run and targeted retest; the user confirmed earlier authenticated live lifecycle checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
 - Notifications are implemented as simulated in-app records only; no email or SMS is sent. Offer/document stages record human declarations about external document exchange, not automatic document verification.
 - All seventeen Phase 1–4 tenant tables have college filters and FORCE RLS, verified locally with independent cross-tenant tests. Live catalog verification now confirms every table and policy; earlier API cross-college denial was verified. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
-- The demonstration cohort is synthetic-only: 4,800 seeded students and 45 seeded companies, plus separately labeled synthetic walkthrough accounts. No real outcome validation, independent accuracy percentage, latency benchmark or calibrated confidence exists.
+- The application demo cohort remains synthetic: 4,800 seeded students and 45 companies plus synthetic walkthrough accounts. The separate classifier uses 215 imported public labeled records (172 train / 43 test), with measured internal holdout results. No external/BPUT validation, production-scale accuracy, latency benchmark or calibrated confidence is established.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
 - Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
 - Local PostgreSQL test configuration is stored only under ignored .local/. The live Render service uses its existing managed PostgreSQL database.
@@ -330,3 +338,9 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Phase 5 final handoff:** 2026-09-23 — User Phase 4 acceptance is recorded. Release c3d7a57 is live on https://jobjugaad.vercel.app and https://jobjugaad-api.onrender.com (API 0.6.0). Public HTTP checks verified connected health, all 17 actual ENABLE/FORCE college_isolation policies and non-bypass runtime role, exact-origin CORS, protected-route 401 responses, and the deployed frontend bundle/API target. Saved safe public evidence in evaluations/phase5-security.json and listed each table in PHASE5_AUDIT.md. No private credentials or authenticated profile payloads were published.
 > **Validation:** 36/37 passed in the full run; the notification assertion counted another test's separate booking. Scoped it to its own interview ID, then all 12 affected scheduling/support tests passed: 37 checks covered across runs. Final build and real saved-data rendering (readiness, 10 candidate cards, 94 support cards, student/admin offers and analytics) passed. No failing score screen. No AI Mock Interview/live chatbot/embedding upgrade; supplied tagline and requested Run AI Matching label remain with an explicit rule-based disclosure.
 > **Delivered:** DEMO_GUIDE.md names student 4805 / drive 17 / interview 7556 / joined offer 2385, visible seeded matching candidates 2003 and 4499, the original support-student double-booking fixture, and a fresh-run conflict/lifecycle alternative. JUDGE_REVIEW.md and Architecture Section 9 provide honest evaluation and multi-college deployment explanations. The user accepted Phase 4 browser behavior; browser automation remains unavailable, so a Phase 5 visual/click rehearsal, reading aloud and actual pre-demo warm-up remain presenter actions. Stop here for user review; no stretch work is authorized.
+
+> **Hybrid data start:** 2026-09-24 — User explicitly requested Campus Recruitment public CSV, an offline Random Forest training/evaluation pipeline, and a stop to show real held-out metrics before frontend integration. Retrieved the requested CSV from a pinned GitHub mirror; verified 215 rows, 15 columns, 148 Placed / 67 Not Placed and recorded SHA-256. Kaggle lists CC0 and describes anonymized campus data provided for classroom work; original collection is not independently audited. Frozen protocol/source/code committed as cde4998 before training. The sample is MBA-oriented and cannot be assumed representative of BPUT engineering cohorts. No frontend, tenant schema, seed records, rules or live deployment changed. Next: finish dependencies, train once, reproduce saved-artifact metrics, update actual results, then stop for review.
+
+> **Public-model metric-review handoff:** 2026-09-24 — Trained once using the cde4998 frozen source/protocol. Measured held-out results: 38/43 correct, accuracy 88.37%, Placed precision 93.10%, recall 90.00%, F1 91.53%. Matrix rows actual / columns predicted, order [Not Placed, Placed]: [[11,2],[3,27]]. Dataset n=215; train=172 (118 Placed/54 Not Placed), test=43 (30/13). Majority baseline 69.77%. No test-set tuning, synthetic labels, salary/ID predictors or refit on the holdout.
+> **Saved:** backend/data/Placement_Data_Full_Class.csv and source/license/checksum notes; backend/ml/train_readiness_model.py, training_protocol.json, readiness_model.joblib, evaluation_report.json and readable EVALUATION.md. pandas/scikit-learn/joblib and transitive versions are pinned. Five offline tests and pip dependency check passed. Saved model predictions independently reproduced the reported metrics.
+> **Boundary:** Public labeled data is publisher-described campus recruitment data, not independently audited. Small MBA-oriented cohort and 43-case internal holdout do not establish BPUT, external or production-grade performance; probabilities are uncalibrated, and gender/education predictors need bias review before operational use. Weighted readiness, rule-based support, matching/skills/projects/certifications, tenant data and all prior synthetic evaluation artifacts remain unchanged. No frontend/API/schema/startup integration or production deployment was performed. Work stays on feature/public-placement-model for metric review. Next: show actual numbers and stop; subsequent integration must collect compatible fields, load once at startup and return separate explained outputs.

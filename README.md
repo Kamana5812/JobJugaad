@@ -29,7 +29,7 @@ This is a **proposed weighted rule**, not a trained model or a validated placeme
 
 Unrecorded factors contribute zero and are explicitly marked missing. Factor values and weighted contributions are rounded half-up to two decimals. Contributions are summed and the total rounded half-up to an integer before applying the official bands: 0–40 Not Ready, 41–65 Developing, 66–85 Ready, 86–100 Highly Employable. Certifications, backlogs, and resume prose are retained but do not add points to this formula.
 
-No accuracy benchmark or real-world outcome validation has been performed. The assistant-authored synthetic face-validity review is documented in [evaluations/phase4-report.md](evaluations/phase4-report.md); it is not independent validation.
+No real-outcome validation has been performed for this weighted readiness rule. The separate public-data classifier has its own measured held-out evaluation below. The assistant-authored synthetic face-validity review is documented in [evaluations/phase4-report.md](evaluations/phase4-report.md); it is not independent validation.
 
 ## Recruiter flow and matching
 
@@ -110,7 +110,7 @@ Vercel: root frontend/, Vite, build npm run build, output dist. Include source f
 
 CORS permits exactly https://jobjugaad.vercel.app with explicit GET/POST/PUT/OPTIONS methods and Authorization/Content-Type headers; no cookies or wildcard configuration. Resume parsing accepts up to 5 MB, 20 pages, and 200,000 extracted characters, with a 20-second subprocess timeout. Scanned/encrypted/unreadable PDFs return a readable error. The raw PDF is not persisted.
 
-Placement support uses simple thresholds. A trained support classifier, mock interview, live chatbot, embedding libraries and pgvector are not implemented. Jugaad Dost is a static FAQ.
+Placement support uses simple thresholds. A trained support classifier, mock interview, live chatbot, embedding libraries and pgvector are not implemented. A separate public-data placement classifier is trained offline, awaiting metric review before application integration. Jugaad Dost is a static FAQ.
 
 
 ## Phase 3 administrator setup
@@ -147,6 +147,14 @@ The live sequence completed for student 4805 / drive 17 / interview 7556 / offer
 
 ## Final demo and honest scope
 
-Follow [DEMO_GUIDE.md](DEMO_GUIDE.md) for the exact Profiling → Matching → Scheduling → Offer → Analytics clicks, named fixtures and fresh-run alternative. [JUDGE_REVIEW.md](JUDGE_REVIEW.md) provides implementation-grounded answers; the written scalability statement is in [Architecture Section 9](ARCHITECTURE.md#9-dataset--evaluation). Competing campus placement platforms exist; no first-mover claim is made. The demonstration dataset is synthetic, scores are unvalidated rules, notifications never deliver email/SMS and document stages are human declarations. Self-selected enrollment, schema-owner runtime privileges, missing rate limiting and absent production backup/migration workflows remain hardening work.
+Follow [DEMO_GUIDE.md](DEMO_GUIDE.md) for the exact Profiling → Matching → Scheduling → Offer → Analytics clicks, named fixtures and fresh-run alternative. [JUDGE_REVIEW.md](JUDGE_REVIEW.md) provides implementation-grounded answers; the written scalability statement is in [Architecture Section 9](ARCHITECTURE.md#9-dataset--evaluation). Competing campus placement platforms exist; no first-mover claim is made. The application demonstration dataset remains synthetic and its displayed scores remain unvalidated rules; a separate public-data placement classifier is evaluated offline. Notifications never deliver email/SMS and document stages are human declarations. Self-selected enrollment, schema-owner runtime privileges, missing rate limiting and absent production backup/migration workflows remain hardening work.
 
 Phase 5 release `c3d7a57` serves API 0.6.0. All 17 actual live tenant policies were verified on 2026-09-23, along with allowed/rejected CORS responses and protected-route authentication. All 37 checks passed across regression/retest; the final production build and explained-score component rendering passed. The [per-table/per-screen audit](PHASE5_AUDIT.md) distinguishes these checks from the presenter's remaining browser rehearsal.
+
+## Hybrid real + synthetic data — metrics-first milestone
+
+Campus Recruitment (`backend/data/Placement_Data_Full_Class.csv`, Ben Roshan/Kaggle via a pinned public GitHub mirror) trains a separate **Placement Likelihood Model** from real/public labels. Its original collection is publisher-reported, not independently audited. It contains no skill/project/certification/resume evidence, so the existing 4,800-student workflow demo and matching evaluation remain synthetic. Weighted readiness and support rules are unchanged.
+
+Accuracy **88.37%**, precision **93.10%**, recall **90.00%**, F1 **91.53%** (positive class: Placed; **43 held-out records**, 172 training, 215 total). Confusion matrix, with actual rows / predicted columns ordered Not Placed then Placed: `[[11, 2], [3, 27]]`. These are measured internal held-out results, not a synthetic sanity check and not a claim of production-grade or BPUT accuracy. The persisted forest is trained on 172 records, not all 215; its probabilities are uncalibrated. [Evaluation and limits](backend/ml/EVALUATION.md) · [Reproduce training](backend/ml/README.md) · [Source/license](backend/data/README.md).
+
+**Integration gate:** training, model persistence and evaluation are complete locally on the feature branch; neither the API nor frontend uses the artifact yet. Review the actual metrics before the next integration stage. No additional tenant table or application record was created.

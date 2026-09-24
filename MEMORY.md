@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-09-24
-**Current phase:** BTech / BE placement model integration authorized and implemented locally; validation and deployment in progress. Existing MBA model remains deployed.
+**Current phase:** BTech / BE and MBA placement models are deployed (API 0.8.0, application release bb3f743). BTech live flow and all 19 tenant policies verified on 2026-09-24.
 
 ---
 
@@ -21,6 +21,7 @@ Living record of project state and decisions. Update this file whenever a major 
 
 | Date | Decision | Reason |
 |---|---|---|
+| 2026-09-24 | Separate BTech / BE model using Tejashvi engineering placement data (CC0 v6), without MBA inputs | User requested BTech integration; 2013–2014 publisher-reported records with 181 distinct modeled profiles require a group-disjoint evaluation. Use four educational fields, exclude age/gender/hostel, retain human decisions and explain every score |
 | 2026-09-24 | Integrate the public Campus Recruitment model; the source need not be BPUT data | User approved after seeing metrics. Optional 12-field academic profile, load-once trusted artifact, separate explained score, 18th RLS table; no automatic hiring decisions or changes to weighted readiness |
 | — | Stack: React + Tailwind (frontend), FastAPI (backend), PostgreSQL (DB) | Free-tier deployable on Vercel + Render; matches team's existing React/JS skills |
 | — | Rule-based scoring for MVP, not black-box ML | Problem statement explicitly requires explainability; rule-based is transparent and easy to justify to judges |
@@ -98,6 +99,8 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] 2026-09-24: BTech / BE extension deployed as bb3f743/API 0.8.0. Publisher-reported engineering dataset v6 (2,966 rows; 181 modeled profiles), fixed group-disjoint training/evaluation, four-field explained signal, no MBA requirement, nineteenth tenant table with application filters/ownership/FORCE RLS.
+- [x] BTech verification: all 51 backend tests passed in one run; production frontend build and actual-output rendering passed. Live checks verified both models ready, all 19 policies, four additive factors, save/reload, unchanged MBA/readiness, missing/outside-source no score, access denials, restored original inputs and deployed frontend.
 - [x] 2026-09-24: Integrated and deployed the public Campus Recruitment Placement Likelihood Model (e6eba59/API 0.7.0). Startup-only trusted loading; optional validated academic inputs with ownership/college filters and 18th FORCE RLS table; separate score, baseline, all 12 factors, explanation and measured evaluation panel. No weighted-rule, matching or support changes.
 - [x] Public-model release checks: 46 backend cases passed across regression/retests; production frontend build, actual-output card rendering and dependency check passed. Live model ready, all 18 policies, owned save/reload, unchanged weighted readiness, missing evidence no score, unauthenticated/other-student/recruiter denials, and frontend bundle verified. Temporary public-row example on the authorized synthetic account was restored to its original academic inputs.
 - [x] Five offline public-model validation checks passed: pinned source/structural salary, stratified disjoint split, excluded predictors/training-only encoding, saved-artifact metric reproduction and modified-source refusal. Dependency check passed; existing package versions, application code and synthetic evaluations are unchanged.
@@ -152,10 +155,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- BTech / BE public-data model: five new tests and four MBA regression tests passed; full regression, production UI checks and deployment are in progress.
+- No implementation or deployment work remains for the authorized BTech extension. Interactive browser automation remains unavailable; HTTP/API, regression and component-render evidence is recorded separately.
 
 ### ⏭️ Next Up
-- Finish BTech regression and live deployment verification, then direct students to Student profile → BTech Placement Likelihood Model → Add or edit BTech model inputs. Keep both trained-model evaluations separate from synthetic rule checks; support-classifier upgrades still require class imbalance handling.
+- User can sign in as a student and open Profile → BTech Placement Likelihood Model → Add or edit BTech model inputs. No further feature is started. Preserve separate BTech, MBA and weighted-readiness outputs; support-classifier upgrades still require class imbalance handling.
 
 ---
 
@@ -163,10 +166,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 
 Keep this section current — it's exactly what a judge or mentor will ask about, and it's better to know your own gaps than be caught off guard.
 
-- Matching and Weighted Readiness Score remain rule-based. The distinct public-data Random Forest has its own academic-input API and frontend card; no merged score is claimed. Its 12 local contributions and training baseline explain an uncalibrated score, not a personal placement probability. Original collection is publisher-reported, fairness and external validity are unverified, and compatible MBA academic records are required without imputation.
+- Matching and Weighted Readiness Score remain rule-based. The distinct public-data BTech and MBA Random Forests have their own input APIs and frontend cards; no merged score is claimed. Four BTech or twelve MBA contributions plus a training baseline explain uncalibrated scores, not personal placement probabilities. Original collections are publisher-reported; fairness, calibration and external validity are unverified. Inputs are not imputed. BTech requires no MBA data, but covers only six streams, semester-6 CGPA 5–9 and 0–3 internships.
 - All 37 local rule/PostgreSQL checks passed across the complete Phase 5 run and targeted retest; the user confirmed earlier authenticated live lifecycle checks. Agent-driven Swagger UI and visual checks could not run because browser automation failed to initialize; HTTP/OpenAPI, integration and server-render checks are distinct evidence. Phase 4 written local checks reproduce 25/30 expected matches, with 10/10 readiness-band and 10/10 support-flag agreements. These are assistant-authored synthetic checks, not real-world accuracy or independent human validation.
 - Notifications are implemented as simulated in-app records only; no email or SMS is sent. Offer/document stages record human declarations about external document exchange, not automatic document verification.
-- The original seventeen Phase 1–4 tenant tables and the new placement_model_profiles table (18 total) have college filters and FORCE RLS, with independent local cross-tenant tests. The API 0.7.0 live catalog now verifies all 18 policies and the non-bypass runtime role; evidence is in evaluations/placement-live-security.json. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
+- The original seventeen Phase 1–4 tenant tables plus placement_model_profiles and btech_model_profiles (19 total) have college filters and FORCE RLS, with independent local cross-tenant tests. The API 0.8.0 live catalog verifies all 19 policies and the non-bypass runtime role; current evidence is in evaluations/btech-live-security.json. Demo college enrollment is self-selected, not verification of real institution membership; use synthetic details only.
 - The application demo cohort remains synthetic: 4,800 seeded students and 45 companies plus synthetic walkthrough accounts. The separate classifier uses 215 imported public labeled records (172 train / 43 test), with measured internal holdout results. No external/BPUT validation, production-scale accuracy, latency benchmark or calibrated confidence is established.
 - Readiness inputs are self-reported. Project count and mean skill proficiency are explicit, unvalidated normalization choices. PDF prose does not automatically create skills or change readiness.
 - Browser JWTs are stored in sessionStorage and expire after two hours. Email verification, password reset, refresh tokens, server-side logout revocation, and rate limiting are not implemented.
@@ -361,3 +364,5 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **BTech measured results:** Fixed protocol committed in e5d4169 before training. One run, 2,374 training / 592 test rows, 140/41 distinct input groups with no overlap. Accuracy 83.95% (497/592), Placed precision 96.77%, recall 73.39%, F1 83.48%, matrix [[257,8],[87,240]], majority baseline 55.24%. Reported results to the user before frontend integration. Implemented optional four-field owned profile, nineteenth FORCE RLS table, startup loading, shared exact factor attribution, separate BTech and MBA UI panels. No model decisions enter recruiting rules. Missing/outside-source inputs yield no score. Five BTech tests and four MBA integration tests passed; full regression and release checks next.
 
 > **BTech release ready:** All 51 backend tests passed in one complete run (364 seconds). Five new engineering tests verify group-disjoint evaluation reproduction, all 181 distinct-profile explanations, missing/outside-source/artifact failures, owned persistence and independent RLS. Existing MBA explanations still reproduce all 215 source rows. Production Vite build and actual-output BTech card rendering passed. Browser automation still fails kernel initialization; no click or Swagger UI rehearsal is claimed. No new dependencies. Next: publish the tested branch and verify both loaded models, all 19 policies, owned BTech persistence and the deployed form.
+
+> **BTech final handoff:** 2026-09-24 — Application release bb3f743 is live at https://jobjugaad.vercel.app and https://jobjugaad-api.onrender.com, API 0.8.0. Both trusted models report ready. The live catalog verifies all 19 FORCE RLS policies. Authorized synthetic-account smoke test used a public engineering row temporarily and passed owned save/reload, score plus four factors/explanation, additive reconciliation, missing/outside-source input handling, unchanged MBA and weighted readiness, unauthenticated/other-student/recruiter denial, original-input restoration and frontend bundle verification. Safe evidence: evaluations/btech-live-security.json. All 51 backend tests, frontend build and component rendering passed; browser initialization still fails, so no interactive click/Swagger test is claimed. BTech evaluation remains 83.95% accuracy, 96.77% precision, 73.39% recall, 83.48% F1 on 592 held-out rows / 41 groups; older publisher-reported data and repeated profiles preclude current-campus or calibrated probability claims. Student path: Profile → BTech Placement Likelihood Model → Add or edit BTech model inputs. No further scope started.

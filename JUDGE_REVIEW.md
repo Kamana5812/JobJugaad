@@ -4,7 +4,7 @@ Lead with: **JobJugaad is an explainability-first campus placement workflow: eve
 
 | Judge question | Implementation-grounded answer |
 |---|---|
-| Where is the AI? | The deployed workflow uses pdfplumber, weighted rules and a greedy scheduler. A separate Random Forest placement signal uses 215 public placement records (172 training / 43 held out) and optional compatible academic inputs, with a local factor breakdown. No LLM is used. The user-specified Run AI Matching label has an adjacent no-trained-model disclosure. |
+| Where is the AI? | Weighted rules and a greedy scheduler drive the placement workflow. Separate MBA and BTech Random Forests use their respective public placement datasets, with measured held-out evaluations, full local factor explanations and uncalibrated scores. Neither changes recruiter eligibility or replaces weighted readiness. No LLM is used. Run AI Matching remains a weighted keyword rule with an adjacent disclosure. |
 | Why these weights? | Readiness uses the requested 30/20/15/15/10/10 proposal. Matching defaults to 40/20/20/15/5 with configurable role weights and normalized 0–100 inputs. These are unvalidated assumptions. |
 | Why exclude a candidate? | CGPA/branch/backlog rules and the default 60 threshold are shown with factors, missing requirements, fixed explanations and a next step. There is no numeric confidence score. |
 | Can a recruiter disagree? | Promote or reject with a reason; original scoring evidence, reviewer and time remain in audit history. |

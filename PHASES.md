@@ -161,4 +161,4 @@ The initial offline milestone preserved the deployed app. The user subsequently 
 - [x] Verify public engineering source/license and freeze a repeated-profile-safe training protocol before fitting.
 - [x] Train one BTech model; report actual held-out metrics before frontend integration, retaining MBA and synthetic rule evaluations separately.
 - [x] Implement BTech evidence storage, ownership/college filters/FORCE RLS, startup-only trusted loading, separate explained signal and frontend panel.
-- [ ] Complete regression/rendering checks and verify the deployed BTech flow and all 19 policies.
+- [x] All 51 regression tests, build and model-card rendering passed; bb3f743/API 0.8.0 deployed, both models ready, owned BTech flow and all 19 policies verified live. Browser automation remains unavailable.

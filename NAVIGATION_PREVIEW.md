@@ -1,21 +1,22 @@
-# Landing and role-selection preview
+# Approved portal navigation
 
-Status: local review preview on `feature/role-navigation`; not a production release.
+The user approved the landing and role-selection design on 2026-09-24. Dashboard continuation is implemented on `feature/role-navigation`; release verification is recorded in MEMORY.md.
 
-1. Open http://127.0.0.1:5174/ and scroll through the hero, before/after, three portals, and explained synthetic matching example.
+## Flow
+
+1. Open JobJugaad and scroll through the hero, before/after, three portals and explained synthetic matching example.
 2. Click **Get Started** or **Login**. Three role cards appear before any form fields.
-3. Choose **Student**, **Recruiter** or **Admin**. The selected portal stays visible beside the form. Students/recruiters can toggle login/signup; admin can only log in.
-4. Click **Choose a different role** to return to the three cards. Each landing **Sign in as…** link preselects its role.
-5. Existing authenticated accounts open their verified portal: `/student`, `/recruiter`, `/admin`. Role selection grants no permissions. Existing `/student/profile`, `/login`, `/signup`, and recruiter signup links redirect compatibly.
+3. Choose **Student**, **Recruiter** or **Admin**. The portal identity remains visible beside the form. Student/recruiter signup reuse their existing endpoints; admin is sign-in only.
+4. Successful login opens the verified account role's dashboard, regardless of the selected card. Wrong-role routes redirect to the authorized portal. Legacy links remain compatible.
+5. **Career Copilot** (`/student`): profile summary → explained readiness → selected-drive skill gaps → ranked opportunities → resume/profile editor → separately explained BTech/MBA models. Save profile changes to refresh comparisons. The excluded view names gaps; comparisons do not submit applications or change recruiter decisions.
+6. **Talent Finder** (`/recruiter`): choose a drive → Run AI Matching (explicit keyword/weighted-rule disclosure) → review ranked explanations/overrides. Use section links to create another drive or edit company details.
+7. **Placement Command Center** (`/admin`): KPI tiles, current conflict summaries, branch/skill charts, offer outcomes and placement-support evidence. Scheduling / Placement support / Offers remain dedicated sections with existing approval/audit flows.
 
-The preview uses the existing Render API through Vite's optional development proxy. Data submitted in forms goes to that existing backend. Production CORS is unchanged. Existing dashboard content is preserved pending visual approval; no new backend features or signup permissions were introduced.
+All three pages scroll normally and have a role-specific banner and shared role navigation/logout. Generated illustrations are decorative, not results. All four assets and prompts are in `frontend/src/assets/hero/README.md`.
 
-## Validation
+## Checks
 
-- `node frontend/scripts/check-navigation.mjs`: 18 checks covering initial role screen, role-specific form fields, admin signup denial, request endpoint/payload wiring, returned-role destinations, wrong-role/anonymous guards and saved example fidelity.
-- Vite production build passes.
-- Browser automation fails kernel initialization on this machine; these are component-rendering and request-wiring checks, not simulated browser clicks or visual screenshots.
-
-## Next after review
-
-Generate the remaining three requested hero illustrations and apply approved visual patterns to existing dashboards, preserving full score explanations, model limitations and access controls. This preview intentionally stops before that work.
+- `node frontend/scripts/check-navigation.mjs`: role selection, form scope, admin restrictions, existing request payloads, server-role destinations and route guards.
+- With the existing localhost test database environment (`ALLOW_TEST_DATABASE=yes`), run `backend/venv/Scripts/python.exe backend/tests/export_dashboard_fixture.py`, then `node frontend/scripts/check-dashboards.mjs` for rendering checks using actual saved synthetic records. The exported fixture stays in ignored `.local/` and cannot be generated from production by this helper.
+- Backend opportunity tests verify rule parity, pagination, exclusions, missing evidence, ownership/role/college checks, unchanged recruiter snapshots and independent RLS.
+- Browser automation cannot initialize on this machine. Component rendering and API tests are not browser click/visual verification.

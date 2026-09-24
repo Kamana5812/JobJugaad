@@ -4,7 +4,7 @@ import { FormField, Message, buttonStyle, secondaryStyle } from '../../component
 import PlacementModelCard from '../../components/PlacementModelCard'
 
 const streams = ['Civil','Computer Science','Electrical','Electronics And Communication','Information Technology','Mechanical']
-export default function BTechModelPanel({ studentId, onExpired }) {
+export default function BTechModelPanel({ sectionNumber = "04", studentId, onExpired }) {
   const [data,setData] = useState(null)
   const [form,setForm] = useState(null)
   const [busy,setBusy] = useState(false)
@@ -35,7 +35,7 @@ export default function BTechModelPanel({ studentId, onExpired }) {
   }
   return <section aria-labelledby="btech-model-title" className="space-y-5 rounded-3xl border border-line bg-white p-6 sm:p-8">
     <div><p className="text-xs font-bold uppercase tracking-widest text-muted">Engineering public-data Random Forest · optional signal</p>
-      <h2 id="btech-model-title" className="mt-2 text-2xl font-bold text-navy"><span className="mr-3 text-saffron">04</span>BTech Placement Likelihood Model</h2>
+      <h2 id="btech-model-title" className="mt-2 text-2xl font-bold text-navy"><span className="mr-3 text-saffron">{sectionNumber}</span>BTech Placement Likelihood Model</h2>
       <p className="mt-3 text-sm leading-6 text-muted">For BTech / BE students in the six engineering streams below. No MBA details needed. Trained on publisher-reported university placement records from 2013–2014; the original collection has not been independently audited.</p>
     </div>
     {data && <PlacementModelCard signal={data.signal} evaluation={data.evaluation} dirty={dirty} datasetName="Engineering Placements Prediction" splitDescription="One fixed split keeps identical modeled input profiles together, with no profile shared between training and testing." />}

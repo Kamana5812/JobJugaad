@@ -1,6 +1,6 @@
 import DashboardCard, { displayTime } from '../../components/DashboardCard'
 import ConversionChart from '../../components/ConversionChart'
-export default function AnalyticsPanel({ data }) {
+export default function AnalyticsPanel({ data, children }) {
   const tiles = [['Students', data.students], ['Placement %', data.placement_percent === null ? '—' : data.placement_percent + '%'],
     ['Recruiters', data.recruiters], ['Drives', data.drives]]
   const amount = value => value === null ? 'Not available' : value.toFixed(2) + ' LPA'
@@ -10,6 +10,7 @@ export default function AnalyticsPanel({ data }) {
       {label === 'Placement %' && <p className="mt-2 text-xs text-muted">Accepted-offer proxy</p>}
     </DashboardCard>)}</div>
     <p className="text-sm text-muted">{data.placement_explanation}</p>
+    {children}
     <div className="grid min-w-0 gap-6 lg:grid-cols-2"><ConversionChart title="01 Branch overview" rows={data.branch_conversion} />
       <ConversionChart title="02 Skill overview" rows={data.skill_conversion} /></div>
     <DashboardCard title="03 Advertised packages" label="Drive CTC · not accepted offers">

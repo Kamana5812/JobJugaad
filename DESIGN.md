@@ -14,7 +14,7 @@ The Indian identity should feel modern and authentic — not like an Independenc
 
 ---
 
-Current navigation preview uses the user-supplied light/dark wordmarks in `frontend/src/assets/brand/`, the supplied favicon in `frontend/public/`, and a generated mascot journey in `frontend/src/assets/hero/`. Original root logos remain available. Dashboard illustration work waits for approval of the landing and role-selection preview.
+Current navigation uses the user-supplied light/dark wordmarks in `frontend/src/assets/brand/`, the supplied favicon in `frontend/public/`, and a generated mascot journey in `frontend/src/assets/hero/`. Original root logos remain available. The approved three portal banners use the same visual language, with student preparation, recruiter review and admin coordination as distinct motifs. Decorative banners never substitute for actual score explanations.
 
 ## 2. Color Palette
 

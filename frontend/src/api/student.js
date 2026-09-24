@@ -24,3 +24,5 @@ export const savePlacementModel = async (id, input) => (await api.put(`/students
 
 export const getBTechModel = async (id) => (await api.get(`/students/${id}/btech-placement-model`)).data
 export const saveBTechModel = async (id, input) => (await api.put(`/students/${id}/btech-placement-model`, input)).data
+
+export const getOpportunities = async (id, params) => (await api.get(`/students/${id}/opportunities`, { params })).data

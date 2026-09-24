@@ -104,3 +104,8 @@ Verify the role, Demo College, student name/ID and drive title before every writ
 ## Dated fixture check — 2026-09-23
 
 Live read-only API lookup confirmed **Synthetic Student 1995 (#2003)** as the first shortlisted result for drive #17 and **Synthetic Student 4491 (#4499)** as the first excluded result. The excluded profile meets skill targets but has branch ECE outside the required CSE: its explanation uses the user-approved truthful no-skill-gap variant rather than inventing a missing skill. Rankings can change after profile edits or overrides; identify the student by name/ID and use Next if needed. Student #4805's readiness is Ready, with all six factors returned; offer #2385 is still present. Use the card's current values with its explanation, not a memorized bare number. These were API reads, not a new browser rehearsal.
+
+
+## Updated portal entry flow (2026-09-24)
+
+Landing → Get Started / Login → choose Student, Recruiter or Admin → sign in using the same college as registration. Admin accounts remain allowlisted. Student now opens `/student` (the old profile URL redirects); the role is shown in the top navigation alongside logout. In Career Copilot, use **Readiness**, **Skill gaps**, **Opportunities**, **Resume**, **My profile** and **Placement models** section links. Choose **Gaps / excluded roles** to inspect why an opportunity misses current rules; this read-only comparison does not make a recruiter shortlist decision. Talent Finder's **Your drives** and **Matching & candidates** links lead to the existing recorded review flow. Command Center's Scheduling, Placement support and Offers sections retain the original named fixtures and actions above.

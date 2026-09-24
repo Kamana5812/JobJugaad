@@ -80,3 +80,16 @@ def get_btech_model(student_id: int, context=Depends(student_session)):
 def save_btech_model(student_id: int, payload: BTechModelInput, context=Depends(student_session)):
     session, user = context
     return btech_model.profile_response(session, owned_student(session,user,student_id),payload)
+
+
+from typing import Literal
+from engines.opportunities import student_opportunities
+from schemas import StudentOpportunities
+
+@router.get("/{student_id}/opportunities", response_model=StudentOpportunities)
+def opportunities(student_id: int, status: Literal["eligible", "excluded", "all"] = "eligible",
+    offset: int = Query(0, ge=0), limit: int = Query(3, ge=1, le=20),
+    target_job_id: int | None = Query(None, ge=1), context=Depends(student_session)):
+    session, user = context
+    return student_opportunities(session, owned_student(session, user, student_id),
+        status, offset, limit, target_job_id)

@@ -598,3 +598,32 @@ class BTechModelResponse(BaseModel):
     inputs: BTechModelInput
     signal: PlacementModelSignal
     evaluation: BTechModelEvaluation | None = None
+
+
+# Read-only student view over the existing keyword/weighted matching engine.
+class OpportunityRole(BaseModel):
+    job_id: int
+    title: str
+    company_name: str
+
+class StudentOpportunity(MatchCalculation):
+    job_id: int
+    title: str
+    company_name: str
+    ctc: float
+    min_cgpa: float
+    max_backlogs: int
+    eligible_branches: list[str]
+    min_match_score: float
+
+class StudentOpportunities(BaseModel):
+    items: list[StudentOpportunity]
+    target: StudentOpportunity | None
+    roles: list[OpportunityRole]
+    total: int
+    eligible_count: int
+    excluded_count: int
+    offset: int
+    limit: int
+    calculated_at: datetime
+    explanation: str

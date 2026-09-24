@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { uploadResume, errorMessage } from '../api/student'
 import { buttonStyle, Message } from './FormField'
 
-export default function ResumeUpload({ profile, onUploaded, disabled, onExpired, onBusyChange }) {
+export default function ResumeUpload({ sectionNumber = "02", profile, onUploaded, disabled, onExpired, onBusyChange }) {
   const [file, setFile] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -22,7 +22,7 @@ export default function ResumeUpload({ profile, onUploaded, disabled, onExpired,
     } finally { setBusy(false); onBusyChange(false) }
   }
   return <section className="rounded-3xl border border-line bg-white p-6 sm:p-8" aria-labelledby="resume-title">
-    <h2 id="resume-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron">02</span>Your resume, readable.</h2>
+    <h2 id="resume-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron">{sectionNumber}</span>Your resume, readable.</h2>
     <p className="mt-2 text-sm leading-6 text-muted">PDF → Extracted text → Your review. Upload a text-based PDF, up to 5 MB and 20 pages. Use synthetic information in this public demo.</p>
     <form onSubmit={upload} className="mt-5 flex flex-wrap items-end gap-4">
       <label className="min-w-0 flex-1 text-sm font-semibold text-navy">Resume PDF

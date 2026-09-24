@@ -7,6 +7,8 @@ import PlacementModelPanel from './PlacementModelPanel'
 import ReadinessCard from '../../components/ReadinessCard'
 import EvidenceEditor from '../../components/EvidenceEditor'
 import ResumeUpload from '../../components/ResumeUpload'
+import PortalHero, { PortalSections } from '../../components/PortalHero'
+import OpportunitiesPanel from './OpportunitiesPanel'
 
 const nullable = (value) => value === '' || value === null ? null : Number(value)
 function editable(profile) {
@@ -17,6 +19,7 @@ function editable(profile) {
 export default function ProfilePage() {
   const { user, logout } = useAuth()
   const [profile, setProfile] = useState(null)
+  const [revision, setRevision] = useState(0)
   const [form, setForm] = useState(null)
   const [dirty, setDirty] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -46,7 +49,7 @@ export default function ProfilePage() {
         interview_score: nullable(form.interview_score),
         skills: form.skills.map((skill) => ({ ...skill, proficiency: Number(skill.proficiency) })) }
       const saved = await saveProfile(profile.id, payload)
-      setProfile(saved); setForm(editable(saved)); setDirty(false)
+      setProfile(saved); setForm(editable(saved)); setDirty(false); setRevision(value => value + 1)
       setNotice('Jugaad Ho Gaya ✓ Profile saved and readiness recalculated.')
     } catch (failure) { if (failure.response?.status === 401) logout(); else setError(errorMessage(failure)) }
     finally { setBusy(false) }
@@ -54,15 +57,19 @@ export default function ProfilePage() {
   if (loading) return <p role="status" className="rounded-2xl border border-line bg-white p-8 text-navy">Loading your saved profile… The demo server may need a moment to wake up.</p>
   if (!profile) return <div className="space-y-4"><Message error>{error}</Message><button onClick={load} className={buttonStyle}>Retry profile</button></div>
   return <div className="space-y-8">
-    <div className="flex flex-wrap items-end justify-between gap-4">
-      <div><p className="text-xs font-bold uppercase tracking-widest text-muted">Student portal · Demo College {profile.college_id}</p>
-        <h1 className="mt-2 text-3xl font-bold text-navy">Your career, with a clear why.</h1><p className="mt-2 text-muted">Hello, {profile.name}. Start with what you know, then build from here.</p></div>
-      <a href="#profile-editor" className={secondaryStyle}>Edit my profile ↓</a>
-    </div>
-    <ReadinessCard readiness={profile.readiness} dirty={dirty} />
-    <ResumeUpload profile={profile} disabled={busy} onBusyChange={setUploading} onExpired={logout} onUploaded={(value) => setProfile(value)} />
-    <section id="profile-editor" aria-labelledby="profile-title" className="rounded-3xl border border-line bg-white p-6 sm:p-8">
-      <h2 id="profile-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron">03</span>Build your profile evidence.</h2>
+    <PortalHero role="student" collegeId={profile.college_id} description={`Hello, ${profile.name}. Understand where you stand, find the gaps, and plan your next step.`}>
+      <a href="#profile-editor" className={buttonStyle}>Update my profile →</a><a href="#opportunities" className={secondaryStyle}>Explore opportunities ↓</a>
+    </PortalHero>
+    <PortalSections label="Career Copilot sections" items={[["readiness", "Readiness"], ["skill-gaps", "Skill gaps"], ["opportunities", "Opportunities"], ["resume", "Resume"], ["profile-editor", "My profile"], ["placement-models", "Placement models"]]} />
+    <section aria-label="Saved profile summary" className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-line bg-white p-6">
+      <div><p className="text-xs font-bold uppercase tracking-widest text-muted">Your saved profile</p><h2 className="mt-2 text-xl font-bold text-navy">{profile.name}</h2><p className="mt-1 text-sm text-muted">{profile.branch} · {profile.cgpa === null ? 'CGPA not recorded' : `CGPA ${profile.cgpa}/10`} · Student #{profile.id}</p></div>
+      <dl className="flex flex-wrap gap-8">{[['Skills', profile.skills.length], ['Projects', profile.projects.length], ['Certifications', profile.certifications.length]].map(([label, count]) => <div key={label}><dt className="text-xs text-muted">{label}</dt><dd className="mt-1 text-2xl font-bold text-navy">{count}</dd></div>)}</dl>
+    </section>
+    <div id="readiness" className="scroll-mt-6"><ReadinessCard readiness={profile.readiness} dirty={dirty} /></div>
+    <OpportunitiesPanel key={revision} studentId={profile.id} revision={revision} dirty={dirty} onExpired={logout} />
+    <div id="resume" className="scroll-mt-6"><ResumeUpload sectionNumber="04" profile={profile} disabled={busy} onBusyChange={setUploading} onExpired={logout} onUploaded={(value) => setProfile(value)} /></div>
+    <section id="profile-editor" aria-labelledby="profile-title" className="scroll-mt-6 rounded-3xl border border-line bg-white p-6 sm:p-8">
+      <h2 id="profile-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron-deep">05</span>Build your profile evidence.</h2>
       <p className="mt-2 text-sm leading-6 text-muted">Keep it accurate. Leave unknown assessments blank; missing information contributes zero, not a judgment of ability.</p>
       <form onSubmit={save} className="mt-6 space-y-6">
         <fieldset disabled={busy || uploading} className="space-y-6">
@@ -88,8 +95,8 @@ export default function ProfilePage() {
           <span className="text-sm text-muted">{dirty ? 'You have unsaved changes.' : 'Your profile is up to date.'}</span></div>
       </form>
     </section>
-    <BTechModelPanel studentId={profile.id} onExpired={logout} />
-    <PlacementModelPanel studentId={profile.id} onExpired={logout} />
+    <div id="placement-models" className="scroll-mt-6 space-y-8"><BTechModelPanel sectionNumber="06" studentId={profile.id} onExpired={logout} />
+    <PlacementModelPanel sectionNumber="07" studentId={profile.id} onExpired={logout} /></div>
     <aside className="rounded-2xl bg-navy p-6 text-white"><h2 className="font-bold">Jugaad Dost 🤝</h2>
       <p className="mt-1 text-xs text-white/70">Quick help · static FAQ</p>
       <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">Why did uploading my resume not change my score?</summary><p className="mt-2 text-sm leading-6 text-white/80">Uploading stores readable text for your review. Add skills, projects, academics, and existing assessment scores to your profile, then save to recalculate.</p></details>

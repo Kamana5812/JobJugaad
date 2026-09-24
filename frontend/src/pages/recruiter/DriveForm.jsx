@@ -25,8 +25,8 @@ export default function DriveForm({ onCreated }) {
     } catch (failure) { setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
-  return <section className="rounded-2xl border border-line bg-white p-6 shadow-sm">
-    <h2 className="text-xl font-bold text-navy"><span className="mr-2 text-saffron-deep">01</span>Create a drive</h2>
+  return <section className="rounded-3xl border border-line bg-white p-6 shadow-sm sm:p-8">
+    <h2 className="text-xl font-bold text-navy"><span className="mr-2 text-saffron-deep">03</span>Create a drive</h2>
     <p className="mt-2 text-sm text-muted">Define the role and its requirements. All details below are editable before creation.</p>
     <form onSubmit={submit} className="mt-5 space-y-5">
       <FormField label="Role / drive title" required maxLength="160" value={form.title} onChange={change('title')} />
@@ -37,7 +37,7 @@ export default function DriveForm({ onCreated }) {
       </div>
       <FormField label="Eligible branches" hint="Comma-separated exact branch names, for example CSE, ECE." required value={form.branches} onChange={change('branches')} />
       <fieldset className="space-y-3"><legend className="mb-2 text-sm font-bold text-navy">Required skills and target proficiency</legend>
-        {skills.map((skill, index) => <div key={index} className="grid grid-cols-[1fr_7rem_auto] items-end gap-2">
+        {skills.map((skill, index) => <div key={index} className="grid grid-cols-[minmax(0,1fr)_5rem_auto] sm:grid-cols-[minmax(0,1fr)_7rem_auto] items-end gap-2">
           <FormField label={'Skill ' + (index + 1)} required maxLength="80" value={skill.skill_name} onChange={e => changeSkill(index, 'skill_name', e.target.value)} />
           <FormField label="Target /100" aria-label={'Target for skill ' + (index + 1)} type="number" min="1" max="100" required value={skill.min_proficiency} onChange={e => changeSkill(index, 'min_proficiency', e.target.value)} />
           <button type="button" aria-label={'Remove skill ' + (index + 1)} className={secondaryStyle} disabled={skills.length === 1} onClick={() => setSkills(skills.filter((_, i) => i !== index))}>×</button>

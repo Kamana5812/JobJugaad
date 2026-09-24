@@ -1,0 +1,51 @@
+{
+  "protocol_version": 1,
+  "declared_at": "2026-09-24T08:06:30.844366+00:00",
+  "dataset_sha256": "539ab9027cf0c02648ea9894362649f141280de7c9ddb1c76d11e23cc6a456c9",
+  "features": [
+    "CGPA",
+    "Stream",
+    "Internships",
+    "HistoryOfBacklogs"
+  ],
+  "numeric_features": [
+    "CGPA",
+    "Internships",
+    "HistoryOfBacklogs"
+  ],
+  "categorical_features": [
+    "Stream"
+  ],
+  "excluded_columns": [
+    "Age",
+    "Gender",
+    "Hostel",
+    "PlacedOrNot"
+  ],
+  "target": "PlacedOrNot",
+  "positive_label": 1,
+  "split": {
+    "method": "First fold from StratifiedGroupKFold",
+    "n_splits": 5,
+    "shuffle": true,
+    "random_state": 42,
+    "groups": "Exact tuples of all four modeled input fields, excluding the label",
+    "intent": "Approximately 80/20, with class stratification best-effort under group constraints; repeated modeled inputs never cross splits."
+  },
+  "random_forest": {
+    "n_estimators": 300,
+    "criterion": "gini",
+    "max_depth": null,
+    "min_samples_split": 2,
+    "min_samples_leaf": 2,
+    "max_features": "sqrt",
+    "bootstrap": true,
+    "class_weight": "balanced",
+    "random_state": 42,
+    "n_jobs": 1
+  },
+  "preprocessing": "Numeric passthrough; OneHotEncoder(handle_unknown=ignore,sparse_output=False) fitted only on training rows. No imputation.",
+  "selection_rule": "One configuration, first fixed fold, no test-set tuning or seed/fold search; metrics reported before frontend integration.",
+  "artifact_rule": "Persist the exact training-fold pipeline; no refit on held-out records.",
+  "feature_choice": "Exclude age, gender and hostel from this optional preparation signal; not a claim of validated fairness."
+}

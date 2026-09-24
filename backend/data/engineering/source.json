@@ -1,0 +1,18 @@
+{
+  "name": "Engineering Placements Prediction",
+  "publisher": "Tejashvi (tejashvi14)",
+  "source_url": "https://www.kaggle.com/datasets/tejashvi14/engineering-placements-prediction",
+  "metadata_url": "https://www.kaggle.com/api/v1/datasets/view/tejashvi14/engineering-placements-prediction",
+  "download_url": "https://www.kaggle.com/api/v1/datasets/download/tejashvi14/engineering-placements-prediction?datasetVersionNumber=6",
+  "version": 6,
+  "retrieved_at": "2026-09-24T08:06:30.808614+00:00",
+  "license": "CC0: Public Domain (publisher metadata)",
+  "sha256": "539ab9027cf0c02648ea9894362649f141280de7c9ddb1c76d11e23cc6a456c9",
+  "rows": 2966,
+  "publisher_description": "A University Announced Its On-Campus Placement Records For The Engineering Course. The Data Is From The Years 2013 And 2014.",
+  "limitations": [
+    "University identity and original collection are not independently verified.",
+    "Records are from 2013-2014, not current or BPUT-specific outcomes.",
+    "Many repeated/coarsely recorded profiles; conflicting outcomes occur for identical inputs."
+  ]
+}

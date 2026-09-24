@@ -1,0 +1,50 @@
+{
+  "protocol_version": 1,
+  "declared_before_training": "2026-09-24",
+  "dataset_sha256": "f4f6ad9e13313a7edd12a71d88adfcec3e5153bf45469199c44e6d47c5de4bd3",
+  "target": "status",
+  "positive_label": "Placed",
+  "excluded_columns": [
+    "sl_no",
+    "status",
+    "salary"
+  ],
+  "numeric_features": [
+    "ssc_p",
+    "hsc_p",
+    "degree_p",
+    "etest_p",
+    "mba_p"
+  ],
+  "categorical_features": [
+    "gender",
+    "ssc_b",
+    "hsc_b",
+    "hsc_s",
+    "degree_t",
+    "workex",
+    "specialisation"
+  ],
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "shuffle": true,
+    "stratify": "status"
+  },
+  "random_forest": {
+    "n_estimators": 300,
+    "criterion": "gini",
+    "max_depth": null,
+    "min_samples_split": 2,
+    "min_samples_leaf": 2,
+    "max_features": "sqrt",
+    "bootstrap": true,
+    "class_weight": "balanced",
+    "random_state": 42,
+    "n_jobs": 1
+  },
+  "preprocessing": "OneHotEncoder(handle_unknown=ignore, sparse_output=False) fitted on training rows only; numeric columns passed through; no salary imputation.",
+  "selection_rule": "One fixed configuration; no test-set tuning, threshold selection, resampling or best-of-seed selection.",
+  "artifact_rule": "Persist the same pipeline fitted on the 172 training rows and evaluated on the 43 held-out rows; do not refit on the test set.",
+  "integration_gate": "Report metrics to the user before frontend integration. This milestone does not change API/profile schema or frontend."
+}

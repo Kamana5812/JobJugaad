@@ -1,0 +1,9 @@
+# Public Campus Recruitment data
+
+`Placement_Data_Full_Class.csv` is an imported real/public labeled dataset, not JobJugaad-generated synthetic data. Publisher: **Ben Roshan**; [original Kaggle data card](https://www.kaggle.com/datasets/benroshan/factors-affecting-campus-placement); [pinned raw GitHub mirror](https://raw.githubusercontent.com/ShuklaPrashant21/Campus_Recruitment/b9e312b86b17967af42d4200bfcfd47025d462be/Placement_Data_Full_Class.csv). Kaggle lists **CC0: Public Domain**. The publisher describes anonymized student placement data supplied for classroom work at an unnamed campus; original collection/authenticity has not been independently audited. See `source.json` for revision, retrieval time and SHA-256.
+
+The file has **215 rows, 15 columns**: 148 Placed and 67 Not Placed. `status` is the observed public label. `sl_no` is an identifier, never a feature. All 67 unplaced rows have structural null salary; salary is excluded entirely rather than imputed. The model uses the remaining 12 fields, including categorical encodings and MBA percentages/specialisation.
+
+This small, MBA-oriented single-campus sample is not representative evidence for BPUT engineering students or production hiring. Gender and educational-background fields can reflect historical bias; no fairness or causal claim follows. A held-out evaluation measures this dataset only. Scores are not calibrated placement probabilities.
+
+These records are kept as an offline research CSV, not imported into tenant tables or merged with the 4,800 synthetic application profiles. Skills, projects, certifications, resume text, jobs, scheduling and offer demonstrations stay synthetic. Matching and rule-readiness/support evaluations keep their existing synthetic labels. Frontend/API integration awaits metric review; future inference must collect compatible fields explicitly, without inventing MBA values or converting CGPA into degree percentage.

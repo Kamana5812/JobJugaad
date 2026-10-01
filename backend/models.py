@@ -294,3 +294,33 @@ class BTechModelProfile(TenantRow, Base):
         onupdate=lambda: datetime.now(timezone.utc))
     __table_args__ = (UniqueConstraint("student_id", "college_id"),
         ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),)
+
+# Applications are student submissions; scores and hiring outcomes remain separate.
+class Application(TenantRow, Base):
+    __tablename__ = "applications"
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    job_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="submitted")
+    cover_note: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    evidence_snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (UniqueConstraint("id", "college_id"), UniqueConstraint("student_id", "job_id", "college_id"),
+        ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),
+        ForeignKeyConstraint(["job_id", "college_id"], ["jobs.id", "jobs.college_id"]),
+        CheckConstraint("status IN ('submitted','under_review','shortlisted','rejected','withdrawn')"),
+        CheckConstraint("version > 0"))
+
+class ApplicationEvent(TenantRow, Base):
+    __tablename__ = "application_events"
+    application_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    actor_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    previous_status: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (
+        ForeignKeyConstraint(["application_id", "college_id"], ["applications.id", "applications.college_id"]),
+        ForeignKeyConstraint(["actor_user_id", "college_id"], ["users.id", "users.college_id"]),
+        CheckConstraint("status IN ('submitted','under_review','shortlisted','rejected','withdrawn')"))

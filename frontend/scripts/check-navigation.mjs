@@ -36,7 +36,7 @@ try {
   for (const role of ['student','recruiter','admin']) for (const signup of [false,true]) {
     check(`${role} ${signup ? 'signup' : 'login'} displays only appropriate fields`, () => {
       const html = render(RoleAuthScreen, { role, signup, onAuthenticated() {} })
-      assert(html.includes('type="password"') && html.includes('Demo college'))
+      assert(html.includes('type="password"') && html.includes('Find your college') && html.includes('2022–23 snapshot'))
       assert.equal(html.includes('Full name'), signup && role === 'student')
       assert.equal(html.includes('Company name'), signup && role === 'recruiter')
       assert.equal(html.includes('Industry'), signup && role === 'recruiter')

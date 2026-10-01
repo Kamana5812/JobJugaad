@@ -1,0 +1,2028 @@
+{
+  "source_url": "https://docs.google.com/spreadsheets/d/10dYEIBxKmSYQFH5GspqzsVCylfChE6er/edit",
+  "university_url": "https://www.bput.ac.in/index1.php",
+  "source_year": "2022–23",
+  "source_sha256": "4d644d40c7004d067d79e1074e05987cfb24577ee7f8e133fb7810f565455b16",
+  "note": "Official BPUT directory snapshot, 2022–23. Current affiliation and account-holder enrollment are not verified. Listing does not imply partnership.",
+  "colleges": [
+    {
+      "id": 1,
+      "name": "Demo College 1",
+      "code": null,
+      "district": "Demo",
+      "courses": [],
+      "category": "Demo",
+      "kind": "demo"
+    },
+    {
+      "id": 2,
+      "name": "Demo College 2",
+      "code": null,
+      "district": "Demo",
+      "courses": [],
+      "category": "Demo",
+      "kind": "demo"
+    },
+    {
+      "id": 10242,
+      "code": "242",
+      "name": "Academy of Business Administration",
+      "district": "Balasore",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10369,
+      "code": "369",
+      "name": "Academy of Management & Information Technology",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10346,
+      "code": "346",
+      "name": "Adarsha College of Engineering",
+      "district": "Angul",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10390,
+      "code": "390",
+      "name": "Adarsha School of Engineering & International Polytechnic",
+      "district": "Angul",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10206,
+      "code": "206",
+      "name": "Ajay Binay Institute of Technology, Cuttack",
+      "district": "Cuttack",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10320,
+      "code": "320",
+      "name": "Aryan Institute of Engineering & Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10384,
+      "code": "384",
+      "name": "Aryan School of Business Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10387,
+      "code": "387",
+      "name": "Asian School of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10284,
+      "code": "284",
+      "name": "Astha School of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10408,
+      "code": "408",
+      "name": "Aurosri Institute of Pharmaceutical Education and Research",
+      "district": "Cuttack",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10225,
+      "code": "225",
+      "name": "Balasore College of Engineering and Technology",
+      "district": "Balasore",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10312,
+      "code": "312",
+      "name": "Barrister Ranjit Mohanty International Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10410,
+      "code": "410",
+      "name": "Batakrushna College of Pharmacy",
+      "district": "Nuapada",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10205,
+      "code": "205",
+      "name": "Bhadrak Institute of Engineering & Technology, Barapada, Bhadrak",
+      "district": "Bhadrak",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10414,
+      "code": "414",
+      "name": "Bharat Institute of Management and Technology",
+      "district": "Balasore",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10370,
+      "code": "370",
+      "name": "Bhubaneswar College of Engineering",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10316,
+      "code": "316",
+      "name": "Bhubaneswar Engineering College (BEC)",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10365,
+      "code": "365",
+      "name": "Bhubaneswar Institute of Industrial Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10397,
+      "code": "397",
+      "name": "Bhubaneswar Institute of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10275,
+      "code": "275",
+      "name": "Bhubaneswar Institute of Management & Information Technology",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10321,
+      "code": "321",
+      "name": "Bhubaneswar Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10113,
+      "code": "113",
+      "name": "Biju Patnaik Film & Television Institute of Orissa",
+      "district": "Cuttack",
+      "courses": [
+        "B.AA&C"
+      ],
+      "category": "Govt (Affiliated)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10258,
+      "code": "258",
+      "name": "Biju Patnaik Institute of Information Technology and Management Studies",
+      "district": "Khurda",
+      "courses": [
+        "MBA(I)",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10309,
+      "code": "309",
+      "name": "Black Diamond College of Engineering & Technology, Jharsuguda",
+      "district": "Jharsuguda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10276,
+      "code": "276",
+      "name": "BRM Institute of Management and Information Technology",
+      "district": "Khurda",
+      "courses": [
+        "MBA(I)",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10402,
+      "code": "402",
+      "name": "Cambridge School of Management",
+      "district": "Balasore",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10388,
+      "code": "388",
+      "name": "Capital Business School",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10360,
+      "code": "360",
+      "name": "Capital Engineering College",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10361,
+      "code": "361",
+      "name": "Capital Institute of Management and Science",
+      "district": "Khurda",
+      "courses": [
+        "MBA(I)",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10112,
+      "code": "112",
+      "name": "Central Institute of Petrochemicals Engineering and Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Govt (Affiliated)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10114,
+      "code": "114",
+      "name": "Centre for UG & PG Studies, BPUT, Odisha",
+      "district": "Sundergarh",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Govt (Affiliated)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10219,
+      "code": "219",
+      "name": "College of Engineering Bhubaneswar",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10107,
+      "code": "107",
+      "name": "College of IT & Management Education, Bhubaneswar",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Govt (Constituent)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10253,
+      "code": "253",
+      "name": "College of Pharmaceutical Sciences, Berhampur",
+      "district": "Ganjam",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10296,
+      "code": "296",
+      "name": "College of Pharmaceutical Sciences, Puri",
+      "district": "Puri",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10290,
+      "code": "290",
+      "name": "Dadhichi College of Pharmacy",
+      "district": "Cuttack",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10379,
+      "code": "379",
+      "name": "Dhaneswar Rath Institute of Engineering and Management Studies (DRIEMS) MBA",
+      "district": "Cuttack",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10389,
+      "code": "389",
+      "name": "Disha College of Management and Technology",
+      "district": "Ganjam",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10407,
+      "code": "407",
+      "name": "Dr. Ambedkar Institute of Pharmaceutical Science",
+      "district": "Sundargarh",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10263,
+      "code": "263",
+      "name": "Dr. Ambedkar Memorial Institute of Information Technology & Management Science",
+      "district": "Sundergarh",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10229,
+      "code": "229",
+      "name": "DRIEMS",
+      "district": "Cuttack",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Pvt. (Autonomous)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10215,
+      "code": "215",
+      "name": "Eastern Academy of Science and Technology (EAST)",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10322,
+      "code": "322",
+      "name": "Einstein Academy of Technology and Management",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10415,
+      "code": "415",
+      "name": "Einstein College of Computer Application and Management",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10324,
+      "code": "324",
+      "name": "Gandhi Academy of Technology and Engineering",
+      "district": "Ganjam",
+      "courses": [
+        "B.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10292,
+      "code": "292",
+      "name": "Gandhi Engineering College (GEC, Bhubaneswar)",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10326,
+      "code": "326",
+      "name": "Gandhi Institute For Education & Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10298,
+      "code": "298",
+      "name": "Gandhi Institute For Technology (GIFT), Bhubaneswar",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA",
+        "MS",
+        "MSC",
+        "MSC(I)"
+      ],
+      "category": "Pvt. (Autonomous)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10374,
+      "code": "374",
+      "name": "Gandhi Institute of Advanced Computer and Research",
+      "district": "Rayagada",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10348,
+      "code": "348",
+      "name": "Gandhi Institute of Excellent Technocrats",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10317,
+      "code": "317",
+      "name": "Gandhi Institute of Science and Technology",
+      "district": "Rayagada",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10304,
+      "code": "304",
+      "name": "Gandhi Institute of Technology and Management (GITAM)",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10386,
+      "code": "386",
+      "name": "Ganesh Institute of Management Studies",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10256,
+      "code": "256",
+      "name": "Gayatri College of Pharmacy",
+      "district": "Sambalpur",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10236,
+      "code": "236",
+      "name": "Gayatri Institute of Computer and Management Studies (GICMS)",
+      "district": "Rayagada",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10330,
+      "code": "330",
+      "name": "Gayatri Institute of Engineering and Technology",
+      "district": "Ganjam",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10418,
+      "code": "418",
+      "name": "Gayatri Institute of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10269,
+      "code": "269",
+      "name": "Gayatri Institute of Science and Technology",
+      "district": "Rayagada",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10395,
+      "code": "395",
+      "name": "Gayatri Institute of Science and Technology",
+      "district": "Ganjam",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10221,
+      "code": "221",
+      "name": "Ghanashyam Hemalata Intitute of Technology & Management, Puri",
+      "district": "Puri",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10287,
+      "code": "287",
+      "name": "GITA Autonomous College, Bhubaneswar",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt. (Autonomous)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10278,
+      "code": "278",
+      "name": "Global Institute of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10228,
+      "code": "228",
+      "name": "Gopal Krishna College of Engineering & Technology, Jeypore",
+      "district": "Koraput",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10110,
+      "code": "110",
+      "name": "Government College of Engineering, Kalahandi",
+      "district": "Kalahandi",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Govt (Affiliated)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10104,
+      "code": "104",
+      "name": "Government College of Engineering, Keonjhar",
+      "district": "Keonjhar",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Govt (Affiliated)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10383,
+      "code": "383",
+      "name": "Gurukrupa College of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10315,
+      "code": "315",
+      "name": "Gurukula Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10345,
+      "code": "345",
+      "name": "Hi-Tech College of Pharmacy",
+      "district": "Khurda",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10300,
+      "code": "300",
+      "name": "Hi-Tech Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MBA(I)",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10400,
+      "code": "400",
+      "name": "HM School of Business Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10262,
+      "code": "262",
+      "name": "IIPM School of Management",
+      "district": "Sundergarh",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10273,
+      "code": "273",
+      "name": "IMT Pharmacy College, Puri",
+      "district": "Puri",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10255,
+      "code": "255",
+      "name": "Indira Gandhi Institute of Pharmaceutical Sciences",
+      "district": "Khurda",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10105,
+      "code": "105",
+      "name": "Indira Gandhi Institute of Technology, Sarang",
+      "district": "Dhenkanal",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Govt (Affiliated Autonomous)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10328,
+      "code": "328",
+      "name": "Indotech College of Engineering",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10318,
+      "code": "318",
+      "name": "Indus College of Engineering",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10376,
+      "code": "376",
+      "name": "Institute of Business Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10102,
+      "code": "102",
+      "name": "Institute of Management & Information Technology, Cuttack",
+      "district": "Cuttack",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Govt (Constituent)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10394,
+      "code": "394",
+      "name": "Institute of Pharmaceutical Sciences",
+      "district": "Balasore",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10257,
+      "code": "257",
+      "name": "Institute of Pharmacy & Technology, Salipur",
+      "district": "Cuttack",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10281,
+      "code": "281",
+      "name": "Institute of Professional Studies & Research",
+      "district": "Cuttack",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10237,
+      "code": "237",
+      "name": "Institute of Science and Information Technology ISIT",
+      "district": "Khurda",
+      "courses": [
+        "MCA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10268,
+      "code": "268",
+      "name": "Jeypore College of Pharmacy",
+      "district": "Koraput",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10305,
+      "code": "305",
+      "name": "Kalam Institute of Technology",
+      "district": "Ganjam",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10404,
+      "code": "404",
+      "name": "Kalinga Institute of Pharmaceutical Sciences",
+      "district": "Balasore",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10251,
+      "code": "251",
+      "name": "Kanak Manjari Institute of Pharmaceutical Sciences",
+      "district": "Sundargarh",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10329,
+      "code": "329",
+      "name": "KMBB College of Engineering and Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10214,
+      "code": "214",
+      "name": "Konark Institute of Science and Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MBA(I)",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10377,
+      "code": "377",
+      "name": "Koustuv Business School",
+      "district": "Khurda",
+      "courses": [
+        "MBA(I)",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10372,
+      "code": "372",
+      "name": "Krupajal Computer Academy",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10223,
+      "code": "223",
+      "name": "Krupajal Engineering College",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10373,
+      "code": "373",
+      "name": "Krupajal Management Studies",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10364,
+      "code": "364",
+      "name": "Krutika Institute of Technical Education",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10412,
+      "code": "412",
+      "name": "Luckky College of Pharmaceutical Sciences",
+      "district": "Khurda",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10151,
+      "code": "151",
+      "name": "Madhusudhan Institute of Co-Operative Management, Bhubaneswar",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Govt (Affiliated)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10391,
+      "code": "391",
+      "name": "Maharaja Business School",
+      "district": "Angul",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10259,
+      "code": "259",
+      "name": "Mahavir Institute of Engineering and Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10224,
+      "code": "224",
+      "name": "Majhighariani Institute of Technology and Science",
+      "district": "Rayagada",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10409,
+      "code": "409",
+      "name": "Mayurbhanj Medical Academy",
+      "district": "Mayurbhanj",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10302,
+      "code": "302",
+      "name": "Modern Engineering & Management Studies",
+      "district": "Balasore",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10310,
+      "code": "310",
+      "name": "Modern Institute of Technology and Management",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10297,
+      "code": "297",
+      "name": "Nalanda Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA",
+        "MS",
+        "MSC",
+        "MSC(I)"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10347,
+      "code": "347",
+      "name": "Nigam Institute of Engineering & Technology",
+      "district": "Cuttack",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10280,
+      "code": "280",
+      "name": "NIIS Institute of Business Administration",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10202,
+      "code": "202",
+      "name": "NIST Institute of Science and Technology",
+      "district": "Ganjam",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt. (Autonomous)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10393,
+      "code": "393",
+      "name": "Nityananda College of Pharmacy",
+      "district": "Balasore",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10288,
+      "code": "288",
+      "name": "NM Institute of Engineering & Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10406,
+      "code": "406",
+      "name": "Om Sai Institute of Paramedical Sciences",
+      "district": "Mayurbhanj",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10411,
+      "code": "411",
+      "name": "Orissa College of Pharmaceutical Sciences",
+      "district": "Dhenkanal",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10342,
+      "code": "342",
+      "name": "Oxford College of Engineering and Management",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10380,
+      "code": "380",
+      "name": "Oxford College of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10217,
+      "code": "217",
+      "name": "Padmashree Krutartha Acharya College of Engineering, Bargarh",
+      "district": "Bargarh",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10109,
+      "code": "109",
+      "name": "Parala Maharaja Engineering College, Berhampur",
+      "district": "Ganjam",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Govt (Affiliated)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10295,
+      "code": "295",
+      "name": "Piloo-mody College of Architecture",
+      "district": "Cuttack",
+      "courses": [
+        "B.ARCH",
+        "M.ARCH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10271,
+      "code": "271",
+      "name": "PJ College of Management & Technology",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10398,
+      "code": "398",
+      "name": "Presidency College",
+      "district": "Ganjam",
+      "courses": [
+        "MCA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10294,
+      "code": "294",
+      "name": "Raajdhani Engineering College",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10367,
+      "code": "367",
+      "name": "Radhakrishna Institute of Technology and Engineering (RITE)",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10283,
+      "code": "283",
+      "name": "Rajdhani College of Engineering and Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA(I)",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10362,
+      "code": "362",
+      "name": "Rayagada Institute of Technology and Management",
+      "district": "Rayagada",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10247,
+      "code": "247",
+      "name": "Regional College of Management",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10285,
+      "code": "285",
+      "name": "RJ School of Management Studies",
+      "district": "Balasore",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10267,
+      "code": "267",
+      "name": "Roland Institute of Pharmaceutical Sciences",
+      "district": "Ganjam",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10204,
+      "code": "204",
+      "name": "Roland Institute of Technology",
+      "district": "Ganjam",
+      "courses": [
+        "B.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10260,
+      "code": "260",
+      "name": "Rourkela Institute of Management Studies",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10240,
+      "code": "240",
+      "name": "Rourkela Institute of Technology",
+      "district": "Sundergarh",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10254,
+      "code": "254",
+      "name": "Royal College of Pharmacy and Health Sciences",
+      "district": "Ganjam",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10282,
+      "code": "282",
+      "name": "S.M.Institute of Technology, P.G.Centre for Management Studies",
+      "district": "Ganjam",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10231,
+      "code": "231",
+      "name": "Samanta Chandrasekhar Institute of Technology & Management",
+      "district": "Koraput",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10401,
+      "code": "401",
+      "name": "Samet School of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10220,
+      "code": "220",
+      "name": "Sanjay Memorial Institute of Technology, SMIT",
+      "district": "Ganjam",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10405,
+      "code": "405",
+      "name": "Santoshi Institute of Pharmaceutical Education and Research",
+      "district": "Cuttack",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10368,
+      "code": "368",
+      "name": "Saraswat Institute of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10293,
+      "code": "293",
+      "name": "Satyasai Engineering College",
+      "district": "Balasore",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10201,
+      "code": "201",
+      "name": "Seemanta Engineering College, Mayurbhanj",
+      "district": "Mayurbhanj",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10226,
+      "code": "226",
+      "name": "Seemanta Institute of Pharmaceutical Sciences",
+      "district": "Mayurbhanj",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10375,
+      "code": "375",
+      "name": "SGI School of Architecture",
+      "district": "Khurda",
+      "courses": [
+        "B.ARCH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10334,
+      "code": "334",
+      "name": "Shibani Institute of Technical Education (SITE)",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10209,
+      "code": "209",
+      "name": "Silicon Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MS",
+        "MSC"
+      ],
+      "category": "Pvt. (Autonomous)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10341,
+      "code": "341",
+      "name": "Silicon Institute of Technology",
+      "district": "Sambalpur",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10332,
+      "code": "332",
+      "name": "Sophitorium Engineering College",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10336,
+      "code": "336",
+      "name": "Spintronic Technology and Advance Research",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10399,
+      "code": "399",
+      "name": "Sri Institute of Management",
+      "district": "Nayagarh",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10239,
+      "code": "239",
+      "name": "Sri Jayadev College of Pharmaceutical Sciences",
+      "district": "Khurda",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10331,
+      "code": "331",
+      "name": "Srinix College of Engineering, Balasore",
+      "district": "Balasore",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10286,
+      "code": "286",
+      "name": "Srusti Academy of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA(I)",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt. (Autonomous)",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10311,
+      "code": "311",
+      "name": "Subas Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10333,
+      "code": "333",
+      "name": "Suddhananda Engineering and Research Centre",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10356,
+      "code": "356",
+      "name": "Suddhananda School of Management and Computer Science",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10319,
+      "code": "319",
+      "name": "Sundargarh Engineering College, Sundargarh",
+      "district": "Sundergarh",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10392,
+      "code": "392",
+      "name": "Swami Vivekananda Institute of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10230,
+      "code": "230",
+      "name": "Synergy Institute of Engineering & Technology",
+      "district": "Dhenkanal",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10335,
+      "code": "335",
+      "name": "Synergy Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10299,
+      "code": "299",
+      "name": "Templecity Institute of Technology & Engineering (TITE), Bhubaneswar",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10403,
+      "code": "403",
+      "name": "The College of Pharmaceutical Science",
+      "district": "Khurda",
+      "courses": [
+        "B.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10252,
+      "code": "252",
+      "name": "The Pharmaceutical College",
+      "district": "Bargarh",
+      "courses": [
+        "B.PHARM",
+        "M.PHARM"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10291,
+      "code": "291",
+      "name": "The Techno School",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10266,
+      "code": "266",
+      "name": "Trident Academy of Creative Technology",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10289,
+      "code": "289",
+      "name": "Trident Academy of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10274,
+      "code": "274",
+      "name": "United School of Business Management",
+      "district": "Khurda",
+      "courses": [
+        "MCA",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10396,
+      "code": "396",
+      "name": "Utkal Institute of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10416,
+      "code": "416",
+      "name": "Utkal Institute of Technology and Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10417,
+      "code": "417",
+      "name": "Vamsi Institute of Management Studies",
+      "district": "Rayagada",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10339,
+      "code": "339",
+      "name": "Vedang Institute of Technology",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10301,
+      "code": "301",
+      "name": "Vignan Institute of Technology and Management",
+      "district": "Ganjam",
+      "courses": [
+        "B.TECH",
+        "M.TECH",
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10343,
+      "code": "343",
+      "name": "Vijayanjali Institute of Technology",
+      "district": "Balasore",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10337,
+      "code": "337",
+      "name": "Vikash Institute of Technology, Bargarh",
+      "district": "Bargarh",
+      "courses": [
+        "B.TECH",
+        "MS",
+        "MSC",
+        "MSC(I)"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10344,
+      "code": "344",
+      "name": "VITS Engineering College",
+      "district": "Khurda",
+      "courses": [
+        "B.TECH"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    },
+    {
+      "id": 10382,
+      "code": "382",
+      "name": "Zenith School of Management",
+      "district": "Khurda",
+      "courses": [
+        "MBA"
+      ],
+      "category": "Pvt.",
+      "kind": "bput_directory"
+    }
+  ]
+}

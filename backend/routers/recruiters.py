@@ -54,3 +54,20 @@ def matches(job_id: int, status: Literal["all", "shortlisted", "excluded"] = "sh
 def override(job_id: int, match_id: int, payload: OverrideInput, context=Depends(recruiter_session)):
     session, user = context
     return talent.override_match(session, user, talent.owned_job(session, user, job_id, lock=True), match_id, payload)
+
+
+from engines import applications
+from models import Application
+from schemas import ApplicationList, ApplicationResponse, ApplicationReview
+
+@router.get("/jobs/{job_id}/applications", response_model=ApplicationList)
+def job_applications(job_id: int, offset: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=50), context=Depends(recruiter_session)):
+    session, user = context
+    job = talent.owned_job(session, user, job_id)
+    return applications.listing(session, user.college_id, Application.job_id == job.id, offset, limit)
+
+@router.post("/jobs/{job_id}/applications/{application_id}/review", response_model=ApplicationResponse)
+def review_application(job_id: int, application_id: int, payload: ApplicationReview, context=Depends(recruiter_session)):
+    session, user = context
+    job = talent.owned_job(session, user, job_id)
+    return applications.action(session, user, application_id, Application.job_id == job.id, payload)

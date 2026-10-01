@@ -93,3 +93,25 @@ def opportunities(student_id: int, status: Literal["eligible", "excluded", "all"
     session, user = context
     return student_opportunities(session, owned_student(session, user, student_id),
         status, offset, limit, target_job_id)
+
+
+from engines import applications
+from models import Application
+from schemas import ApplicationSubmit, ApplicationAction, ApplicationResponse, ApplicationList
+
+@router.post("/{student_id}/applications", response_model=ApplicationResponse, status_code=201)
+def submit_application(student_id: int, payload: ApplicationSubmit, context=Depends(student_session)):
+    session, user = context
+    return applications.submit(session, user, owned_student(session, user, student_id), payload)
+
+@router.get("/{student_id}/applications", response_model=ApplicationList)
+def student_applications(student_id: int, offset: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=50), context=Depends(student_session)):
+    session, user = context
+    student = owned_student(session, user, student_id)
+    return applications.listing(session, user.college_id, Application.student_id == student.id, offset, limit)
+
+@router.post("/{student_id}/applications/{application_id}/withdraw", response_model=ApplicationResponse)
+def withdraw_application(student_id: int, application_id: int, payload: ApplicationAction, context=Depends(student_session)):
+    session, user = context
+    student = owned_student(session, user, student_id)
+    return applications.action(session, user, application_id, Application.student_id == student.id, payload, withdraw=True)

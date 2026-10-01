@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { errorMessage } from '../../api/student'
 import { authenticateAccount } from '../../api/authentication'
 import { roleHome } from '../../context/roleHome'
+import CollegeSelector from '../../components/CollegeSelector'
 import { FormField, buttonStyle, Message } from '../../components/FormField'
 
 export default function AuthForm({ role, signup, onAuthenticated }) {
@@ -26,7 +27,7 @@ export default function AuthForm({ role, signup, onAuthenticated }) {
     {creating && role === 'recruiter' && <FormField label="Industry" required maxLength="100" value={form.industry} onChange={change('industry')} disabled={busy} />}
     <FormField label="Email" type="email" autoComplete="email" required maxLength="254" value={form.email} onChange={change('email')} disabled={busy} />
     <FormField label="Password" type="password" autoComplete={creating ? 'new-password' : 'current-password'} required minLength="10" maxLength="72" hint={creating ? 'At least 10 characters; up to 72 UTF-8 bytes.' : undefined} value={form.password} onChange={change('password')} disabled={busy} />
-    <FormField label="Demo college" value={form.college_id} onChange={change('college_id')} disabled={busy} hint="Choose the same college each time you sign in. Demo enrollment is self-selected; college affiliation is not verified."><option value="1">Demo College 1</option><option value="2">Demo College 2</option></FormField>
+    <CollegeSelector value={form.college_id} onChange={change('college_id')} disabled={busy} />
     <Message error>{error}</Message>
     <button disabled={busy} className={buttonStyle + ' w-full'}>{busy ? 'Connecting…' : creating ? `Create ${role} account` : `Sign in as ${role}`}</button>
     <p className="text-xs leading-5 text-muted">Your account’s verified role determines which portal opens. Choosing a card does not change your access.</p>

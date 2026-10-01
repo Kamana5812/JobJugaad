@@ -35,7 +35,15 @@ class LoginRequest(InputModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=False)
     email: str = Field(min_length=3, max_length=254)
     password: str = Field(min_length=10, max_length=72)
-    college_id: Literal[1, 2]
+    college_id: int = Field(ge=1, strict=True)
+
+    @field_validator("college_id")
+    @classmethod
+    def registered_college(cls, value):
+        from colleges import valid_college
+        if not valid_college(value):
+            raise ValueError("Choose a college from the registered directory.")
+        return value
 
     @field_validator("email")
     @classmethod
@@ -61,6 +69,7 @@ class SignupRequest(LoginRequest):
         return value.strip() if isinstance(value, str) else value
 
 class UserResponse(BaseModel):
+    college_name: str
     user_id: int
     student_id: int | None = None
     company_id: int | None = None
@@ -268,7 +277,16 @@ from pydantic import AwareDatetime
 
 class AdminAccountConfig(InputModel):
     email: str
-    college_id: Literal[1, 2]
+    college_id: int = Field(ge=1, strict=True)
+
+    @field_validator("college_id")
+    @classmethod
+    def registered_college(cls, value):
+        from colleges import valid_college
+        if not valid_college(value):
+            raise ValueError("Unknown college in administrator configuration.")
+        return value
+
 
 class ScheduleInput(InputModel):
     job_id: int = Field(gt=0)
@@ -627,3 +645,56 @@ class StudentOpportunities(BaseModel):
     limit: int
     calculated_at: datetime
     explanation: str
+
+class CollegeReference(BaseModel):
+    id: int
+    name: str
+    code: str | None
+    district: str
+    courses: list[str]
+    category: str
+    kind: Literal["demo", "bput_directory"]
+
+class CollegeDirectory(BaseModel):
+    source_url: str
+    university_url: str
+    source_year: str
+    source_sha256: str
+    note: str
+    colleges: list[CollegeReference]
+
+ApplicationStatus = Literal["submitted", "under_review", "shortlisted", "rejected", "withdrawn"]
+class ApplicationSubmit(InputModel):
+    job_id: int = Field(ge=1, strict=True)
+    cover_note: str = Field(default="", max_length=1000)
+class ApplicationAction(InputModel):
+    version: int = Field(ge=1, strict=True)
+    reason: str = Field(min_length=5, max_length=1000)
+class ApplicationReview(ApplicationAction):
+    status: Literal["under_review", "shortlisted", "rejected"]
+class ApplicationEventResponse(BaseModel):
+    id: int
+    previous_status: ApplicationStatus | None
+    status: ApplicationStatus
+    reason: str
+    created_at: datetime
+class ApplicationResponse(BaseModel):
+    id: int
+    student_id: int
+    student_name: str
+    job_id: int
+    job_title: str
+    company_name: str
+    status: ApplicationStatus
+    cover_note: str
+    version: int
+    created_at: datetime
+    updated_at: datetime
+    evidence: MatchCalculation
+    history: list[ApplicationEventResponse]
+    explanation: str = "Submission-time weighted-rule evidence is frozen. Application review is a separate human decision, not an interview result or offer."
+class ApplicationList(BaseModel):
+    items: list[ApplicationResponse]
+    total: int
+    offset: int
+    limit: int

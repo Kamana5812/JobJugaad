@@ -31,7 +31,7 @@ async def lifespan(app):
     logging.getLogger("uvicorn.error").info("Phase 3 FORCE RLS initialized; fixtures: %s; admin accounts provisioned: %s", phase3, admins)
     yield
 
-app = FastAPI(title="JobJugaad API", version="0.9.0",
+app = FastAPI(title="JobJugaad API", version="0.10.0",
     description="Explainability-first Student Core, Talent Finder and Placement Command Center. Weighted rules plus separate public-data engineering and MBA Random Forest placement signals.",
     lifespan=lifespan)
 # Exact production origin. CORS is a browser boundary, not a substitute for JWT/RBAC/RLS.
@@ -59,3 +59,10 @@ def health():
         return HealthResponse(database=check_database(), isolation=isolation_report(), placement_model=model_status(), btech_model=btech_model.model_status())
     except (SQLAlchemyError, RuntimeError):
         raise HTTPException(503, "The database health or isolation check failed.") from None
+
+from colleges import DIRECTORY
+from schemas import CollegeDirectory
+
+@app.get("/colleges", response_model=CollegeDirectory, tags=["College directory"])
+def colleges():
+    return DIRECTORY

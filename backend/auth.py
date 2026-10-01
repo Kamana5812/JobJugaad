@@ -10,6 +10,7 @@ from database import tenant_session
 from admin_access import is_allowed_admin
 from models import User, Student, Company
 from schemas import UserResponse, TokenResponse
+from colleges import valid_college, college_name
 
 passwords = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer = HTTPBearer(auto_error=False)
@@ -33,18 +34,18 @@ def verify_password(password, hashed):
 
 def user_response(session, user):
     if user.role == "admin":
-        return UserResponse(user_id=user.id, college_id=user.college_id, role="admin",
+        return UserResponse(college_name=college_name(user.college_id), user_id=user.id, college_id=user.college_id, role="admin",
             email=user.email, name="Placement administrator")
     if user.role == "student":
         student = session.scalar(select(Student).where(Student.user_id == user.id, Student.college_id == user.college_id))
         if student is None:
             raise HTTPException(404, "Student profile not found.")
-        return UserResponse(user_id=user.id, student_id=student.id, college_id=user.college_id,
+        return UserResponse(college_name=college_name(user.college_id), user_id=user.id, student_id=student.id, college_id=user.college_id,
             role=user.role, email=user.email, name=student.name)
     company = session.scalar(select(Company).where(Company.recruiter_user_id == user.id, Company.college_id == user.college_id))
     if company is None:
         raise HTTPException(404, "Company profile not found.")
-    return UserResponse(user_id=user.id, company_id=company.id, college_id=user.college_id,
+    return UserResponse(college_name=college_name(user.college_id), user_id=user.id, company_id=company.id, college_id=user.college_id,
         role=user.role, email=user.email, name=company.name)
 
 def issue_token(user, student=None, company=None):
@@ -53,7 +54,7 @@ def issue_token(user, student=None, company=None):
         "college_id": user.college_id, "iat": now, "exp": now + timedelta(seconds=TOKEN_SECONDS),
         "iss": ISSUER, "aud": AUDIENCE}, signing_secret(), algorithm="HS256")
     return TokenResponse(access_token=token, expires_in=TOKEN_SECONDS,
-        user=UserResponse(user_id=user.id, student_id=student.id if student else None,
+        user=UserResponse(college_name=college_name(user.college_id), user_id=user.id, student_id=student.id if student else None,
             company_id=company.id if company else None, college_id=user.college_id,
             role=user.role, email=user.email, name=student.name if student else company.name if company else "Placement administrator"))
 
@@ -65,7 +66,7 @@ def current_identity(credentials: HTTPAuthorizationCredentials | None = Depends(
     try:
         claims = jwt.decode(credentials.credentials, signing_secret(), algorithms=["HS256"],
             issuer=ISSUER, audience=AUDIENCE, options={"require_exp": True, "require_iat": True, "require_sub": True})
-        if (type(claims.get("college_id")) is not int or claims["college_id"] not in (1, 2)
+        if (type(claims.get("college_id")) is not int or not valid_college(claims["college_id"])
             or type(claims.get("user_id")) is not int or claims["user_id"] < 1
             or claims["sub"] != str(claims["user_id"])):
             raise unauthorized

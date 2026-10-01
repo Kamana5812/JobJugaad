@@ -1,4 +1,4 @@
-"""Role-specific demo enrollment; clients cannot assign themselves privileged roles."""
+"""Role-specific self-selected college enrollment; clients cannot assign themselves privileged roles."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -24,7 +24,7 @@ def signup(payload: SignupRequest):
             session.flush()
             return issue_token(user, student)
     except IntegrityError:
-        raise HTTPException(409, "An account with this email already exists in this demo college.") from None
+        raise HTTPException(409, "An account with this email already exists in this college.") from None
 
 @router.post("/recruiter/signup", response_model=TokenResponse, status_code=201)
 def recruiter_signup(payload: RecruiterSignupRequest):
@@ -39,7 +39,7 @@ def recruiter_signup(payload: RecruiterSignupRequest):
             session.flush()
             return issue_token(user, company=company)
     except IntegrityError:
-        raise HTTPException(409, "An account with this email already exists in this demo college.") from None
+        raise HTTPException(409, "An account with this email already exists in this college.") from None
 
 @router.post("/login", response_model=TokenResponse)
 def login(payload: LoginRequest):
@@ -47,7 +47,7 @@ def login(payload: LoginRequest):
         user = session.scalar(select(User).where(User.email == payload.email, User.college_id == payload.college_id))
         valid = verify_password(payload.password, user.password_hash if user else DUMMY_HASH)
         if not user or not valid:
-            raise HTTPException(401, "Email, password, or demo college is incorrect.")
+            raise HTTPException(401, "Email, password, or college is incorrect.")
         if user.role == "student":
             student = session.scalar(select(Student).where(Student.user_id == user.id, Student.college_id == user.college_id))
             if student is None:

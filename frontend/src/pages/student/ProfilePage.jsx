@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { getProfile, saveProfile, errorMessage } from '../../api/student'
 import { FormField, buttonStyle, secondaryStyle, Message } from '../../components/FormField'
@@ -9,6 +9,8 @@ import EvidenceEditor from '../../components/EvidenceEditor'
 import ResumeUpload from '../../components/ResumeUpload'
 import PortalHero, { PortalSections } from '../../components/PortalHero'
 import OpportunitiesPanel from './OpportunitiesPanel'
+
+const MarketRolesPanel = lazy(() => import('./MarketRolesPanel'))
 
 const nullable = (value) => value === '' || value === null ? null : Number(value)
 function editable(profile) {
@@ -60,13 +62,14 @@ export default function ProfilePage() {
     <PortalHero role="student" collegeId={profile.college_id} description={`Hello, ${profile.name}. Understand where you stand, find the gaps, and plan your next step.`}>
       <a href="#profile-editor" className={buttonStyle}>Update my profile →</a><a href="#opportunities" className={secondaryStyle}>Explore opportunities ↓</a>
     </PortalHero>
-    <PortalSections label="Career Copilot sections" items={[["readiness", "Readiness"], ["skill-gaps", "Skill gaps"], ["opportunities", "Opportunities"], ["resume", "Resume"], ["profile-editor", "My profile"], ["placement-models", "Placement models"]]} />
+    <PortalSections label="Career Copilot sections" items={[["readiness", "Readiness"], ["skill-gaps", "Skill gaps"], ["opportunities", "College drives"], ["market-roles", "Market roles"], ["resume", "Resume"], ["profile-editor", "My profile"], ["placement-models", "Placement models"]]} />
     <section aria-label="Saved profile summary" className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-line bg-white p-6">
       <div><p className="text-xs font-bold uppercase tracking-widest text-muted">Your saved profile</p><h2 className="mt-2 text-xl font-bold text-navy">{profile.name}</h2><p className="mt-1 text-sm text-muted">{profile.branch} · {profile.cgpa === null ? 'CGPA not recorded' : `CGPA ${profile.cgpa}/10`} · Student #{profile.id}</p></div>
       <dl className="flex flex-wrap gap-8">{[['Skills', profile.skills.length], ['Projects', profile.projects.length], ['Certifications', profile.certifications.length]].map(([label, count]) => <div key={label}><dt className="text-xs text-muted">{label}</dt><dd className="mt-1 text-2xl font-bold text-navy">{count}</dd></div>)}</dl>
     </section>
     <div id="readiness" className="scroll-mt-6"><ReadinessCard readiness={profile.readiness} dirty={dirty} /></div>
     <OpportunitiesPanel key={revision} studentId={profile.id} revision={revision} dirty={dirty} onExpired={logout} />
+    <Suspense fallback={<p role="status">Loading historical market references…</p>}><MarketRolesPanel /></Suspense>
     <div id="resume" className="scroll-mt-6"><ResumeUpload sectionNumber="04" profile={profile} disabled={busy} onBusyChange={setUploading} onExpired={logout} onUploaded={(value) => setProfile(value)} /></div>
     <section id="profile-editor" aria-labelledby="profile-title" className="scroll-mt-6 rounded-xl border border-line bg-white p-6 sm:p-8">
       <h2 id="profile-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron-deep">05</span>Build your profile evidence.</h2>

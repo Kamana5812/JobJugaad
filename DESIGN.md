@@ -125,3 +125,7 @@ This is both a UX principle and a hackathon judging requirement (see `PRD.md` §
 ## Product presentation refinement — 2026-10-01
 
 User requested a modern product appearance. Keep the exact existing navy, saffron, paper, and status palette. Use restrained accents, compact workspace headers, white bordered cards with 12px corners, 8px form controls, and semibold headings with tighter tracking. Navigation is sticky and the wordmark is smaller. Landing uses a split editorial layout and clearly labeled illustrative workflow; no fictional performance or customer statistics. Large decorative mascot banners are retained as assets but no longer loaded in the landing, auth, or workspace headers. Hinglish labels remain in relevant task panels. Public event/pitch copy is removed from primary navigation, auth, and footer; the demo environment and synthetic workflow disclosures remain visible. A polished appearance does not claim production operational readiness.
+
+### Historical market references
+
+Keep “Explore market roles” visibly separate from calculated college-drive opportunities. Every card shows Historical reference, recorded location/experience/date, an expandable description, derived-keyword disclaimer, and “View original historical posting”; no Apply button or score. Prominent section copy explains that availability is unchecked and companies are not campus partners. Source, modifications and CC BY-SA attribution remain visible below the catalogue.

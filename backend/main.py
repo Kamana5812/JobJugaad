@@ -1,5 +1,6 @@
 """JobJugaad API: explainability-first student core."""
 import logging
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -21,17 +22,14 @@ async def lifespan(app):
     load_model()
     btech_model.load_model()
     initialize_schema()  # Tables and FORCE RLS are committed atomically before serving.
-    created = seed_students()
-    companies, demonstrations = seed_companies()
-    logging.getLogger("uvicorn.error").info("Phase 2 FORCE RLS initialized; created %s students, %s companies; new drive demonstrations: %s", created, companies, demonstrations)
-    phase3 = seed_phase3()
-    phase4 = seed_phase4()
-    logging.getLogger("uvicorn.error").info("Phase 4 FORCE RLS initialized; synthetic expansion: %s", phase4)
+    # Real deployments do not create synthetic tenants or workflow records.
+    if os.environ.get("SEED_DEMO_DATA") == "yes":
+        seed_students(); seed_companies(); seed_phase3(); seed_phase4()
     admins = provision_admin_accounts()
-    logging.getLogger("uvicorn.error").info("Phase 3 FORCE RLS initialized; fixtures: %s; admin accounts provisioned: %s", phase3, admins)
+    logging.getLogger("uvicorn.error").info("Tenant RLS initialized; admin accounts provisioned: %s", admins)
     yield
 
-app = FastAPI(title="JobJugaad API", version="0.10.0",
+app = FastAPI(title="JobJugaad API", version="0.11.0",
     description="Explainability-first Student Core, Talent Finder and Placement Command Center. Weighted rules plus separate public-data engineering and MBA Random Forest placement signals.",
     lifespan=lifespan)
 # Exact production origin. CORS is a browser boundary, not a substitute for JWT/RBAC/RLS.

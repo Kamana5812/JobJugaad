@@ -65,12 +65,15 @@ try {
   check('every dashboard blocks anonymous and wrong-role access while allowing its own role', () => {
     for (const role of ['student','recruiter','admin']) {
       assert.equal(RoleGate({ user:null, loading:false, role, children:'private' }).props.to, `/auth?role=${role}&mode=login`)
-      assert.equal(RoleGate({ user:{role}, loading:false, role, children:'private' }), 'private')
-      assert.notEqual(RoleGate({ user:{role}, loading:true, role, children:'private' }), 'private')
+      assert.equal(RoleGate({ user:{role,access_status:'approved'}, loading:false, role, children:'private' }), 'private')
+      assert.notEqual(RoleGate({ user:{role,access_status:'approved'}, loading:true, role, children:'private' }), 'private')
       for (const actual of ['student','recruiter','admin'].filter(r=>r!==role)) {
         assert.equal(RoleGate({ user:{role:actual}, loading:false, role, children:'private' }).props.to, roleHome(actual))
       }
     }
+  })
+  check('unverified, pending and rejected accounts cannot enter a dashboard', () => {
+    for (const access_status of ['unverified','pending','rejected']) assert.notEqual(RoleGate({user:{role:'student',access_status},loading:false,role:'student',children:'private'}), 'private')
   })
   // A recording Axios adapter tests request wiring only; these are not live backend tests.
   const form = { name:'Synthetic example', industry:'Testing', email:'example@example.invalid', password:'Synthetic-Test-Only', college_id:'2' }

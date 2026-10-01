@@ -2,10 +2,11 @@
 from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from sqlalchemy import select, update, text
-from models import Job, Student, Schedule, Interview, ScheduleEvent
-from schemas import ScheduleInput, ScheduleResponse, InterviewResponse, AuditEventResponse, SchedulingBoard, NamedOption, BookingConflict
+from models import Job, Student, Schedule, Interview, ScheduleEvent, Application, Company
+from schemas import SchedulingApplicant, ScheduleInput, ScheduleResponse, InterviewResponse, AuditEventResponse, SchedulingBoard, NamedOption, BookingConflict
 from engines.scheduler import propose_slot, conflicts_for
 from engines.notifications import notify_student
+from engines.accounts import approved_scope
 
 
 def lock_calendar(session, college):
@@ -32,6 +33,18 @@ def validate_references(session, college, payload):
         raise HTTPException(404, "Drive not found.")
     if session.scalar(select(Student.id).where(Student.id == payload.student_id, Student.college_id == college)) is None:
         raise HTTPException(404, "Student not found.")
+    if college not in (1, 2):
+        approved = session.scalar(select(Student.id).where(Student.college_id == college,
+            Student.id == payload.student_id, approved_scope(Student.user_id, college, "student")))
+        drive = session.scalar(select(Job.id).join(Company,
+            (Company.id == Job.company_id) & (Company.college_id == Job.college_id)).where(
+            Job.college_id == college, Company.college_id == college, Job.id == payload.job_id,
+            approved_scope(Company.recruiter_user_id, college, "recruiter")))
+        shortlist = session.scalar(select(Application.id).where(Application.college_id == college,
+            Application.student_id == payload.student_id, Application.job_id == payload.job_id,
+            Application.status == "shortlisted"))
+        if not approved or not drive or not shortlist:
+            raise HTTPException(409, "Real-college interviews require approved student/recruiter accounts and a recruiter-shortlisted application.")
     if payload.reschedule_interview_id:
         source = owned_interview(session, college, payload.reschedule_interview_id)
         if source.status != "scheduled" or (source.student_id, source.job_id) != (payload.student_id, payload.job_id):
@@ -170,11 +183,17 @@ def calendar_board(session, user):
                 seen.add(pair)
                 conflicts.append(BookingConflict(interview_id=booking.id, other_interview_id=conflict.interview_id,
                     kinds=conflict.kinds, explanation=f"Interview #{booking.id}: " + conflict.explanation))
-    jobs = session.scalars(select(Job).where(Job.college_id == college).order_by(Job.id.desc())).all()
-    students = session.scalars(select(Student).where(Student.college_id == college).order_by(Student.name, Student.id)).all()
+    jobs = session.scalars(select(Job).join(Company, (Company.id == Job.company_id) & (Company.college_id == Job.college_id)).where(Job.college_id == college, Company.college_id == college, approved_scope(Company.recruiter_user_id, college, "recruiter")).order_by(Job.id.desc())).all()
+    students = session.scalars(select(Student).where(Student.college_id == college, approved_scope(Student.user_id, college, "student")).order_by(Student.name, Student.id)).all()
     proposals = session.scalars(select(Schedule).where(Schedule.college_id == college).order_by(Schedule.id.desc())).all()
     audit = session.scalars(select(ScheduleEvent).where(ScheduleEvent.college_id == college).order_by(ScheduleEvent.id.desc()).limit(50)).all()
-    return SchedulingBoard(jobs=[NamedOption(id=j.id,name=j.title) for j in jobs],
+    applications = session.scalars(select(Application).join(Student,
+        (Student.id == Application.student_id) & (Student.college_id == Application.college_id)).where(
+        Application.college_id == college, Student.college_id == college, Application.status == "shortlisted", Application.job_id.in_([j.id for j in jobs]),
+        approved_scope(Student.user_id, college, "student")).order_by(Application.id.desc()).limit(100)).all()
+    applicants = [SchedulingApplicant(application_id=a.id, job_id=a.job_id, student_id=a.student_id,
+        job_title=a.evidence_snapshot["job_title"], student_name=a.evidence_snapshot["student_name"]) for a in applications]
+    return SchedulingBoard(applicants=applicants, jobs=[NamedOption(id=j.id,name=j.title) for j in jobs],
         students=[NamedOption(id=s.id,name=s.name) for s in students],
         interviews=[InterviewResponse.model_validate(b,from_attributes=True) for b in bookings+history],
         proposals=[response(p) for p in proposals], conflicts=conflicts,

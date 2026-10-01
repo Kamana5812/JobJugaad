@@ -1,4 +1,5 @@
 """Role-specific self-selected college enrollment; clients cannot assign themselves privileged roles."""
+import os
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -13,6 +14,8 @@ DUMMY_HASH = hash_password("unused-password-for-timing")
 
 @router.post("/signup", response_model=TokenResponse, status_code=201)
 def signup(payload: SignupRequest):
+    if payload.college_id in (1, 2) and os.environ.get("ALLOW_DEMO_SIGNUPS") != "yes":
+        raise HTTPException(403, "Demo signup is closed. Choose your real college to create an account.")
     try:
         with tenant_session(payload.college_id) as session:
             user = User(email=payload.email, password_hash=hash_password(payload.password),
@@ -22,12 +25,14 @@ def signup(payload: SignupRequest):
             student = Student(user_id=user.id, college_id=user.college_id, name=payload.name)
             session.add(student)
             session.flush()
-            return issue_token(user, student)
+            return issue_token(user, student, session=session)
     except IntegrityError:
         raise HTTPException(409, "An account with this email already exists in this college.") from None
 
 @router.post("/recruiter/signup", response_model=TokenResponse, status_code=201)
 def recruiter_signup(payload: RecruiterSignupRequest):
+    if payload.college_id in (1, 2) and os.environ.get("ALLOW_DEMO_SIGNUPS") != "yes":
+        raise HTTPException(403, "Demo signup is closed. Choose your real college to create an account.")
     try:
         with tenant_session(payload.college_id) as session:
             user = User(email=payload.email, password_hash=hash_password(payload.password),
@@ -37,7 +42,7 @@ def recruiter_signup(payload: RecruiterSignupRequest):
             company = Company(recruiter_user_id=user.id, college_id=user.college_id, **payload.company.model_dump())
             session.add(company)
             session.flush()
-            return issue_token(user, company=company)
+            return issue_token(user, company=company, session=session)
     except IntegrityError:
         raise HTTPException(409, "An account with this email already exists in this college.") from None
 
@@ -52,16 +57,37 @@ def login(payload: LoginRequest):
             student = session.scalar(select(Student).where(Student.user_id == user.id, Student.college_id == user.college_id))
             if student is None:
                 raise HTTPException(404, "Student profile not found.")
-            return issue_token(user, student)
+            return issue_token(user, student, session=session)
         if user.role == "recruiter":
             company = session.scalar(select(Company).where(Company.recruiter_user_id == user.id, Company.college_id == user.college_id))
             if company is None:
                 raise HTTPException(404, "Company profile not found.")
-            return issue_token(user, company=company)
+            return issue_token(user, company=company, session=session)
         if user.role == "admin" and is_allowed_admin(user):
-            return issue_token(user)
+            return issue_token(user, session=session)
         raise HTTPException(403, "Administrator access is not enabled for this account.")
 
 @router.get("/me", response_model=UserResponse)
 def me(context=Depends(authenticated_session)):
     return user_response(*context)
+
+
+from auth import current_identity
+from engines import accounts
+from schemas import DetailResponse, EmailVerificationInput, AccountAccessResponse, AccessRequestInput
+
+@router.post("/email-verification", response_model=DetailResponse)
+def request_email_verification(identity=Depends(current_identity)):
+    return accounts.request_verification(identity)
+
+@router.post("/verify-email", response_model=DetailResponse)
+def verify_email(payload: EmailVerificationInput):
+    return accounts.verify_email(payload)
+
+@router.get("/access", response_model=AccountAccessResponse)
+def account_access(context=Depends(authenticated_session)):
+    return accounts.view(*context)
+
+@router.post("/access", response_model=AccountAccessResponse)
+def request_college_access(payload: AccessRequestInput, context=Depends(authenticated_session)):
+    return accounts.request_access(*context, payload)

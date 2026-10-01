@@ -7,6 +7,7 @@ import ScheduleForm from './ScheduleForm'
 import ProposalCard from './ProposalCard'
 import InterviewList from './InterviewList'
 export default function SchedulingPanel({ board, refresh }) {
+  const [applicant, setApplicant] = useState(null)
   const [source, setSource] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -27,7 +28,7 @@ export default function SchedulingPanel({ board, refresh }) {
     finally { setBusy(false) }
   }
   function resolve(item) {
-    setSource(item)
+    setApplicant(null); setSource(item)
     document.getElementById('schedule-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
   return <div className="space-y-6">
@@ -41,7 +42,11 @@ export default function SchedulingPanel({ board, refresh }) {
         </div>
       })}</div> : <p className="text-sm font-semibold text-growth">No overlapping bookings found in the recorded calendar.</p>}
     </DashboardCard>
-    <div id="schedule-form"><ScheduleForm key={source?.id || 'new'} board={board} source={source} onClearSource={() => setSource(null)} onSaved={refresh} /></div>
+    {board.applicants?.length > 0 && <DashboardCard title="Recruiter-shortlisted applicants" label="Applications → scheduling">
+      <p className="mb-4 text-sm text-muted">Real college bookings require an approved student, an approved recruiter, and a recruiter-shortlisted application. Choose an applicant to fill the proposal form.</p>
+      <ul className="space-y-3">{board.applicants.map(item => <li key={item.application_id} className="flex flex-wrap items-center justify-between gap-3 text-sm"><span>{item.student_name} · {item.job_title}</span><button className={secondaryStyle} onClick={() => { setSource(null); setApplicant(item); document.getElementById('schedule-form')?.scrollIntoView({ behavior: 'smooth' }) }}>Propose interview</button></li>)}</ul>
+    </DashboardCard>}
+    <div id="schedule-form"><ScheduleForm key={source ? 'interview-' + source.id : applicant ? 'application-' + applicant.application_id : 'new'} board={board} source={source} applicant={applicant} onClearSource={() => setSource(null)} onSaved={refresh} /></div>
     <DashboardCard title={'03 Pending approval (' + pending.length + ')'} label="The administrator makes the final decision">
       <Message error>{error}</Message><Message>{message}</Message>
       <div className="mt-4 space-y-4">{pending.length ? pending.map(proposal => <ProposalCard key={proposal.id} proposal={proposal} names={names} perform={perform} busy={busy} />)

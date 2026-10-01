@@ -324,3 +324,39 @@ class ApplicationEvent(TenantRow, Base):
         ForeignKeyConstraint(["application_id", "college_id"], ["applications.id", "applications.college_id"]),
         ForeignKeyConstraint(["actor_user_id", "college_id"], ["users.id", "users.college_id"]),
         CheckConstraint("status IN ('submitted','under_review','shortlisted','rejected','withdrawn')"))
+
+
+class AccountAccess(TenantRow, Base):
+    __tablename__ = "account_access"
+    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    email_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    approval_status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
+    affiliation_reference: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    context: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_email_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (UniqueConstraint("id", "college_id"), UniqueConstraint("user_id", "college_id"),
+        ForeignKeyConstraint(["user_id", "college_id"], ["users.id", "users.college_id"]),
+        CheckConstraint("approval_status IN ('pending','approved','rejected')"), CheckConstraint("version > 0"))
+
+class AccountAccessEvent(TenantRow, Base):
+    __tablename__ = "account_access_events"
+    access_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    actor_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    action: Mapped[str] = mapped_column(String(40), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (
+        ForeignKeyConstraint(["access_id", "college_id"], ["account_access.id", "account_access.college_id"]),
+        ForeignKeyConstraint(["actor_user_id", "college_id"], ["users.id", "users.college_id"]),)
+
+class EmailVerificationToken(TenantRow, Base):
+    __tablename__ = "email_verification_tokens"
+    user_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (ForeignKeyConstraint(["user_id", "college_id"], ["users.id", "users.college_id"]),)

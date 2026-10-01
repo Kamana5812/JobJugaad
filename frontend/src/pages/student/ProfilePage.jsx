@@ -9,6 +9,7 @@ import EvidenceEditor from '../../components/EvidenceEditor'
 import ResumeUpload from '../../components/ResumeUpload'
 import PortalHero, { PortalSections } from '../../components/PortalHero'
 import OpportunitiesPanel from './OpportunitiesPanel'
+import InterviewsPanel from './InterviewsPanel'
 import ApplicationsPanel from './ApplicationsPanel'
 
 const MarketRolesPanel = lazy(() => import('./MarketRolesPanel'))
@@ -57,13 +58,13 @@ export default function ProfilePage() {
     } catch (failure) { if (failure.response?.status === 401) logout(); else setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
-  if (loading) return <p role="status" className="rounded-2xl border border-line bg-white p-8 text-navy">Loading your saved profile… The demo server may need a moment to wake up.</p>
+  if (loading) return <p role="status" className="rounded-2xl border border-line bg-white p-8 text-navy">Loading your saved profile… The service may need a moment to wake up.</p>
   if (!profile) return <div className="space-y-4"><Message error>{error}</Message><button onClick={load} className={buttonStyle}>Retry profile</button></div>
   return <div className="space-y-8">
     <PortalHero role="student" collegeId={profile.college_id} description={`Hello, ${profile.name}. Understand where you stand, find the gaps, and plan your next step.`}>
       <a href="#profile-editor" className={buttonStyle}>Update my profile →</a><a href="#opportunities" className={secondaryStyle}>Explore opportunities ↓</a>
     </PortalHero>
-    <PortalSections label="Career Copilot sections" items={[["readiness", "Readiness"], ["skill-gaps", "Skill gaps"], ["opportunities", "College drives"], ["applications", "My applications"], ["market-roles", "Market roles"], ["resume", "Resume"], ["profile-editor", "My profile"], ["placement-models", "Placement models"]]} />
+    <PortalSections label="Career Copilot sections" items={[["readiness", "Readiness"], ["skill-gaps", "Skill gaps"], ["opportunities", "College drives"], ["applications", "My applications"], ["interviews", "My interviews"], ["market-roles", "Market roles"], ["resume", "Resume"], ["profile-editor", "My profile"], ["placement-models", "Placement models"]]} />
     <section aria-label="Saved profile summary" className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-line bg-white p-6">
       <div><p className="text-xs font-bold uppercase tracking-widest text-muted">Your saved profile</p><h2 className="mt-2 text-xl font-bold text-navy">{profile.name}</h2><p className="mt-1 text-sm text-muted">{profile.branch} · {profile.cgpa === null ? 'CGPA not recorded' : `CGPA ${profile.cgpa}/10`} · Student #{profile.id}</p></div>
       <dl className="flex flex-wrap gap-8">{[['Skills', profile.skills.length], ['Projects', profile.projects.length], ['Certifications', profile.certifications.length]].map(([label, count]) => <div key={label}><dt className="text-xs text-muted">{label}</dt><dd className="mt-1 text-2xl font-bold text-navy">{count}</dd></div>)}</dl>
@@ -71,6 +72,7 @@ export default function ProfilePage() {
     <div id="readiness" className="scroll-mt-6"><ReadinessCard readiness={profile.readiness} dirty={dirty} /></div>
     <OpportunitiesPanel key={revision} studentId={profile.id} revision={revision} dirty={dirty} onExpired={logout} />
     <ApplicationsPanel studentId={profile.id} dirty={dirty} onExpired={logout} />
+    <InterviewsPanel studentId={profile.id} />
     <Suspense fallback={<p role="status">Loading historical market references…</p>}><MarketRolesPanel /></Suspense>
     <div id="resume" className="scroll-mt-6"><ResumeUpload sectionNumber="04" profile={profile} disabled={busy} onBusyChange={setUploading} onExpired={logout} onUploaded={(value) => setProfile(value)} /></div>
     <section id="profile-editor" aria-labelledby="profile-title" className="scroll-mt-6 rounded-xl border border-line bg-white p-6 sm:p-8">

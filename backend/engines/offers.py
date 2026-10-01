@@ -9,7 +9,7 @@ from engines.notifications import notify_student, notify_admins
 
 STAGES = ("offer_letter_status","documents_status","verification_status","acceptance_status","joining_status")
 METHOD = ("Recorded lifecycle statuses only. Document submission and verification are human declarations; "
-    "no offer letter/document files are uploaded or automatically validated here. Notifications are simulated in-app only.")
+    "no offer letter/document files are uploaded or automatically validated here. Hiring notifications are recorded in-app only; demo tenants contain synthetic records.")
 
 
 def snapshot(row):

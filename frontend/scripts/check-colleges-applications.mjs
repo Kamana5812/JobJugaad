@@ -26,9 +26,11 @@ try {
  })
  check('search and college selector render official names and honest enrollment/source notice', () => {
    const html = render(College, { value: college.id, onChange() {} })
-   assert(html.includes('Find your college') && html.includes('2022–23 snapshot') && html.includes('self-selected and unverified'))
+   assert(html.includes('Find your college') && html.includes('2022–23 snapshot') && html.includes('administrator approval'))
    assert(html.includes(esc(college.name)) && html.includes(directory.source_url))
-   assert(html.includes('Demo College 1') && html.includes('Demo College 2'))
+   assert(!html.includes('Demo College 1') && !html.includes('Demo College 2'))
+   const legacy = render(College, { value: 1, allowDemo: true, onChange() {} })
+   assert(legacy.includes('Demo College 1') && legacy.includes('Demo College 2'))
    assert(html.includes(`value="${college.id}" selected=""`))
  })
  check('workspace names selected real college rather than inventing a demo name', () => {

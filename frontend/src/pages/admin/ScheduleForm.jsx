@@ -4,8 +4,8 @@ import DashboardCard, { displayTime, localInputTime } from '../../components/Das
 import { checkSlot, proposeSchedule } from '../../api/admin'
 import { errorMessage } from '../../api/student'
 
-export default function ScheduleForm({ board, source, onClearSource, onSaved }) {
-  const initial = () => ({ job_id: board.jobs[0]?.id || '', student_id: board.students[0]?.id || '',
+export default function ScheduleForm({ board, source, applicant, onClearSource, onSaved }) {
+  const initial = () => ({ job_id: applicant?.job_id || board.jobs[0]?.id || '', student_id: applicant?.student_id || board.students[0]?.id || '',
     scheduled_time: localInputTime(Date.now() + 86400000), duration_minutes: 30, venue: '', panel_id: '' })
   const [form, setForm] = useState(initial)
   const [preview, setPreview] = useState(null)

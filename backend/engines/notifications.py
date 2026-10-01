@@ -1,4 +1,4 @@
-"""Simulated database-backed feed only; never sends email, SMS or external messages."""
+"""Tenant-owned in-app hiring feed; email verification is a separate delivery path."""
 from datetime import datetime, timezone
 from fastapi import HTTPException
 from sqlalchemy import select, update, func
@@ -32,7 +32,9 @@ def feed(session, user, offset=0, limit=20):
     total = session.scalar(select(func.count()).select_from(Notification).where(*scope))
     unread = session.scalar(select(func.count()).select_from(Notification).where(*scope, Notification.read_at.is_(None)))
     rows = session.scalars(select(Notification).where(*scope).order_by(Notification.id.desc()).offset(offset).limit(limit)).all()
-    return NotificationFeed(notifications=[NotificationResponse.model_validate(row,from_attributes=True) for row in rows],
+    delivery = "simulated_in_app" if user.college_id in (1, 2) else "in_app"
+    return NotificationFeed(explanation="Archived demo notifications." if delivery == "simulated_in_app" else "Recorded in-app notifications. Hiring events are not delivered by email or SMS.",
+        notifications=[NotificationResponse(**NotificationResponse.model_validate(row,from_attributes=True).model_dump(exclude={"delivery"}), delivery=delivery) for row in rows],
         total=total,unread_count=unread,offset=offset,limit=limit)
 
 
@@ -44,4 +46,4 @@ def mark_read(session, user, identity):
     if row.read_at is None:
         session.execute(update(Notification).where(Notification.college_id == user.college_id,
             Notification.recipient_user_id == user.id, Notification.id == identity).values(read_at=datetime.now(timezone.utc)))
-    return NotificationResponse.model_validate(row,from_attributes=True)
+    return NotificationResponse(**NotificationResponse.model_validate(row,from_attributes=True).model_dump(exclude={"delivery"}), delivery="simulated_in_app" if user.college_id in (1, 2) else "in_app")

@@ -16,7 +16,7 @@ export async function uploadResume(id, file) {
 }
 export function errorMessage(error) {
   const detail = error.response?.data?.detail
-  return typeof detail === 'string' ? detail : 'Could not reach JobJugaad. Please retry; the demo server may be waking up.'
+  return typeof detail === 'string' ? detail : 'Could not reach JobJugaad. Please retry; the service may be waking up.'
 }
 
 export const getPlacementModel = async (id) => (await api.get(`/students/${id}/placement-model`)).data
@@ -26,3 +26,5 @@ export const getBTechModel = async (id) => (await api.get(`/students/${id}/btech
 export const saveBTechModel = async (id, input) => (await api.put(`/students/${id}/btech-placement-model`, input)).data
 
 export const getOpportunities = async (id, params) => (await api.get(`/students/${id}/opportunities`, { params })).data
+
+export const getInterviews = async (id, offset = 0) => (await api.get(`/students/${id}/interviews`, { params: { offset, limit: 10 } })).data

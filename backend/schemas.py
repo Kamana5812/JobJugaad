@@ -69,6 +69,9 @@ class SignupRequest(LoginRequest):
         return value.strip() if isinstance(value, str) else value
 
 class UserResponse(BaseModel):
+    email_verified: bool = False
+    access_status: Literal["unverified", "pending", "approved", "rejected", "legacy_demo"] = "unverified"
+    is_demo: bool = False
     college_name: str
     user_id: int
     student_id: int | None = None
@@ -383,6 +386,7 @@ class BookingConflict(BaseModel):
     explanation: str
 
 class SchedulingBoard(BaseModel):
+    applicants: list["SchedulingApplicant"] = Field(default_factory=list)
     jobs: list[NamedOption]
     students: list[NamedOption]
     interviews: list[InterviewResponse]
@@ -540,7 +544,7 @@ class NotificationResponse(BaseModel):
     target_path: str
     read_at: datetime | None
     created_at: datetime
-    delivery: Literal["simulated_in_app"] = "simulated_in_app"
+    delivery: Literal["simulated_in_app", "in_app"] = "simulated_in_app"
 
 class NotificationFeed(BaseModel):
     notifications: list[NotificationResponse]
@@ -698,3 +702,61 @@ class ApplicationList(BaseModel):
     total: int
     offset: int
     limit: int
+
+
+class DetailResponse(BaseModel):
+    detail: str
+class EmailVerificationInput(InputModel):
+    college_id: int = Field(ge=1, strict=True)
+    token: str = Field(min_length=32, max_length=256)
+class AccessRequestInput(InputModel):
+    consent: Literal[True]
+    affiliation_reference: str = Field(min_length=3, max_length=120)
+    context: str = Field(default="", max_length=1000)
+class AccessReviewInput(InputModel):
+    version: int = Field(ge=1, strict=True)
+    status: Literal["approved", "rejected"]
+    reason: str = Field(min_length=5, max_length=1000)
+class AccessEventResponse(BaseModel):
+    id: int
+    action: str
+    reason: str
+    created_at: datetime
+class AccountAccessResponse(BaseModel):
+    id: int | None
+    college_id: int
+    college_name: str
+    email: str
+    email_verified: bool
+    email_delivery_ready: bool
+    access_status: Literal["unverified", "pending", "approved", "rejected", "legacy_demo"]
+    affiliation_reference: str
+    context: str
+    version: int
+    requested_at: datetime | None
+    history: list[AccessEventResponse]
+    explanation: str = "Email verification confirms inbox access. A college administrator separately reviews affiliation; no automatic institution endorsement is implied."
+class AccessQueueItem(AccountAccessResponse):
+    name: str
+    role: Literal["student", "recruiter"]
+class AccessQueue(BaseModel):
+    items: list[AccessQueueItem]
+    total: int
+    offset: int
+    limit: int
+class StudentInterviewResponse(InterviewResponse):
+    job_title: str
+    company_name: str
+class InterviewListResponse(BaseModel):
+    items: list[StudentInterviewResponse]
+    total: int
+    offset: int
+    limit: int
+class SchedulingApplicant(BaseModel):
+    application_id: int
+    job_id: int
+    student_id: int
+    job_title: str
+    student_name: str
+
+SchedulingBoard.model_rebuild()

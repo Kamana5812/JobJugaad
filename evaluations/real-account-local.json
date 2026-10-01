@@ -1,0 +1,30 @@
+{
+  "release": "real-account-workflow",
+  "api_version": "0.11.0",
+  "date": "2026-10-02",
+  "environment": "explicit localhost PostgreSQL, not live",
+  "initial_regression": {
+    "cases": 68,
+    "passed": 67,
+    "outdated_endpoint_count_assertion": 1,
+    "corrected_case_rerun_passed": true
+  },
+  "expanded_account_suite": {
+    "cases": 9,
+    "passed": 9,
+    "email_transport": "mocked; no actual delivery claim",
+    "workflow": "approval -> application -> shortlist -> approved interview -> selected (controlled local clock) -> issued offer -> acceptance -> submitted documents -> verification -> joining -> analytics"
+  },
+  "distinct_backend_cases_verified": 70,
+  "frontend_render_and_wiring_checks": 49,
+  "production_build": "passed",
+  "tenant_policy_count": 24,
+  "credentials_or_raw_verification_tokens_in_report": false,
+  "pending": [
+    "Gmail OAuth setup in Render",
+    "Actual verification email inbox check",
+    "Owner registration and admin allowlist for tenant 10219",
+    "Live deployment checks",
+    "Manual browser rehearsal"
+  ]
+}

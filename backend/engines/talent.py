@@ -7,6 +7,12 @@ from sqlalchemy.dialects.postgresql import insert
 from models import Company, Job, Match, MatchOverride, Student, StudentSkill, Project, Certification
 from schemas import CompanyResponse, JobResponse, MatchCalculation, CandidateResponse, OverrideResponse, MatchSummary, MatchResults
 from engines.matching import calculate_match
+from engines.accounts import approved_scope
+
+
+def candidate_scope(college):
+    return Match.student_id.in_(select(Student.id).where(Student.college_id == college,
+        approved_scope(Student.user_id, college, "student")))
 
 
 def owned_company(session, user):
@@ -50,7 +56,7 @@ def create_job(session, user, payload):
 def run_matching(session, job):
     # Caller locks the owned job row; concurrent reruns and overrides serialize.
     college = job.college_id
-    students = session.scalars(select(Student).where(Student.college_id == college).order_by(Student.id)).all()
+    students = session.scalars(select(Student).where(Student.college_id == college, approved_scope(Student.user_id, college, "student")).order_by(Student.id)).all()
     grouped = []
     for model in (StudentSkill, Project, Certification):
         rows = defaultdict(list)
@@ -67,7 +73,7 @@ def run_matching(session, job):
         computed=set(values[0]) - {"college_id","job_id","student_id"}
         session.execute(statement.on_conflict_do_update(index_elements=["job_id","student_id","college_id"],
             set_={name:getattr(statement.excluded,name) for name in computed},
-            where=and_(Match.college_id==college,Match.job_id==job.id)))
+            where=and_(Match.college_id==college,candidate_scope(college),Match.job_id==job.id)))
     session.flush()
     return summary(session, job)
 
@@ -77,7 +83,7 @@ def shortlisted(row):
 
 
 def all_matches(session, job):
-    return session.scalars(select(Match).where(Match.college_id == job.college_id, Match.job_id == job.id)
+    return session.scalars(select(Match).where(Match.college_id == job.college_id, candidate_scope(job.college_id), Match.job_id == job.id)
         .order_by(Match.match_score.desc(), Match.student_id)).all()
 
 
@@ -89,7 +95,7 @@ def summary(session, job, rows=None):
     if rows is not None:
         total=len(rows);accepted=sum(shortlisted(m) for m in rows);overridden=sum(m.override_action is not None for m in rows)
     else:
-        scope=(Match.college_id==job.college_id,Match.job_id==job.id)
+        scope=(Match.college_id==job.college_id,candidate_scope(job.college_id),Match.job_id==job.id)
         total=session.scalar(select(func.count()).select_from(Match).where(*scope))
         accepted=session.scalar(select(func.count()).select_from(Match).where(*scope,shortlist_filter()))
         overridden=session.scalar(select(func.count()).select_from(Match).where(*scope,Match.override_action.is_not(None)))
@@ -106,7 +112,7 @@ def candidate_response(row, student, audit):
 
 def match_results(session, job, status, offset, limit):
     totals=summary(session,job)
-    query=select(Match).where(Match.college_id==job.college_id,Match.job_id==job.id)
+    query=select(Match).where(Match.college_id==job.college_id,candidate_scope(job.college_id),Match.job_id==job.id)
     if status!="all":query=query.where(shortlist_filter() if status=="shortlisted" else ~shortlist_filter())
     # Same descending score and student-ID tie-breaker; pagination happens in PostgreSQL.
     page=session.scalars(query.order_by(Match.match_score.desc(),Match.student_id).offset(offset).limit(limit)).all()
@@ -121,7 +127,7 @@ def match_results(session, job, status, offset, limit):
 
 
 def override_match(session, user, job, match_id, payload):
-    row = session.scalar(select(Match).where(Match.college_id == user.college_id, Match.job_id == job.id, Match.id == match_id).with_for_update())
+    row = session.scalar(select(Match).where(Match.college_id == user.college_id, candidate_scope(user.college_id), Match.job_id == job.id, Match.id == match_id).with_for_update())
     if row is None:
         raise HTTPException(404, "Candidate match not found. Run matching first.")
     snapshot = MatchCalculation.model_validate(row, from_attributes=True).model_dump()

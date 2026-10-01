@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy import select, update, func
 from models import Application, ApplicationEvent, Student, Job, Company
 from schemas import ApplicationResponse, ApplicationEventResponse, ApplicationList
+from engines.accounts import approved_scope
 from engines.profile import collections
 from engines.matching import calculate_match
 from engines.notifications import notify
@@ -52,7 +53,7 @@ def submit(session, user, student, payload):
     pair = session.execute(select(Job, Company).join(Company,
         (Company.id == Job.company_id) & (Company.college_id == Job.college_id)).where(
         Job.college_id == user.college_id, Company.college_id == user.college_id,
-        Job.id == payload.job_id)).first()
+        Job.id == payload.job_id, approved_scope(Company.recruiter_user_id, user.college_id, "recruiter"))).first()
     if pair is None:
         raise HTTPException(404, "College drive not found. Historical market references cannot receive applications.")
     job, company = pair

@@ -9,6 +9,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from models import Job, Company
 from engines.profile import collections
+from engines.accounts import approved_scope
 from engines.matching import calculate_match
 from schemas import StudentOpportunity, StudentOpportunities, OpportunityRole
 
@@ -18,7 +19,7 @@ def student_opportunities(session, student, status, offset, limit, target_job_id
     # Both application filters remain explicit, independently of FORCE RLS.
     rows = session.execute(select(Job, Company).join(Company,
         (Company.id == Job.company_id) & (Company.college_id == Job.college_id)).where(
-        Job.college_id == student.college_id, Company.college_id == student.college_id)).all()
+        Job.college_id == student.college_id, Company.college_id == student.college_id, approved_scope(Company.recruiter_user_id, student.college_id, "recruiter"))).all()
     results = []
     for job, company in rows:
         calculation = calculate_match(student, evidence["skills"], evidence["projects"],

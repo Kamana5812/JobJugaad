@@ -115,3 +115,12 @@ def withdraw_application(student_id: int, application_id: int, payload: Applicat
     session, user = context
     student = owned_student(session, user, student_id)
     return applications.action(session, user, application_id, Application.student_id == student.id, payload, withdraw=True)
+
+
+from schemas import InterviewListResponse
+from engines.interviews import interviews_for_student
+
+@router.get("/{student_id}/interviews", response_model=InterviewListResponse)
+def student_interviews(student_id: int, offset: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=50), context=Depends(student_session)):
+    session, user = context
+    return interviews_for_student(session, owned_student(session, user, student_id), offset, limit)

@@ -68,3 +68,17 @@ def create_offer(payload:OfferCreate,context=Depends(admin_session)):
 @router.put("/offers/{offer_id}", response_model=OfferResponse)
 def update_offer(offer_id:int,payload:OfferAdminUpdate,context=Depends(admin_session)):
     return offers.admin_update(*context,offer_id,payload)
+
+
+from typing import Literal
+from engines import accounts
+from schemas import AccessQueue, AccessReviewInput, AccountAccessResponse
+
+@router.get("/accounts", response_model=AccessQueue)
+def account_queue(status: Literal["pending", "approved", "rejected"] = "pending", offset: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=50), context=Depends(admin_session)):
+    return accounts.queue(*context, status, offset, limit)
+
+@router.post("/accounts/{access_id}/review", response_model=AccountAccessResponse)
+def review_account(access_id: int, payload: AccessReviewInput, context=Depends(admin_session)):
+    return accounts.review(*context, access_id, payload)

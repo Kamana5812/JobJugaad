@@ -3,6 +3,7 @@ import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import LandingPage from './pages/public/LandingPage'
 import AuthPage from './pages/public/AuthPage'
+import VerifyEmailPage from './pages/public/VerifyEmailPage'
 import ProfilePage from './pages/student/ProfilePage'
 import OffersPage from './pages/student/OffersPage'
 import NotificationsPage from './components/NotificationsPage'
@@ -25,13 +26,14 @@ export function AppRoutes() {
   const { user } = useAuth()
   return <Routes>
     <Route path="/" element={<LandingPage />} /><Route path="/auth" element={<AuthPage />} />
+    <Route path="/verify-email" element={<VerifyEmailPage />} />
     <Route path="/login" element={<Navigate to="/auth" replace />} /><Route path="/signup" element={<Navigate to="/auth?mode=signup" replace />} />
     <Route path="/recruiter/login" element={<Navigate to="/auth?role=recruiter&mode=login" replace />} />
     <Route path="/recruiter/signup" element={<Navigate to="/auth?role=recruiter&mode=signup" replace />} />
     <Route path="/student" element={<RoleGuard role="student"><ProfilePage /></RoleGuard>} />
     <Route path="/student/profile" element={<Navigate to="/student" replace />} />
     <Route path="/student/offers" element={<RoleGuard role="student"><OffersPage /></RoleGuard>} />
-    <Route path="/notifications" element={user ? <NotificationsPage /> : <Navigate to="/auth" replace />} />
+    <Route path="/notifications" element={user ? <RoleGuard role={user.role}><NotificationsPage /></RoleGuard> : <Navigate to="/auth" replace />} />
     <Route path="/recruiter" element={<RoleGuard role="recruiter"><TalentPage /></RoleGuard>} />
     <Route path="/admin" element={<RoleGuard role="admin"><Suspense fallback={<p role="status">Loading Command Center…</p>}><AdminPage /></Suspense></RoleGuard>} />
     <Route path="*" element={<div className="rounded-2xl bg-white p-8"><h1 className="text-2xl font-bold text-navy">Page not found</h1><Link className="mt-4 inline-block underline" to="/">Back to JobJugaad</Link></div>} />

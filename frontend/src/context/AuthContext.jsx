@@ -21,11 +21,12 @@ export function AuthProvider({ children }) {
     setAccessToken(result.access_token)
     setUser(result.user)
   }
+  async function refreshUser() { const current = await getMe(); setUser(current); return current }
   function logout() {
     sessionStorage.removeItem(TOKEN_KEY)
     setAccessToken(null)
     setUser(null)
   }
-  return <AuthContext.Provider value={{ user, loading, authenticate, logout }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, loading, authenticate, logout, refreshUser }}>{children}</AuthContext.Provider>
 }
 export const useAuth = () => useContext(AuthContext)

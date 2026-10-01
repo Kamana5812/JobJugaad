@@ -17,7 +17,7 @@ export default function AnalyticsPanel({ data, children }) {
       <dl className="grid gap-5 sm:grid-cols-3">{[['Minimum', data.ctc_min_lpa], ['Mean', data.ctc_mean_lpa], ['Maximum', data.ctc_max_lpa]].map(([label, value]) =>
         <div key={label}><dt className="text-sm text-muted">{label}</dt><dd className="text-2xl font-bold text-navy">{amount(value)}</dd></div>)}</dl>
     </DashboardCard>
-    <DashboardCard title="04 Recorded offer outcomes" label="Synthetic demonstration records included">
+    <DashboardCard title="04 Recorded offer outcomes" label={data.synthetic_offer_count ? "Includes labeled synthetic offers" : "Recorded college outcomes"}>
       <dl className="grid gap-5 sm:grid-cols-3">{[['Students with accepted offers', data.accepted_students], ['Students recorded joined', data.joined_students], ['Offers (all stages)', data.offer_count]].map(([label, value]) => <div key={label}><dt className="text-sm text-muted">{label}</dt><dd className="text-2xl font-bold text-navy">{value}</dd></div>)}</dl>
       <p className="mt-4 text-sm text-muted">{data.synthetic_offer_count} offers are synthetic. Accepted offers and joining are distinct stages.</p>
       <h3 className="mb-3 mt-6 font-bold text-navy">CTC for active accepted offers</h3>

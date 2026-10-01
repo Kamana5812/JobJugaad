@@ -11,7 +11,8 @@ from sqlalchemy.exc import DBAPIError
 from colleges import DIRECTORY
 from database import engine, tenant_session, SessionLocal
 from main import app
-from models import Application, ApplicationEvent, Match, Notification, Job
+from datetime import datetime, timezone
+from models import AccountAccess, Application, ApplicationEvent, Match, Notification, Job
 
 class ApplicationsTests(unittest.TestCase):
     @classmethod
@@ -29,11 +30,15 @@ class ApplicationsTests(unittest.TestCase):
             r = cls.client.post("/auth/signup", json={**credentials, "name": "Synthetic application check"})
             assert r.status_code == 201, r.text
             result = r.json()
+            with tenant_session(college) as session:
+                session.add(AccountAccess(college_id=college, user_id=result["user"]["user_id"], email_verified_at=datetime.now(timezone.utc), approval_status="approved"))
             cls.accounts.append((credentials, result["user"], {"Authorization": "Bearer " + result["access_token"]}))
         for college in [cls.colleges[0], cls.colleges[1], cls.colleges[0]]:
             r = cls.client.post("/auth/recruiter/signup", json=dict(email=f"{uuid.uuid4().hex}@applications.test",
                 password="Synthetic-test-only-2026", college_id=college, company=dict(name="Synthetic application company", industry="Testing")))
             assert r.status_code == 201, r.text
+            with tenant_session(college) as session:
+                session.add(AccountAccess(college_id=college, user_id=r.json()["user"]["user_id"], email_verified_at=datetime.now(timezone.utc), approval_status="approved"))
             headers = {"Authorization": "Bearer " + r.json()["access_token"]}
             cls.recruiters.append(headers)
             drives = []

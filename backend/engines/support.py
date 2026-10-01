@@ -8,6 +8,7 @@ from sqlalchemy import select, update, text, case
 from sqlalchemy.dialects.postgresql import insert
 from models import Job, Student, StudentSkill, Interview, RiskPrediction, SupportReview
 from schemas import SupportCalculation, SupportResponse, SupportReport, AuditEventResponse
+from engines.accounts import approved_scope
 from engines.risk import evaluate_support, METHOD
 
 
@@ -30,7 +31,7 @@ def run_support(session, user, job_id):
     session.execute(text("SELECT pg_advisory_xact_lock(20260302, :college)"), {"college":college})
     job = tenant_job(session, college, job_id)
     now = datetime.now(timezone.utc)
-    students = session.scalars(select(Student).where(Student.college_id == college)).all()
+    students = session.scalars(select(Student).where(Student.college_id == college, approved_scope(Student.user_id, college, "student"))).all()
     skills = defaultdict(list)
     for skill in session.scalars(select(StudentSkill).where(StudentSkill.college_id == college)):
         skills[skill.student_id].append(skill)
@@ -64,7 +65,7 @@ def report(session, user, job_id):
     college = user.college_id
     tenant_job(session, college, job_id)
     rows = session.scalars(select(RiskPrediction).where(RiskPrediction.college_id == college,
-        RiskPrediction.job_id == job_id).order_by(RiskPrediction.student_id)).all()
+        RiskPrediction.job_id == job_id, RiskPrediction.student_id.in_(select(Student.id).where(Student.college_id == college, approved_scope(Student.user_id, college, "student")))).order_by(RiskPrediction.student_id)).all()
     flagged = [r for r in rows if r.flagged]
     student_ids = [r.student_id for r in flagged]
     students = {s.id:s for s in session.scalars(select(Student).where(Student.college_id == college, Student.id.in_(student_ids)))}

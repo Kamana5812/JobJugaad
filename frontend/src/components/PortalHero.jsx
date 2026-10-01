@@ -9,7 +9,7 @@ export default function PortalHero({ role, collegeId, description, children }) {
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-navy sm:text-4xl">{portal.name}</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-muted">{description || portal.line}</p>
       </div>{children && <div className="flex shrink-0 flex-wrap gap-3">{children}</div>}
     </div>
-    <p className="mt-5 flex items-center gap-2 text-xs text-muted"><span className="rounded border border-line bg-white px-2 py-0.5 font-medium text-navy">Demo environment</span>Demonstration service · Existing demo workflows are synthetic. People make the final decisions.</p>
+    <p className="mt-5 flex items-center gap-2 text-xs text-muted">{[1, 2].includes(Number(collegeId)) ? <><span className="rounded border border-line bg-white px-2 py-0.5 font-medium text-navy">Demo archive</span>Existing demonstration records are synthetic. People make the final decisions.</> : <><span className="rounded border border-line bg-white px-2 py-0.5 font-medium text-navy">College workspace</span>Recorded college activity · People make the final decisions.</>}</p>
   </header>
 }
 export function PortalSections({ label, items }) {

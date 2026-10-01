@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-10-02
-**Current phase:** Real college account admission is in progress on feature/real-account-workflow (API 0.11.0, 24 tenant tables). Previous deployed release is 40787b6 / API 0.10.0. Local checks passed: 70 distinct backend cases across regression/focused runs, 49 frontend checks and production build. Deployment checks are pending. Gmail API credential setup and an actual inbox verification remain pending.
+**Current phase:** Real-account components deployed in release 99d6f28 (API 0.11.0). All 24 live tenant policies and 20 public live checks verified. Local validation: 70 distinct backend cases across regression/focused runs, 49 frontend checks and production build. Operational activation is still pending: Gmail OAuth configuration/actual inbox check and college-219 administrator bootstrap. The entire real-account workflow is not yet claimed complete.
 
 ---
 
@@ -105,6 +105,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] Deployed real-account activation/approval components (99d6f28 / API 0.11.0), three new ENABLE/FORCE RLS tables, approved-account matching and shortlist-to-calendar handoff. Verified 24 live policies and 20 public live checks. Actual Gmail delivery and owner onboarding remain in progress; no full operational completion claim.
 
 - [x] 2026-10-02: Added searchable signup/login college selection for 169 official BPUT 2022–23 directory entries. Stable IDs, backend/frontend parity, source links/checksum, dated/unverified disclosures, workspace names and existing demo account compatibility are implemented and live.
 - [x] Delivered separate student applications: consenting submission with frozen weighted-rule evidence, owning-recruiter review/reasons, version protection, withdrawal, audit histories and recipient-only simulated notifications. Application shortlist does not create interviews/offers. Both new tables have explicit tenant filters and ENABLE/FORCE RLS.
@@ -168,10 +169,10 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- Real account activation for college 219: verification/approval workflow implemented locally; regression correction, publication and live checks are in progress. Gmail API OAuth settings and actual inbox delivery are pending. Browser clicks are not claimed.
+- Real account activation for college 219: components deployed and public live checks passed. Gmail API OAuth settings, actual verification email delivery and college-219 administrator provisioning are pending. Browser clicks are not claimed.
 
 ### ⏭️ Next Up
-- Finish the account release and verify 24 live policies. Owner follows docs/REAL-ACCOUNT-SETUP.md to connect Gmail API, registers/verifies kamnaa313@gmail.com in college 219, then adds tenant 10219 to ADMIN_ACCOUNTS. Verify actual mail and college approvals before marking the real account feature complete. No other innovation features are authorized by this extension.
+- Owner follows docs/REAL-ACCOUNT-SETUP.md to connect Gmail API, registers/verifies kamnaa313@gmail.com in college 219, then adds tenant 10219 to ADMIN_ACCOUNTS. Verify actual mail and college approvals before marking the real account feature complete. No other innovation features are authorized by this extension.
 
 ---
 
@@ -425,3 +426,7 @@ _When ending a work session, leave a short note here for whoever (or whatever AI
 > **Final local verification checkpoint:** The initial full regression ran 68 cases: 67 passed, one failed only because its expected admin endpoint count was still 14 instead of 16. That assertion is corrected and its case is being rerun. The expanded nine-case account suite passed, including a full local real-college hiring/offer/joining workflow with a controlled outcome clock, all three new table RLS write denials, tenant-isolated queue, failure/replacement/expiry cases and mocked Gmail transport. All 49 frontend checks and the final production build passed. These are local tests; actual Gmail delivery and UI clicks are not claimed.
 
 > **Local checks complete:** Corrected admin endpoint-count test passed. Every distinct case in the expanded 70-case backend suite has been exercised successfully across the initial regression and focused final runs; this is not a claim of one 70-case full run. Publication is authorized by the existing deployment workflow. Gmail configuration, inbox verification and college administrator bootstrap remain pending.
+
+
+> **Real-account deployment handoff — 2026-10-02:** Release 99d6f28 was fast-forwarded to main and pushed. Vercel reports success; the live served /assets/index-besyc907.js contains account activation, Gmail verification routes and the correct Render API URL. Render serves API 0.11.0; PostgreSQL is connected and all 24 policies are ENABLE/FORCE, college-scoped and verified under a restricted runtime role. Twenty public live checks pass, including anonymous denial, invalid verification-link denial, blocked new demo signup, exact-origin CORS and the verification page. These checks did not create live accounts or send email. Safe reports: evaluations/real-account-local.json and evaluations/real-account-live.json. No independent browser-click claim.
+> **User action still required:** The owner answered “ok” to Gmail setup instructions, not confirmation of saved values. Follow docs/REAL-ACCOUNT-SETUP.md: connect own-client Gmail send-only OAuth, enter four values in Render, verify a real inbox message, register/verify the owner account in college code 219, and then add tenant 10219 to the server admin allowlist. Existing demo accounts are preserved as an archive, not migrated or relabeled real. The user’s selected approval flow is implemented, but real mail/administrator onboarding must be finished before the entire extension is marked complete. Preserve the unrelated navigation-live-security.json timestamp change. No paid upgrade, new stretch feature, scoring-weight change or real hiring-notification delivery was introduced.

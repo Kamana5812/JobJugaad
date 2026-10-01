@@ -1,0 +1,315 @@
+{
+  "release": "99d6f28",
+  "date": "2026-10-02",
+  "api_version": "0.11.0",
+  "frontend_bundle": "/assets/index-besyc907.js",
+  "checks": [
+    {
+      "check": "API 0.11.0 deployed",
+      "passed": true
+    },
+    {
+      "check": "API route /auth/access",
+      "passed": true
+    },
+    {
+      "check": "API route /auth/email-verification",
+      "passed": true
+    },
+    {
+      "check": "API route /auth/verify-email",
+      "passed": true
+    },
+    {
+      "check": "API route /admin/accounts",
+      "passed": true
+    },
+    {
+      "check": "API route /admin/accounts/{access_id}/review",
+      "passed": true
+    },
+    {
+      "check": "API route /students/{student_id}/interviews",
+      "passed": true
+    },
+    {
+      "check": "Managed database connected",
+      "passed": true
+    },
+    {
+      "check": "24 tenant policies audited",
+      "passed": true
+    },
+    {
+      "check": "Runtime role restricted",
+      "passed": true
+    },
+    {
+      "check": "Anonymous account access denied",
+      "passed": true
+    },
+    {
+      "check": "Anonymous administrator queue denied",
+      "passed": true
+    },
+    {
+      "check": "Invalid verification link rejected",
+      "passed": true
+    },
+    {
+      "check": "New demo signup closed",
+      "passed": true
+    },
+    {
+      "check": "CORS https://jobjugaad.vercel.app",
+      "passed": true
+    },
+    {
+      "check": "CORS https://evil.example",
+      "passed": true
+    },
+    {
+      "check": "Live frontend activation screen",
+      "passed": true
+    },
+    {
+      "check": "Live frontend Gmail verification route",
+      "passed": true
+    },
+    {
+      "check": "Live frontend production API URL",
+      "passed": true
+    },
+    {
+      "check": "Verification page served",
+      "passed": true
+    }
+  ],
+  "isolation": {
+    "status": "verified",
+    "runtime_role_restricted": true,
+    "tables": [
+      {
+        "table": "account_access",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "account_access_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "application_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "applications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "btech_model_profiles",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "certifications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "companies",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "email_verification_tokens",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "interviews",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "jobs",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "match_overrides",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "matches",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "notifications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offer_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offers",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "placement_model_profiles",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "projects",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "risk_predictions",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "schedule_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "schedules",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "student_skills",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "students",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "support_reviews",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "users",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      }
+    ]
+  },
+  "actual_email_delivery": "pending user OAuth configuration and inbox check",
+  "college_219_admin_bootstrap": "pending user registration, verification and server allowlist",
+  "browser_clicks": "not claimed",
+  "new_live_test_accounts_created": false,
+  "audit_note": "Initial script expected passed instead of the API contract verified; corrected against a fresh live catalog report."
+}

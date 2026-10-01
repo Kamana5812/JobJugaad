@@ -1,6 +1,6 @@
 export default function ReadinessCard({ readiness, dirty }) {
   const healthy = ['Ready', 'Highly Employable'].includes(readiness.band)
-  return <section aria-labelledby="readiness-title" className="overflow-hidden rounded-3xl border border-line bg-white shadow-sm">
+  return <section aria-labelledby="readiness-title" className="overflow-hidden rounded-xl border border-line bg-white shadow-sm">
     <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[240px_1fr]">
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-muted">Weighted Readiness Score · rule-based</p>

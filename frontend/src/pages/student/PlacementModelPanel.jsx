@@ -46,7 +46,7 @@ export default function PlacementModelPanel({ sectionNumber = "05", studentId, o
     } catch (failure) { if (failure.response?.status === 401) onExpired(); else setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
-  return <section aria-labelledby="placement-model-title" className="space-y-5 rounded-3xl border border-line bg-white p-6 sm:p-8">
+  return <section aria-labelledby="placement-model-title" className="space-y-5 rounded-xl border border-line bg-white p-6 sm:p-8">
     <div><p className="text-xs font-bold uppercase tracking-widest text-muted">Public-data Random Forest · optional signal</p>
       <h2 id="placement-model-title" className="mt-2 text-2xl font-bold text-navy"><span className="mr-3 text-saffron">{sectionNumber}</span>Placement Likelihood Model · MBA</h2>
       <p className="mt-3 text-sm leading-6 text-muted">Trained using the real public Campus Recruitment dataset (215 records: 172 training, 43 testing). This MBA-oriented model uses academic records and prior work experience. It does not use your skills, projects, resume or weighted readiness.</p>

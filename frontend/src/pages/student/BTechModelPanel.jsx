@@ -33,7 +33,7 @@ export default function BTechModelPanel({ sectionNumber = "04", studentId, onExp
     catch (failure) { if (failure.response?.status===401) onExpired();else setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
-  return <section aria-labelledby="btech-model-title" className="space-y-5 rounded-3xl border border-line bg-white p-6 sm:p-8">
+  return <section aria-labelledby="btech-model-title" className="space-y-5 rounded-xl border border-line bg-white p-6 sm:p-8">
     <div><p className="text-xs font-bold uppercase tracking-widest text-muted">Engineering public-data Random Forest · optional signal</p>
       <h2 id="btech-model-title" className="mt-2 text-2xl font-bold text-navy"><span className="mr-3 text-saffron">{sectionNumber}</span>BTech Placement Likelihood Model</h2>
       <p className="mt-3 text-sm leading-6 text-muted">For BTech / BE students in the six engineering streams below. No MBA details needed. Trained on publisher-reported university placement records from 2013–2014; the original collection has not been independently audited.</p>

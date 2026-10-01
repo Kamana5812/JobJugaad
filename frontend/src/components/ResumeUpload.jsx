@@ -21,7 +21,7 @@ export default function ResumeUpload({ sectionNumber = "02", profile, onUploaded
       else setError(errorMessage(failure))
     } finally { setBusy(false); onBusyChange(false) }
   }
-  return <section className="rounded-3xl border border-line bg-white p-6 sm:p-8" aria-labelledby="resume-title">
+  return <section className="rounded-xl border border-line bg-white p-6 sm:p-8" aria-labelledby="resume-title">
     <h2 id="resume-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron">{sectionNumber}</span>Your resume, readable.</h2>
     <p className="mt-2 text-sm leading-6 text-muted">PDF → Extracted text → Your review. Upload a text-based PDF, up to 5 MB and 20 pages. Use synthetic information in this public demo.</p>
     <form onSubmit={upload} className="mt-5 flex flex-wrap items-end gap-4">

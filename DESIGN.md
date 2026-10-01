@@ -121,3 +121,7 @@ This is both a UX principle and a hackathon judging requirement (see `PRD.md` §
 - Maintain sufficient contrast between text and background (avoid light text on light backgrounds, or the reverse — this was an early cover-page mistake, corrected by placing the logo on a white card against the navy hero).
 - Don't rely on color alone for status — always pair a pill color with a label or icon (✅ ⚠ ❌).
 - Keep charts simple (bar/line/pie via Recharts) — avoid overly dense visualizations under demo time pressure.
+
+## Product presentation refinement — 2026-10-01
+
+User requested a modern product appearance. Keep the exact existing navy, saffron, paper, and status palette. Use restrained accents, compact workspace headers, white bordered cards with 12px corners, 8px form controls, and semibold headings with tighter tracking. Navigation is sticky and the wordmark is smaller. Landing uses a split editorial layout and clearly labeled illustrative workflow; no fictional performance or customer statistics. Large decorative mascot banners are retained as assets but no longer loaded in the landing, auth, or workspace headers. Hinglish labels remain in relevant task panels. Public event/pitch copy is removed from primary navigation, auth, and footer; the demo environment and synthetic workflow disclosures remain visible. A polished appearance does not claim production operational readiness.

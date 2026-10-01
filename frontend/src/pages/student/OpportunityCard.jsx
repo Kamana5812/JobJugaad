@@ -1,6 +1,6 @@
 import FactorTable from '../../components/FactorTable'
 export default function OpportunityCard({ opportunity: o, position }) {
-  return <article className="rounded-3xl border border-line bg-white p-6 shadow-sm sm:p-8" aria-label={o.title}>
+  return <article className="rounded-xl border border-line bg-white p-6 shadow-sm sm:p-8" aria-label={o.title}>
     <div className="flex flex-wrap items-start justify-between gap-5"><div><p className="text-xs font-bold uppercase tracking-widest text-muted">Position {position} · {o.company_name}</p><h3 className="mt-2 text-xl font-bold text-navy">{o.title}</h3><p className="mt-2 text-sm text-muted">₹{o.ctc} LPA · Drive #{o.job_id}</p><p className={'mt-3 inline-block rounded-full px-3 py-1 text-xs font-bold ' + (o.eligible ? 'bg-growth-soft text-navy' : 'bg-warning-soft text-navy')}>{o.eligible ? '✓ Meets calculated eligibility' : '⚠ Excluded by current rules'}</p></div>
       <div className="text-right"><p className="text-3xl font-bold text-navy">{o.match_score}<span className="text-sm text-muted"> /100</span></p><p className="text-xs text-muted">Weighted match score · rule-based</p></div></div>
     <p className="my-5 text-sm leading-7">{o.explanation}</p><FactorTable factors={o.factor_breakdown} />

@@ -25,7 +25,7 @@ export default function DriveForm({ onCreated }) {
     } catch (failure) { setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
-  return <section className="rounded-3xl border border-line bg-white p-6 shadow-sm sm:p-8">
+  return <section className="rounded-xl border border-line bg-white p-6 shadow-sm sm:p-8">
     <h2 className="text-xl font-bold text-navy"><span className="mr-2 text-saffron-deep">03</span>Create a drive</h2>
     <p className="mt-2 text-sm text-muted">Define the role and its requirements. All details below are editable before creation.</p>
     <form onSubmit={submit} className="mt-5 space-y-5">

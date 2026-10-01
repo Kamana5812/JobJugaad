@@ -37,7 +37,7 @@ export default function TalentPage() {
     <Message error>{error}</Message>{error && <button onClick={() => setRetry(retry + 1)} className={secondaryStyle}>Retry loading</button>}
     {loading && <p role="status">Loading your company and drives…</p>}
     {company && <>
-      <section id="drives" className="scroll-mt-6 rounded-3xl border border-line bg-white p-6 sm:p-8">
+      <section id="drives" className="scroll-mt-6 rounded-xl border border-line bg-white p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-widest text-muted">{company.name}</p><h2 className="mt-2 text-2xl font-bold text-navy"><span className="mr-3 text-saffron-deep">01</span>Your drives</h2></div><p className="text-sm text-muted">{jobs.length} recorded drive{jobs.length === 1 ? '' : 's'}</p></div>
         <p className="mt-3 text-sm text-muted">Choose a drive to review its requirements and explained candidate matches below.</p>
         {jobs.length === 0 && <div className="mt-5 rounded-2xl border border-dashed border-line bg-paper p-6"><p className="text-sm text-muted">Your company has no drives yet. Seeded drives belong to their own recruiter accounts.</p><a href="#create-drive" className={buttonStyle + ' mt-4'}>Create your first drive →</a></div>}

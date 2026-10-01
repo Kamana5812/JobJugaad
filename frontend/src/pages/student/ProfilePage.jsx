@@ -68,7 +68,7 @@ export default function ProfilePage() {
     <div id="readiness" className="scroll-mt-6"><ReadinessCard readiness={profile.readiness} dirty={dirty} /></div>
     <OpportunitiesPanel key={revision} studentId={profile.id} revision={revision} dirty={dirty} onExpired={logout} />
     <div id="resume" className="scroll-mt-6"><ResumeUpload sectionNumber="04" profile={profile} disabled={busy} onBusyChange={setUploading} onExpired={logout} onUploaded={(value) => setProfile(value)} /></div>
-    <section id="profile-editor" aria-labelledby="profile-title" className="scroll-mt-6 rounded-3xl border border-line bg-white p-6 sm:p-8">
+    <section id="profile-editor" aria-labelledby="profile-title" className="scroll-mt-6 rounded-xl border border-line bg-white p-6 sm:p-8">
       <h2 id="profile-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron-deep">05</span>Build your profile evidence.</h2>
       <p className="mt-2 text-sm leading-6 text-muted">Keep it accurate. Leave unknown assessments blank; missing information contributes zero, not a judgment of ability.</p>
       <form onSubmit={save} className="mt-6 space-y-6">

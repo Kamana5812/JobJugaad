@@ -22,9 +22,9 @@ try {
  const Support=(await server.ssrLoadModule('/src/pages/admin/SupportCard.jsx')).default
  const Analytics=(await server.ssrLoadModule('/src/pages/admin/AnalyticsPanel.jsx')).default
  const Attention=(await server.ssrLoadModule('/src/pages/admin/AdminAttention.jsx')).default
- for (const role of ['student','recruiter','admin']) check(role+' hero uses its own imported illustration and role identity',()=>{
+ for (const role of ['student','recruiter','admin']) check(role+' compact workspace header preserves identity and demo disclosure',()=>{
    const html=render(Hero,{role,collegeId:1})
-   assert(html.includes(`/src/assets/hero/${role}.png`));assert(html.includes('Demo College'))
+   assert(html.includes('workspace') && !html.includes('<img'));assert(html.includes('Demo College') && html.includes('Demo environment'))
    assert(html.includes('People make the final decisions'));assert(!html.includes('AI-powered'))
  })
  check('readiness still renders all six factors and explanation',()=>{

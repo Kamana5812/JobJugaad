@@ -44,7 +44,7 @@ function Layout() {
   return <div className="min-h-screen bg-paper font-sans leading-relaxed text-ink">
     <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-10 focus:bg-white focus:p-4">Skip to content</a>
     <SiteHeader user={user} logout={logout} /><PageFocus />
-    <main id="main" tabIndex="-1" className={publicPage ? 'outline-none' : 'mx-auto max-w-6xl px-5 py-8 outline-none sm:px-6 sm:py-12'}>
+    <main id="main" tabIndex="-1" className={publicPage ? 'outline-none' : 'mx-auto max-w-7xl px-5 py-8 outline-none sm:px-8 sm:py-10'}>
       {loading && pathname !== '/' ? <p role="status" className="px-5 py-16 text-center">Restoring your session…</p> : <AppRoutes />}
     </main><SiteFooter />
   </div>

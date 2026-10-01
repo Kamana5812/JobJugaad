@@ -1,0 +1,16 @@
+{
+  "main_bundle": "/assets/index-CH_fFpP7.js",
+  "catalogue_chunk": "MarketRolesPanel-CfyouzAl.js",
+  "live": true,
+  "source_ids_verified": true,
+  "records": 36,
+  "release": "e61c97b",
+  "site": "https://jobjugaad.vercel.app",
+  "verification": "HTTP bundle inspection; not an authenticated browser interaction",
+  "checks": {
+    "market_reference": 5,
+    "navigation": 18,
+    "production_build": "passed"
+  },
+  "license": "CC BY-SA 4.0"
+}

@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-02",
+  "api_version": "0.11.2",
+  "providers": {
+    "resend": "default if EMAIL_PROVIDER is absent; owner-only default sender unchanged",
+    "gmail": "explicit EMAIL_PROVIDER=gmail; owner send-only OAuth over HTTPS"
+  },
+  "local_tests": {
+    "suite": "backend/tests/test_accounts.py",
+    "passed": 17,
+    "failed": 0,
+    "seconds": 19.753,
+    "email_transport": "mocked; no real delivery claim"
+  },
+  "actual_google_setup": "Owner asked to create/select JobJugaad project; completion not confirmed.",
+  "actual_inbox_delivery": "pending owner configuration and inbox check",
+  "live_deployment": "pending",
+  "new_dependencies": false,
+  "frontend_changes": false,
+  "limits": [
+    "Google External Testing Gmail refresh tokens expire after seven days.",
+    "Provider/API acceptance is not proof of inbox receipt.",
+    "Verification does not establish college affiliation or grant placement access.",
+    "No automatic provider fallback or ambiguous send retry.",
+    "Hiring notifications remain simulated in-app."
+  ]
+}

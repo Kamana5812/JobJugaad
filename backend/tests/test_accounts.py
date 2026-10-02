@@ -1,6 +1,4 @@
 """Local PostgreSQL account admission tests. Email transport mocked; no delivery claim."""
-from email import message_from_bytes
-import base64
 import hashlib
 import io
 import json
@@ -9,6 +7,7 @@ import unittest
 import uuid
 from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
+from urllib.error import HTTPError
 from urllib.parse import urlparse, parse_qs
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
@@ -164,6 +163,24 @@ class AccountTests(unittest.TestCase):
         self.assertEqual(self.client.get("/auth/me", headers=self.headers(self.student)).json()["access_status"], "pending")
         self.assertEqual(self.client.get(f"/students/{self.student['user']['student_id']}", headers=self.headers(self.student)).status_code, 403)
 
+    def test_owner_test_mode_does_not_create_other_user_challenge(self):
+        values = {"MAIL_FROM": "onboarding@resend.dev", "RESEND_API_KEY": "local-mocked-key",
+            "RESEND_TEST_RECIPIENT": self.admin["user"]["email"]}
+        with patch.dict(os.environ, values), patch.object(email_delivery, "urlopen") as send:
+            headers = self.headers(self.student)
+            self.assertFalse(self.client.get("/auth/access", headers=headers).json()["email_delivery_ready"])
+            self.assertEqual(self.client.post("/auth/email-verification", headers=headers).status_code, 503)
+            with tenant_session(self.college) as session:
+                challenges = session.scalars(select(EmailVerificationToken).where(EmailVerificationToken.college_id == self.college,
+                    EmailVerificationToken.user_id == self.student["user"]["user_id"])).all()
+                self.assertEqual(challenges, [])
+            send.assert_not_called()
+            with patch.dict(os.environ, {"RESEND_TEST_RECIPIENT": self.student["user"]["email"]}), patch.object(email_delivery, "urlopen", return_value=io.BytesIO(b'{"id":"local-test-message"}')) as accepted:
+                self.assertTrue(self.client.get("/auth/access", headers=headers).json()["email_delivery_ready"])
+                self.assertEqual(self.client.post("/auth/email-verification", headers=headers).status_code, 200)
+                accepted.assert_called_once()
+            self.assertEqual(self.client.get("/auth/me", headers=headers).json()["access_status"], "unverified")
+
     def test_admission_filters_and_shortlist_to_calendar(self):
         recruiter = self.signup("recruiter")
         self.approve(recruiter); self.approve(self.student)
@@ -224,26 +241,65 @@ class AccountTests(unittest.TestCase):
         notifications = self.client.get("/notifications", headers=self.headers(self.student)).json()
         self.assertTrue(all(n["delivery"] == "in_app" for n in notifications["notifications"]))
 
-class GmailAdapterTests(unittest.TestCase):
-    def test_https_refresh_and_base64_message(self):
-        values = {"MAIL_FROM": "owner@example.invalid", "GMAIL_CLIENT_ID": "test-client", "GMAIL_CLIENT_SECRET": "test-secret", "GMAIL_REFRESH_TOKEN": "test-refresh"}
-        responses = [io.BytesIO(json.dumps({"access_token": "test-access"}).encode()), io.BytesIO(json.dumps({"id": "test-message"}).encode())]
-        with patch.dict(os.environ, values), patch.object(email_delivery, "urlopen", side_effect=responses) as request:
-            self.assertTrue(email_delivery.configured())
-            email_delivery.send_verification("recipient@example.invalid", "https://jobjugaad.vercel.app/verify-email#token=test", "local-only")
-            calls = request.call_args_list
-            self.assertEqual(calls[0].args[0].full_url, "https://oauth2.googleapis.com/token")
-            self.assertEqual(calls[1].args[0].full_url, "https://gmail.googleapis.com/gmail/v1/users/me/messages/send")
-            encoded = json.loads(calls[1].args[0].data)["raw"]
-            mime = message_from_bytes(base64.urlsafe_b64decode(encoded))
-            content = mime.get_payload(decode=True).decode()
-            self.assertEqual(mime["To"], "recipient@example.invalid")
-            self.assertIn("token=test", content)
-            self.assertNotIn("test-refresh", content)
+class ResendAdapterTests(unittest.TestCase):
+    values = {"MAIL_FROM": "accounts@example.invalid", "RESEND_API_KEY": "local-mocked-key",
+        "RESEND_TEST_RECIPIENT": ""}
 
-    def test_failed_transport_has_generic_error(self):
-        with patch.object(email_delivery, "configured", return_value=True), patch.dict(os.environ, {"GMAIL_CLIENT_ID":"test", "GMAIL_CLIENT_SECRET":"test", "GMAIL_REFRESH_TOKEN":"test"}), patch.object(email_delivery, "urlopen", side_effect=OSError("private provider detail")):
-            with self.assertRaises(HTTPException) as raised:
-                email_delivery.send_verification("recipient@example.invalid", "test", "test")
-            self.assertEqual(raised.exception.status_code, 503)
-            self.assertNotIn("private", raised.exception.detail)
+    def test_https_payload_and_challenge_idempotency(self):
+        response = io.BytesIO(json.dumps({"id": "test-message"}).encode())
+        with patch.dict(os.environ, self.values), patch.object(email_delivery, "urlopen", return_value=response) as send:
+            self.assertTrue(email_delivery.configured("recipient@example.invalid"))
+            email_delivery.send_verification("recipient@example.invalid", "https://jobjugaad.vercel.app/verify-email#token=test", "verification:10219:42")
+            request = send.call_args.args[0]
+            self.assertEqual(request.full_url, "https://api.resend.com/emails")
+            self.assertEqual(request.get_method(), "POST")
+            self.assertEqual(send.call_args.kwargs["timeout"], 15)
+            headers = {k.lower(): v for k, v in request.header_items()}
+            self.assertEqual(headers["authorization"], "Bearer local-mocked-key")
+            self.assertEqual(headers["idempotency-key"], "verification:10219:42")
+            body = json.loads(request.data)
+            self.assertEqual(body["from"], "JobJugaad <accounts@example.invalid>")
+            self.assertEqual(body["to"], ["recipient@example.invalid"])
+            self.assertIn("token=test", body["text"])
+            self.assertIn("does not confirm college affiliation", body["text"])
+            self.assertNotIn("local-mocked-key", str(body))
+            send.assert_called_once()
+
+    def test_default_sender_requires_explicit_owner_and_blocks_other_recipients(self):
+        values = {**self.values, "MAIL_FROM": "onboarding@resend.dev", "RESEND_TEST_RECIPIENT": "owner@example.invalid"}
+        with patch.dict(os.environ, values), patch.object(email_delivery, "urlopen") as send:
+            self.assertTrue(email_delivery.configured())
+            self.assertTrue(email_delivery.configured("OWNER@example.invalid"))
+            self.assertFalse(email_delivery.configured("other@example.invalid"))
+            with self.assertRaises(HTTPException) as error:
+                email_delivery.send_verification("other@example.invalid", "test", "test")
+            self.assertEqual(error.exception.status_code, 503)
+            send.assert_not_called()
+            with patch.dict(os.environ, {"RESEND_TEST_RECIPIENT": ""}):
+                self.assertFalse(email_delivery.configured())
+
+    def test_missing_secret_and_invalid_sender_fail_closed(self):
+        for update in [{"RESEND_API_KEY": ""}, {"MAIL_FROM": "kamnaa313@gmail.com"},
+            {"MAIL_FROM": "bad\naddress@example.invalid"}, {"MAIL_FROM": ""},
+            {"MAIL_FROM": "other@resend.dev", "RESEND_TEST_RECIPIENT": "owner@example.invalid"}]:
+            with self.subTest(update=update), patch.dict(os.environ, {**self.values, **update}), patch.object(email_delivery, "urlopen") as send:
+                self.assertFalse(email_delivery.configured())
+                with self.assertRaises(HTTPException):
+                    email_delivery.send_verification("recipient@example.invalid", "test", "test")
+                send.assert_not_called()
+
+    def test_provider_failures_are_generic_and_leave_no_delivery_claim(self):
+        failures = [OSError("private provider detail"),
+            HTTPError("https://api.resend.com/emails", 403, "private", {}, io.BytesIO(b"secret provider body"))]
+        for failure in failures:
+            with self.subTest(error=type(failure).__name__), patch.dict(os.environ, self.values), patch.object(email_delivery, "urlopen", side_effect=failure):
+                with self.assertRaises(HTTPException) as error:
+                    email_delivery.send_verification("recipient@example.invalid", "test", "test")
+                self.assertEqual(error.exception.status_code, 503)
+                self.assertNotIn("private", error.exception.detail)
+                self.assertNotIn("local-mocked-key", error.exception.detail)
+        for payload in [b"not JSON", b"[]", b"{}", b'{"id": null}', b'{"id": ""}']:
+            with self.subTest(payload=payload), patch.dict(os.environ, self.values), patch.object(email_delivery, "urlopen", return_value=io.BytesIO(payload)):
+                with self.assertRaises(HTTPException) as error:
+                    email_delivery.send_verification("recipient@example.invalid", "test", "test")
+                self.assertEqual(error.exception.status_code, 503)

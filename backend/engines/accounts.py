@@ -62,7 +62,7 @@ def view(session, user, row=None):
         AccountAccessEvent.college_id == user.college_id, AccountAccessEvent.access_id == row.id)
         .order_by(AccountAccessEvent.id)).all()
     return AccountAccessResponse(id=row.id if row else None, college_id=user.college_id,
-        college_name=college_name(user.college_id), email=user.email, email_delivery_ready=email_delivery.configured(),
+        college_name=college_name(user.college_id), email=user.email, email_delivery_ready=email_delivery.configured(user.email),
         **identity_fields(session, user), affiliation_reference=row.affiliation_reference if row else "",
         context=row.context if row else "", version=row.version if row else 0,
         requested_at=row.requested_at if row else None,
@@ -131,6 +131,8 @@ def request_verification(identity):
             User.id == identity["user_id"], User.role == identity["role"]))
         if user is None or user.college_id in (1, 2):
             raise HTTPException(403, "Use a real college account for email verification.")
+        if not email_delivery.configured(user.email):
+            raise HTTPException(503, "Email delivery is unavailable for this account. The default Resend sender is limited to the service owner's test inbox; other users need a verified sending domain.")
         row = ensure_access(session, user)
         if row.email_verified_at:
             raise HTTPException(409, "This email address is already verified.")

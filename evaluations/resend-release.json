@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-02",
+  "api_version": "0.11.1",
+  "transport": "Resend HTTPS API",
+  "selected_mode": "default sender; owner inbox only",
+  "local_tests": {
+    "suite": "backend/tests/test_accounts.py",
+    "passed": 12,
+    "failed": 0,
+    "seconds": 38.681,
+    "coverage": [
+      "HTTPS payload and idempotency key",
+      "missing/invalid configuration fails closed",
+      "owner-only default sender",
+      "blocked recipient creates no challenge",
+      "provider errors and malformed responses are generic",
+      "verification hash, expiry, replacement and rate limits",
+      "college-isolated approval/revocation and admission-table RLS",
+      "local application to joining workflow"
+    ]
+  },
+  "actual_provider_delivery": "not tested; real API key and inbox check remain pending",
+  "live_deployment": "pending",
+  "new_dependencies": false,
+  "frontend_changed": false,
+  "limits": [
+    "Default resend.dev sender can reach only the Resend account email.",
+    "Other recipients require an owned Resend-verified sending domain.",
+    "Inbox verification does not establish affiliation or grant placement approval.",
+    "Hiring notifications remain simulated in-app."
+  ]
+}

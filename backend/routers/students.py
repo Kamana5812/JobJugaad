@@ -124,3 +124,24 @@ from engines.interviews import interviews_for_student
 def student_interviews(student_id: int, offset: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=50), context=Depends(student_session)):
     session, user = context
     return interviews_for_student(session, owned_student(session, user, student_id), offset, limit)
+
+from engines import calendar_constraints
+from schemas import (CalendarConstraintList, CalendarConstraintResponse, StudentAvailabilityInput,
+    CalendarCancelInput)
+
+@router.get("/{student_id}/availability", response_model=CalendarConstraintList)
+def availability_list(student_id: int, offset: int = Query(0, ge=0), limit: int = Query(20, ge=1, le=50), context=Depends(student_session)):
+    session, user = context
+    student = owned_student(session, user, student_id)
+    return calendar_constraints.constraints_list(session, user.college_id, offset, limit, student.id)
+
+@router.post("/{student_id}/availability", response_model=CalendarConstraintResponse, status_code=201)
+def declare_availability(student_id: int, payload: StudentAvailabilityInput, context=Depends(student_session)):
+    session, user = context
+    return calendar_constraints.create_student_availability(session, user, owned_student(session, user, student_id), payload)
+
+@router.put("/{student_id}/availability/{constraint_id}/cancel", response_model=CalendarConstraintResponse)
+def cancel_availability(student_id: int, constraint_id: int, payload: CalendarCancelInput, context=Depends(student_session)):
+    session, user = context
+    student = owned_student(session, user, student_id)
+    return calendar_constraints.cancel_constraint(session, user, constraint_id, payload, student.id)

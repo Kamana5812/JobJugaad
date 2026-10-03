@@ -6,6 +6,8 @@ import { errorMessage } from '../../api/student'
 import ScheduleForm from './ScheduleForm'
 import ProposalCard from './ProposalCard'
 import InterviewList from './InterviewList'
+import CalendarSettings from './CalendarSettings'
+import CalendarConstraintsPanel from './CalendarConstraintsPanel'
 export default function SchedulingPanel({ board, refresh }) {
   const [applicant, setApplicant] = useState(null)
   const [source, setSource] = useState(null)
@@ -32,6 +34,8 @@ export default function SchedulingPanel({ board, refresh }) {
     document.getElementById('schedule-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
   return <div className="space-y-6">
+    <CalendarSettings onChanged={refresh} />
+    <CalendarConstraintsPanel students={board.students} onChanged={refresh} />
     <DashboardCard title="01 Conflict alerts" label="Shared students · venues · panels · overlapping drives">
       <p className="mb-4 text-sm text-muted">Independent drives may run together. Overlapping drives conflict when they share a student, venue or panel. Pending proposals do not reserve a slot.</p>
       {board.conflicts.length ? <div className="space-y-3">{board.conflicts.map(conflict => {
@@ -41,6 +45,15 @@ export default function SchedulingPanel({ board, refresh }) {
           {item?.status === 'scheduled' && <button className={secondaryStyle + ' mt-3'} onClick={() => resolve(item)}>Propose resolution for #{item.id}</button>}
         </div>
       })}</div> : <p className="text-sm font-semibold text-growth">No overlapping bookings found in the recorded calendar.</p>}
+      <div className="mt-5 border-t border-line pt-4"><h3 className="font-semibold text-navy">Calendar rules affecting confirmed interviews</h3>
+        <p className="mt-1 text-xs text-muted">These interviews stay scheduled until an administrator approves a reschedule or records a cancellation.</p>
+        <div className="mt-3 space-y-3">{board.calendar_alerts?.length ? board.calendar_alerts.map(alert => {
+          const item = board.interviews.find(row => row.id === alert.interview_id)
+          return <div key={alert.interview_id} className="rounded-xl border border-saffron-deep/30 bg-warning-soft p-4"><p className="text-sm font-semibold text-navy">Interview #{alert.interview_id} · {item ? names.student(item.student_id) : 'Confirmed booking'}</p><p className="mt-1 text-sm">{alert.explanation}</p>
+            {item?.status === 'scheduled' && <button className={secondaryStyle + ' mt-3'} onClick={() => resolve(item)}>Review reschedule #{item.id}</button>}
+          </div>
+        }) : <p className="text-sm text-muted">No calendar rule conflicts found in the recorded bookings.</p>}</div>
+      </div>
     </DashboardCard>
     {board.applicants?.length > 0 && <DashboardCard title="Recruiter-shortlisted applicants" label="Applications → scheduling">
       <p className="mb-4 text-sm text-muted">Real college bookings require an approved student, an approved recruiter, and a recruiter-shortlisted application. Choose an applicant to fill the proposal form.</p>

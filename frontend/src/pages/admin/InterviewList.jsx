@@ -14,6 +14,7 @@ function InterviewRow({ item, names, onResolve, busy, perform }) {
   return <article className="border-t border-line py-4">
     <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-bold text-navy">#{item.id} · {names.student(item.student_id)}</h3><StatusPill critical={item.status === 'rejected'} warning={['cancelled', 'scheduled'].includes(item.status)}>{item.status}</StatusPill></div>
     <p className="text-sm">{names.job(item.job_id)} · {item.venue} · {item.panel_id}</p>
+    <p className="text-sm text-muted">Round {item.round_number || 1} · {item.round_name || 'Interview'}</p>
     <p className="text-sm text-muted">{displayTime(item.scheduled_time)} – {displayTime(item.end_time)}</p>
     {item.seed_key?.startsWith('phase3-double') && <p className="mt-1 text-xs text-muted">Synthetic imported double-booking demonstration.</p>}
     {item.status === 'scheduled' && <button className={secondaryStyle + ' mt-3'} disabled={busy} onClick={() => onResolve(item)}>Propose reschedule #{item.id}</button>}

@@ -74,6 +74,32 @@ from typing import Literal
 from engines import accounts
 from schemas import AccessQueue, AccessReviewInput, AccountAccessResponse
 
+from engines import calendar_constraints
+from schemas import (CalendarSettingsResponse, CalendarSettingsInput, CalendarConstraintInput,
+    CalendarConstraintList, CalendarConstraintResponse, CalendarCancelInput)
+
+@router.get("/calendar/settings", response_model=CalendarSettingsResponse)
+def calendar_settings(context=Depends(admin_session)):
+    session, user = context
+    return calendar_constraints.settings_for(session, user.college_id)
+
+@router.put("/calendar/settings", response_model=CalendarSettingsResponse)
+def update_calendar_settings(payload: CalendarSettingsInput, context=Depends(admin_session)):
+    return calendar_constraints.save_settings(*context, payload)
+
+@router.get("/calendar/constraints", response_model=CalendarConstraintList)
+def calendar_constraints_list(offset: int = Query(0, ge=0), limit: int = Query(20, ge=1, le=50), context=Depends(admin_session)):
+    session, user = context
+    return calendar_constraints.constraints_list(session, user.college_id, offset, limit)
+
+@router.post("/calendar/constraints", response_model=CalendarConstraintResponse, status_code=201)
+def add_calendar_constraint(payload: CalendarConstraintInput, context=Depends(admin_session)):
+    return calendar_constraints.create_constraint(*context, payload)
+
+@router.put("/calendar/constraints/{constraint_id}/cancel", response_model=CalendarConstraintResponse)
+def cancel_calendar_constraint(constraint_id: int, payload: CalendarCancelInput, context=Depends(admin_session)):
+    return calendar_constraints.cancel_constraint(*context, constraint_id, payload)
+
 @router.get("/accounts", response_model=AccessQueue)
 def account_queue(status: Literal["pending", "approved", "rejected"] = "pending", offset: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=50), context=Depends(admin_session)):

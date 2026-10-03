@@ -215,9 +215,25 @@ class AccountTests(unittest.TestCase):
         matching = self.client.post(f"/recruiters/jobs/{job}/matching", headers=headers)
         self.assertEqual(matching.status_code, 200, matching.text)
         # Unverified accounts never appear in recruiter ranking, even if they have a student row.
-        candidates = self.client.get(f"/recruiters/jobs/{job}/matches?status=all", headers=headers).json()
-        self.assertIn(self.student["user"]["student_id"], [c["student_id"] for c in candidates["candidates"]])
-        self.assertNotIn(self.admin["user"]["student_id"], [c["student_id"] for c in candidates.get("candidates", [])])
+        # Repeated local runs retain approved fixtures. Admission must be checked
+        # across the full ranked result, not just its first page of ten students.
+        page_size = 10
+        first = self.client.get(f"/recruiters/jobs/{job}/matches?status=all&limit={page_size}", headers=headers)
+        self.assertEqual(first.status_code, 200, first.text)
+        first_page = first.json()
+        total = first_page["total"]
+        candidate_ids = [c["student_id"] for c in first_page["candidates"]]
+        for offset in range(page_size, total, page_size):
+            response = self.client.get(f"/recruiters/jobs/{job}/matches?status=all&limit={page_size}&offset={offset}", headers=headers)
+            self.assertEqual(response.status_code, 200, response.text)
+            page = response.json()
+            self.assertEqual(page["total"], total)
+            self.assertEqual(len(page["candidates"]), min(page_size, total-offset))
+            candidate_ids.extend(c["student_id"] for c in page["candidates"])
+        self.assertEqual(len(candidate_ids), total)
+        self.assertEqual(len(set(candidate_ids)), total)
+        self.assertIn(self.student["user"]["student_id"], candidate_ids)
+        self.assertNotIn(self.admin["user"]["student_id"], candidate_ids)
         slot = {"job_id": job, "student_id": self.student["user"]["student_id"], "scheduled_time": "2038-05-01T10:00:00Z", "duration_minutes": 30, "venue": uuid.uuid4().hex, "panel_id": uuid.uuid4().hex}
         self.assertEqual(self.client.post("/admin/schedules", headers=self.admin_headers, json=slot).status_code, 409)
         application = self.client.post(f"/students/{self.student['user']['student_id']}/applications", headers=self.headers(self.student), json={"job_id": job})

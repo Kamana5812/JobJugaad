@@ -299,6 +299,8 @@ class ScheduleInput(InputModel):
     venue: str = Field(min_length=1, max_length=100)
     panel_id: str = Field(min_length=1, max_length=80)
     reschedule_interview_id: int | None = Field(default=None, gt=0)
+    round_number: int = Field(default=1, ge=1, le=20, strict=True)
+    round_name: str = Field(default="Interview", min_length=1, max_length=80)
 
     @field_validator("venue", "panel_id")
     @classmethod
@@ -314,11 +316,19 @@ class ConflictResponse(BaseModel):
     kinds: list[Literal["student", "venue", "panel", "overlapping_drive"]]
     explanation: str
 
+class CalendarConflictResponse(BaseModel):
+    constraint_id: int | None = None
+    kind: str
+    explanation: str
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+
 class SlotProposal(BaseModel):
     requested_time: datetime
     proposed_time: datetime | None
     proposed_end_time: datetime | None
     conflicts: list[ConflictResponse]
+    calendar_conflicts: list[CalendarConflictResponse] = Field(default_factory=list)
     explanation: str
     requires_approval: Literal[True] = True
     methodology: str
@@ -335,6 +345,9 @@ class ScheduleResponse(BaseModel):
     panel_id: str
     status: str
     conflicts: list[ConflictResponse]
+    calendar_conflicts: list[CalendarConflictResponse] = Field(default_factory=list)
+    round_number: int = 1
+    round_name: str = "Interview"
     explanation: str
     reschedule_interview_id: int | None
     version: int
@@ -354,6 +367,8 @@ class InterviewResponse(BaseModel):
     panel_id: str
     status: str
     seed_key: str | None
+    round_number: int = 1
+    round_name: str = "Interview"
 
 class AuditEventResponse(BaseModel):
     id: int
@@ -385,6 +400,11 @@ class BookingConflict(BaseModel):
     kinds: list[str]
     explanation: str
 
+class CalendarBookingAlert(BaseModel):
+    interview_id: int
+    explanation: str
+    kinds: list[str]
+
 class SchedulingBoard(BaseModel):
     applicants: list["SchedulingApplicant"] = Field(default_factory=list)
     jobs: list[NamedOption]
@@ -392,7 +412,125 @@ class SchedulingBoard(BaseModel):
     interviews: list[InterviewResponse]
     proposals: list[ScheduleResponse]
     conflicts: list[BookingConflict]
+    calendar_alerts: list[CalendarBookingAlert] = Field(default_factory=list)
     audit: list[AuditEventResponse]
+
+class CalendarSettingsResponse(BaseModel):
+    college_id: int
+    version: int = 0
+    enabled: bool = False
+    timezone: str = "Asia/Kolkata"
+    weekdays: list[int] = Field(default_factory=lambda: [0, 1, 2, 3, 4])
+    day_start: str = "09:00"
+    day_end: str = "17:00"
+    require_student_availability: bool = False
+    require_panel_availability: bool = False
+
+class CalendarSettingsInput(InputModel):
+    version: int = Field(ge=0, strict=True)
+    enabled: bool
+    timezone: str = Field(min_length=1, max_length=80)
+    weekdays: list[Annotated[int, Field(ge=0, le=6, strict=True)]] = Field(min_length=1, max_length=7)
+    day_start: str
+    day_end: str
+    require_student_availability: bool = False
+    require_panel_availability: bool = False
+    reason: str = Field(min_length=10, max_length=1000)
+
+    @field_validator("timezone")
+    @classmethod
+    def recognized_timezone(cls, value):
+        from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError):
+            raise ValueError("Choose an available IANA timezone such as Asia/Kolkata.") from None
+        return value
+
+    @field_validator("weekdays")
+    @classmethod
+    def unique_weekdays(cls, value):
+        if len(set(value)) != len(value):
+            raise ValueError("Choose each weekday only once; Monday is 0.")
+        return sorted(value)
+
+    @field_validator("day_start", "day_end")
+    @classmethod
+    def clock_time(cls, value):
+        if not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", value):
+            raise ValueError("Use a 24-hour HH:MM time.")
+        return value
+
+    @model_validator(mode="after")
+    def same_day_hours(self):
+        if self.day_start >= self.day_end:
+            raise ValueError("Campus closing time must be after opening time on the same local day.")
+        return self
+
+class CalendarConstraintInput(InputModel):
+    kind: Literal["available", "unavailable", "exam"]
+    scope: Literal["student", "panel", "campus", "branch"]
+    student_id: int | None = Field(default=None, gt=0, strict=True)
+    resource_name: str | None = Field(default=None, min_length=1, max_length=80)
+    starts_at: AwareDatetime
+    ends_at: AwareDatetime
+    label: str = Field(min_length=3, max_length=160)
+    reason: str = Field(min_length=10, max_length=1000)
+
+    @model_validator(mode="after")
+    def valid_scope(self):
+        if self.ends_at <= self.starts_at:
+            raise ValueError("The end must be after the start.")
+        if self.scope in ("student", "panel") and self.kind == "exam":
+            raise ValueError("Exams must have campus or branch scope.")
+        if self.scope in ("campus", "branch") and self.kind != "exam":
+            raise ValueError("Campus and branch constraints must be exam blocks.")
+        if self.scope == "student":
+            if self.student_id is None or self.resource_name is not None:
+                raise ValueError("Student scope needs a student ID only.")
+        elif self.scope in ("panel", "branch"):
+            if self.student_id is not None or not self.resource_name or not self.resource_name.strip():
+                raise ValueError("Panel or branch scope needs its resource name only.")
+            normalized = " ".join(self.resource_name.split())
+            self.resource_name = normalized.upper() if self.scope == "branch" else normalized.lower()
+        elif self.student_id is not None or self.resource_name is not None:
+            raise ValueError("Campus scope cannot specify a student or resource.")
+        return self
+
+class StudentAvailabilityInput(InputModel):
+    kind: Literal["available", "unavailable"]
+    starts_at: AwareDatetime
+    ends_at: AwareDatetime
+    label: str = Field(min_length=3, max_length=160)
+
+    @model_validator(mode="after")
+    def valid_interval(self):
+        if self.ends_at <= self.starts_at:
+            raise ValueError("The end must be after the start.")
+        return self
+
+class CalendarCancelInput(InputModel):
+    version: int = Field(ge=1, strict=True)
+    reason: str = Field(min_length=10, max_length=1000)
+
+class CalendarConstraintResponse(BaseModel):
+    id: int
+    college_id: int
+    kind: Literal["available", "unavailable", "exam"]
+    scope: Literal["student", "panel", "campus", "branch"]
+    student_id: int | None
+    resource_name: str | None
+    starts_at: datetime
+    ends_at: datetime
+    label: str
+    status: Literal["active", "cancelled"]
+    version: int
+
+class CalendarConstraintList(BaseModel):
+    items: list[CalendarConstraintResponse]
+    total: int
+    offset: int
+    limit: int
 
 class ConversionRow(BaseModel):
     name: str

@@ -136,6 +136,9 @@ class Schedule(TenantRow, Base):
     panel_id: Mapped[str] = mapped_column(String(80), nullable=False)
     status: Mapped[str] = mapped_column(String(20), default="pending")
     conflicts: Mapped[list] = mapped_column(JSON, nullable=False)
+    calendar_conflicts: Mapped[list] = mapped_column(JSON, nullable=False, default=list, server_default="[]")
+    round_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1")
+    round_name: Mapped[str] = mapped_column(String(80), nullable=False, default="Interview", server_default="Interview")
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
     reschedule_interview_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_by: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -150,7 +153,8 @@ class Schedule(TenantRow, Base):
         ForeignKeyConstraint(["reviewed_by","college_id"], ["users.id","users.college_id"]),
         ForeignKeyConstraint(["reschedule_interview_id","college_id"], ["interviews.id","interviews.college_id"],
             use_alter=True, name="fk_schedule_source_interview_tenant"),
-        CheckConstraint("end_time > scheduled_time"), CheckConstraint("status IN ('pending','scheduled','rejected')"))
+        CheckConstraint("end_time > scheduled_time"), CheckConstraint("status IN ('pending','scheduled','rejected')"),
+        CheckConstraint("round_number BETWEEN 1 AND 20", name="ck_schedules_round_number"))
 
 class Interview(TenantRow, Base):
     __tablename__ = "interviews"
@@ -163,12 +167,15 @@ class Interview(TenantRow, Base):
     panel_id: Mapped[str] = mapped_column(String(80), nullable=False)
     status: Mapped[str] = mapped_column(String(20), default="scheduled")
     seed_key: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    round_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1")
+    round_name: Mapped[str] = mapped_column(String(80), nullable=False, default="Interview", server_default="Interview")
     __table_args__ = (UniqueConstraint("id","college_id"), UniqueConstraint("college_id","seed_key"),
         ForeignKeyConstraint(["schedule_id","college_id"], ["schedules.id","schedules.college_id"]),
         ForeignKeyConstraint(["job_id","college_id"], ["jobs.id","jobs.college_id"]),
         ForeignKeyConstraint(["student_id","college_id"], ["students.id","students.college_id"]),
         CheckConstraint("end_time > scheduled_time"),
-        CheckConstraint("status IN ('scheduled','completed','selected','rejected','cancelled')"))
+        CheckConstraint("status IN ('scheduled','completed','selected','rejected','cancelled')"),
+        CheckConstraint("round_number BETWEEN 1 AND 20", name="ck_interviews_round_number"))
 
 class ScheduleEvent(TenantRow, Base):
     __tablename__ = "schedule_events"
@@ -183,6 +190,38 @@ class ScheduleEvent(TenantRow, Base):
         ForeignKeyConstraint(["schedule_id","college_id"], ["schedules.id","schedules.college_id"]),
         ForeignKeyConstraint(["interview_id","college_id"], ["interviews.id","interviews.college_id"]),
         ForeignKeyConstraint(["actor_user_id","college_id"], ["users.id","users.college_id"]),)
+
+# Calendar constraints are declarations, not inferred attendance or interview outcomes.
+class CalendarSettings(TenantRow, Base):
+    __tablename__ = "calendar_settings"
+    enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    timezone: Mapped[str] = mapped_column(String(80), nullable=False, default="Asia/Kolkata")
+    weekdays: Mapped[list] = mapped_column(JSON, nullable=False, default=lambda: [0, 1, 2, 3, 4])
+    day_start: Mapped[str] = mapped_column(String(5), nullable=False, default="09:00")
+    day_end: Mapped[str] = mapped_column(String(5), nullable=False, default="17:00")
+    require_student_availability: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    require_panel_availability: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    __table_args__ = (UniqueConstraint("college_id"), CheckConstraint("version >= 1"),)
+
+class CalendarConstraint(TenantRow, Base):
+    __tablename__ = "calendar_constraints"
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    scope: Mapped[str] = mapped_column(String(20), nullable=False)
+    student_id: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
+    resource_name: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    label: Mapped[str] = mapped_column(String(160), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_by: Mapped[int] = mapped_column(Integer, nullable=False)
+    __table_args__ = (ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),
+        ForeignKeyConstraint(["created_by", "college_id"], ["users.id", "users.college_id"]),
+        CheckConstraint("ends_at > starts_at"), CheckConstraint("version >= 1"),
+        CheckConstraint("status IN ('active','cancelled')"),
+        CheckConstraint("(kind IN ('available','unavailable') AND scope IN ('student','panel')) OR (kind = 'exam' AND scope IN ('campus','branch'))"),
+        CheckConstraint("(scope = 'student' AND student_id IS NOT NULL AND resource_name IS NULL) OR (scope IN ('panel','branch') AND student_id IS NULL AND resource_name IS NOT NULL) OR (scope = 'campus' AND student_id IS NULL AND resource_name IS NULL)"))
 
 class RiskPrediction(TenantRow, Base):
     __tablename__ = "risk_predictions"

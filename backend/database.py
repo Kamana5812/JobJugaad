@@ -25,8 +25,10 @@ def tenant_session(college_id: int):
 def initialize_schema():
     """Create tables and FORCE RLS in one transaction before accepting requests.
 
-    Raw SQL is used only for PostgreSQL policy DDL, catalog checks and session
-    settings, which SQLAlchemy's portable metadata API does not represent.
+    Raw SQL is used only for PostgreSQL policy DDL, catalog checks, session
+    settings and additive schema upgrades. create_all does not add columns to
+    existing tables, so IF NOT EXISTS upgrades preserve every legacy booking
+    and proposal with explicit round-one/empty-evidence defaults.
     Application data queries use SQLAlchemy and explicit college_id filters.
     """
     import models  # register Phase 1 tables
@@ -37,6 +39,15 @@ def initialize_schema():
         if connection.execute(text("SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = current_user")).scalar_one():
             raise RuntimeError("Database runtime role must not be superuser or BYPASSRLS.")
         Base.metadata.create_all(connection)
+        for name in ("schedules", "interviews"):
+            connection.execute(text(f"ALTER TABLE {name} ADD COLUMN IF NOT EXISTS round_number integer NOT NULL DEFAULT 1"))
+            connection.execute(text(f"ALTER TABLE {name} ADD COLUMN IF NOT EXISTS round_name varchar(80) NOT NULL DEFAULT 'Interview'"))
+            check_name = f"ck_{name}_round_number"
+            exists = connection.execute(text("SELECT 1 FROM pg_constraint WHERE conrelid = CAST(:table AS regclass) AND conname = :name"),
+                {"table": name, "name": check_name}).scalar()
+            if not exists:
+                connection.execute(text(f"ALTER TABLE {name} ADD CONSTRAINT {check_name} CHECK (round_number BETWEEN 1 AND 20)"))
+        connection.execute(text("ALTER TABLE schedules ADD COLUMN IF NOT EXISTS calendar_conflicts json NOT NULL DEFAULT '[]'::json"))
         for table in Base.metadata.sorted_tables:
             name = connection.dialect.identifier_preparer.quote(table.name)
             connection.execute(text(f"ALTER TABLE {name} ENABLE ROW LEVEL SECURITY"))

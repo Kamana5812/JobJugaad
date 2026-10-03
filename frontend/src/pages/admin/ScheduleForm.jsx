@@ -3,20 +3,22 @@ import { FormField, buttonStyle, secondaryStyle, Message } from '../../component
 import DashboardCard, { displayTime, localInputTime } from '../../components/DashboardCard'
 import { checkSlot, proposeSchedule } from '../../api/admin'
 import { errorMessage } from '../../api/student'
+import CalendarConflictList from '../../components/CalendarConflictList'
 
 export default function ScheduleForm({ board, source, applicant, onClearSource, onSaved }) {
-  const initial = () => ({ job_id: applicant?.job_id || board.jobs[0]?.id || '', student_id: applicant?.student_id || board.students[0]?.id || '',
-    scheduled_time: localInputTime(Date.now() + 86400000), duration_minutes: 30, venue: '', panel_id: '' })
+  const sourceForm = () => ({ job_id: source.job_id, student_id: source.student_id,
+    scheduled_time: localInputTime(Math.max(new Date(source.scheduled_time).getTime(), Date.now() + 3600000)),
+    duration_minutes: (new Date(source.end_time) - new Date(source.scheduled_time)) / 60000,
+    venue: source.venue, panel_id: source.panel_id, round_number: source.round_number || 1, round_name: source.round_name || 'Interview' })
+  const initial = () => source ? sourceForm() : ({ job_id: applicant?.job_id || board.jobs[0]?.id || '', student_id: applicant?.student_id || board.students[0]?.id || '',
+    scheduled_time: localInputTime(Date.now() + 86400000), duration_minutes: 30, venue: '', panel_id: '', round_number: 1, round_name: 'Interview' })
   const [form, setForm] = useState(initial)
   const [preview, setPreview] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   useEffect(() => {
-    if (source) setForm({ job_id: source.job_id, student_id: source.student_id,
-      scheduled_time: localInputTime(Math.max(new Date(source.scheduled_time).getTime(), Date.now() + 3600000)),
-      duration_minutes: (new Date(source.end_time) - new Date(source.scheduled_time)) / 60000,
-      venue: source.venue, panel_id: source.panel_id })
+    if (source) setForm(sourceForm())
     setPreview(null); setError(''); setMessage('')
   }, [source])
   const change = key => event => { setForm({ ...form, [key]: event.target.value }); setPreview(null); setMessage('') }
@@ -25,7 +27,7 @@ export default function ScheduleForm({ board, source, applicant, onClearSource, 
     const save = event.nativeEvent.submitter?.value === 'save'
     try {
       const input = { ...form, job_id: Number(form.job_id), student_id: Number(form.student_id),
-        duration_minutes: Number(form.duration_minutes), scheduled_time: new Date(form.scheduled_time).toISOString(),
+        duration_minutes: Number(form.duration_minutes), round_number: Number(form.round_number), scheduled_time: new Date(form.scheduled_time).toISOString(),
         reschedule_interview_id: source?.id || null }
       if (save) {
         const result = await proposeSchedule(input)
@@ -37,7 +39,7 @@ export default function ScheduleForm({ board, source, applicant, onClearSource, 
     finally { setBusy(false) }
   }
   return <DashboardCard title={source ? 'Propose a new time for interview #' + source.id : '02 Propose an interview'} label="Availability → proposal → admin approval">
-    <p className="mb-4 text-sm text-muted">Times use your browser timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone}). The greedy checker skips occupied slots for up to seven days; campus working hours are not configured.</p>
+    <p className="mb-4 text-sm text-muted">Times use your browser timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone}). The greedy checker searches up to seven days against bookings, active calendar windows and campus rules. A pending proposal reserves no resources.</p>
     {source && <div className="mb-4 rounded-xl bg-paper p-3 text-sm"><p>The current booking stays in place until this proposal is approved.</p>
       <button type="button" className={secondaryStyle + ' mt-2'} onClick={onClearSource}>Switch to a new interview</button></div>}
     <form onSubmit={submit} className="space-y-4">
@@ -50,6 +52,8 @@ export default function ScheduleForm({ board, source, applicant, onClearSource, 
         <FormField label="Duration (minutes)" type="number" min="5" max="240" step="1" required value={form.duration_minutes} onChange={change('duration_minutes')} />
         <FormField label="Venue" required maxLength="100" value={form.venue} onChange={change('venue')} hint="Use the same name for the same room." />
         <FormField label="Panel" required maxLength="80" value={form.panel_id} onChange={change('panel_id')} hint="Use the same name for the same interview panel." />
+        <FormField label="Round number" type="number" min="1" max="20" step="1" required value={form.round_number} onChange={change('round_number')} disabled={Boolean(source) || busy} />
+        <FormField label="Round name" required maxLength="80" value={form.round_name} onChange={change('round_name')} disabled={Boolean(source) || busy} hint={source ? 'Rescheduling keeps the original round identity.' : 'For example: Technical interview or HR interview.'} />
       </div>
       <Message error>{error}</Message><Message>{message}</Message>
       <div className="flex flex-wrap gap-3"><button className={secondaryStyle} disabled={busy} value="check">Check availability</button>
@@ -59,6 +63,7 @@ export default function ScheduleForm({ board, source, applicant, onClearSource, 
       <h3 className="font-bold text-navy">{preview.proposed_time ? 'Suggested: ' + displayTime(preview.proposed_time) + ' – ' + displayTime(preview.proposed_end_time) : 'No slot found'}</h3>
       <p className="mt-2 text-sm">{preview.explanation}</p>
       <ul className="mt-3 space-y-2 text-sm">{preview.conflicts.map(item => <li key={item.interview_id}>{item.explanation}</li>)}</ul>
+      <CalendarConflictList items={preview.calendar_conflicts} />
       <p className="mt-3 text-xs text-muted">{preview.methodology} Availability is checked again when saving and approving.</p>
     </div>}
   </DashboardCard>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FormField, buttonStyle, secondaryStyle } from '../../components/FormField'
 import { displayTime, StatusPill } from '../../components/DashboardCard'
 import { reviewSchedule, recheckSchedule } from '../../api/admin'
+import CalendarConflictList from '../../components/CalendarConflictList'
 export default function ProposalCard({ proposal, names, perform, busy }) {
   const [reason, setReason] = useState('')
   async function submit(event) {
@@ -16,10 +17,12 @@ export default function ProposalCard({ proposal, names, perform, busy }) {
     <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-bold text-navy">Proposal #{proposal.id} · {names.student(proposal.student_id)}</h3>
       <StatusPill warning>Pending approval</StatusPill></div>
     <p className="text-sm text-muted">{names.job(proposal.job_id)} · {proposal.venue} · {proposal.panel_id}</p>
+    <p className="mt-1 text-sm text-muted">Round {proposal.round_number || 1} · {proposal.round_name || 'Interview'}</p>
     <p className="mt-3 text-sm">Requested: {displayTime(proposal.requested_time)}</p>
     <p className="font-semibold text-navy">Proposed: {displayTime(proposal.scheduled_time)} – {displayTime(proposal.end_time)}</p>
     <p className="mt-3 text-sm">{proposal.explanation}</p>
     {!!proposal.conflicts.length && <ul className="mt-2 space-y-2 text-sm">{proposal.conflicts.map(conflict => <li key={conflict.interview_id}>{conflict.explanation}</li>)}</ul>}
+    <CalendarConflictList items={proposal.calendar_conflicts} />
     {proposal.reschedule_interview_id && <p className="mt-2 text-sm text-muted">Approval replaces interview #{proposal.reschedule_interview_id}; its original record remains in history.</p>}
     <form onSubmit={submit} className="mt-4 space-y-3">
       <FormField label={'Review reason for proposal #' + proposal.id} required minLength="10" maxLength="1000" value={reason} onChange={event => setReason(event.target.value)} />

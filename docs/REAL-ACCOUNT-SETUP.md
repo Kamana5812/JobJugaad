@@ -6,11 +6,13 @@ Real account flow: signup → verify inbox → submit affiliation reference with
 
 ## Gmail API setup: no domain purchase
 
-For the requested no-payment setup, use **kamnaa313@gmail.com** as the sender through Gmail API. This can send verification links to other students' email addresses, including Gmail addresses. Only the service owner authorizes Google; students/recruiters do not need Google Cloud projects or OAuth consent. No domain purchase, Google Workspace subscription, SMTP app password or Render upgrade is needed for this small-volume setup. Standard Gmail API use currently has no additional charge within Google's quotas; Gmail sending limits still apply. JobJugaad supports this transport when **EMAIL_PROVIDER=gmail**. The default remains Resend until you explicitly select Gmail in Render; it never falls back to another provider.
+For the requested no-payment setup, use **sunilagrawal63323@gmail.com** as the sender through Gmail API. This can send verification links to other students' email addresses, including Gmail addresses. Only the service owner authorizes Google; students/recruiters do not need Google Cloud projects or OAuth consent. No domain purchase, Google Workspace subscription, SMTP app password or Render upgrade is needed for this small-volume setup. Standard Gmail API use currently has no additional charge within Google's quotas; Gmail sending limits still apply. JobJugaad supports this transport when **EMAIL_PROVIDER=gmail**. The default remains Resend until you explicitly select Gmail in Render; it never falls back to another provider.
+
+**Sender change (2026-10-03):** The owner requested sunilagrawal63323@gmail.com as the Gmail sender. Authorize that mailbox and use its refresh token; changing MAIL_FROM alone is insufficient. This does not change the college administrator allowlist or migrate any account. The existing college administrator remains kamnaa313@gmail.com.
 
 ### 1. Create/select the Google project
 
-Open [Google Cloud Console](https://console.cloud.google.com/) as **kamnaa313@gmail.com**. In the project selector at the top choose **New Project**, name it **JobJugaad**, then **Create**. Select that project. If you already made a JobJugaad project during the earlier setup, reuse it. Do not activate paid services or enable billing for this setup.
+Open [Google Cloud Console](https://console.cloud.google.com/) as **sunilagrawal63323@gmail.com**. In the project selector at the top choose **New Project**, name it **JobJugaad**, then **Create**. Select that project. If you already made a JobJugaad project during the earlier setup, reuse it. Do not activate paid services or enable billing for this setup.
 
 ### 2. Enable Gmail API
 
@@ -18,9 +20,9 @@ Choose **APIs & Services → Library**, search for **Gmail API**, open it, and c
 
 ### 3. Configure owner authorization
 
-Choose **Google Auth Platform → Branding → Get started** (older console: **APIs & Services → OAuth consent screen**). Set app name **JobJugaad**, user support email **kamnaa313@gmail.com**, audience **External**, and contact email **kamnaa313@gmail.com**. Review the displayed Google policy yourself, then complete creation.
+Choose **Google Auth Platform → Branding → Get started** (older console: **APIs & Services → OAuth consent screen**). Set app name d**JobJugaa**, user support email **sunilagrawal63323@gmail.com**, audience **External**, and contact email **sunilagrawal63323@gmail.com**. Review the displayed Google policy yourself, then complete creation.
 
-Under **Audience → Test users → Add users**, add **only kamnaa313@gmail.com**. Sunil and other students are email recipients, not Google OAuth test users. Under **Data Access → Add or remove scopes**, add exactly **https://www.googleapis.com/auth/gmail.send**, then update/save. This is send-only permission. Do not select gmail.readonly, gmail.modify, gmail.compose or full mailbox permission.
+Under **Audience → Test users → Add users**, add **only sunilagrawal63323@gmail.com**. Sunil and other students are email recipients, not Google OAuth test users. Under **Data Access → Add or remove scopes**, add exactly **https://www.googleapis.com/auth/gmail.send**, then update/save. This is send-only permission. Do not select gmail.readonly, gmail.modify, gmail.compose or full mailbox permission.
 
 ### 4. Create your OAuth client
 
@@ -36,7 +38,7 @@ Click **Create**. Keep the client ID and client secret privately; the secret is 
 
 Open [Google OAuth Playground](https://developers.google.com/oauthplayground/), click the settings gear, select **Use your own OAuth credentials**, and enter your client ID and secret there. Keep **OAuth endpoints: Google**, **OAuth flow: Server-side**, **Access type: Offline**, and **Force prompt: Consent Screen**. Close the settings panel.
 
-In Step 1 enter **https://www.googleapis.com/auth/gmail.send** in **Input your own scopes**, then click **Authorize APIs**. Choose **kamnaa313@gmail.com**, inspect the requested send-only permission, and approve it yourself. If Google shows an unverified-app warning, continue only after confirming this is your own project/client and only the expected sending permission is requested. A blocked screen is not the same as a warning; do not bypass an organization policy. In Step 2 click **Exchange authorization code for tokens**. Copy the **refresh token** privately, not the short-lived access token. Use your own OAuth client; the playground's shared-client refresh token can be revoked after 24 hours. Do not share the playground URL with credentials/tokens included.
+In Step 1 enter **https://www.googleapis.com/auth/gmail.send** in **Input your own scopes**, then click **Authorize APIs**. Choose **sunilagrawal63323@gmail.com**, inspect the requested send-only permission, and approve it yourself. If Google shows an unverified-app warning, continue only after confirming this is your own project/client and only the expected sending permission is requested. A blocked screen is not the same as a warning; do not bypass an organization policy. In Step 2 click **Exchange authorization code for tokens**. Copy the **refresh token** privately, not the short-lived access token. Use your own OAuth client; the playground's shared-client refresh token can be revoked after 24 hours. Do not share the playground URL with credentials/tokens included.
 
 ### 6. Configure Render
 
@@ -45,7 +47,7 @@ Open [Render service Environment](https://dashboard.render.com/web/srv-daol1s5g1
 | Key | Value |
 |---|---|
 | EMAIL_PROVIDER | gmail |
-| MAIL_FROM | kamnaa313@gmail.com |
+| MAIL_FROM | sunilagrawal63323@gmail.com |
 | GMAIL_CLIENT_ID | Your own OAuth client ID |
 | GMAIL_CLIENT_SECRET | Your own client secret (private) |
 | GMAIL_REFRESH_TOKEN | Your refresh token (private) |

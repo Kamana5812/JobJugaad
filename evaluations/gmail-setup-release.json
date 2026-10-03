@@ -12,9 +12,9 @@
     "seconds": 19.753,
     "email_transport": "mocked; no real delivery claim"
   },
-  "actual_google_setup": "Owner asked to create/select JobJugaad project; completion not confirmed.",
-  "actual_inbox_delivery": "pending owner configuration and inbox check",
-  "live_deployment": "pending",
+  "actual_google_setup": "Owner saved Gmail OAuth configuration in Render; credential validity and sender authorization are not proven by key presence.",
+  "actual_inbox_delivery": "pending an actual inbox receipt and verification-link check",
+  "live_deployment": "verified Live, API 0.11.2 and all 24 tenant policies; see live_verification",
   "new_dependencies": false,
   "frontend_changes": false,
   "limits": [
@@ -23,5 +23,38 @@
     "Verification does not establish college affiliation or grant placement access.",
     "No automatic provider fallback or ambiguous send retry.",
     "Hiring notifications remain simulated in-app."
-  ]
+  ],
+  "release": "e385e62",
+  "live_verification": {
+    "checked_on": "2026-10-04",
+    "api_version": "0.11.2",
+    "render_status": "Deploy succeeded | Live",
+    "commit": "e385e62",
+    "database": "connected",
+    "tenant_policy_count": 24,
+    "isolation_status": "verified",
+    "runtime_role_restricted": true,
+    "email_provider": "gmail",
+    "mail_from": "sunilagrawal63323@gmail.com",
+    "credential_keys_present": [
+      "GMAIL_CLIENT_ID",
+      "GMAIL_CLIENT_SECRET",
+      "GMAIL_REFRESH_TOKEN"
+    ],
+    "credentials_revealed": false,
+    "actual_inbox_delivery_verified": false
+  },
+  "earlier_live_check": {
+    "date": "2026-10-03",
+    "results": [
+      {
+        "check": "version",
+        "error": "TimeoutError"
+      },
+      {
+        "check": "health",
+        "error": "TimeoutError"
+      }
+    ]
+  }
 }

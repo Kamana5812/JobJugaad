@@ -3,7 +3,7 @@ import os
 import unittest
 from fastapi.testclient import TestClient
 from sqlalchemy import text
-from database import engine, initialize_schema
+from database import Base, engine, initialize_schema
 from main import app
 from security_audit import audit_isolation, require_isolation
 
@@ -17,7 +17,9 @@ class Phase5SecurityTests(unittest.TestCase):
     def test_actual_catalog_and_health(self):
         with engine.connect() as connection:
             report = require_isolation(connection)
-        self.assertEqual(len(report['tables']), 24)
+        self.assertEqual({row['table'] for row in report['tables']}, set(Base.metadata.tables))
+        self.assertIn('calendar_settings', Base.metadata.tables)
+        self.assertIn('calendar_constraints', Base.metadata.tables)
         self.assertTrue(report['runtime_role_restricted'])
         response = TestClient(app).get('/health')
         self.assertEqual(response.status_code, 200)

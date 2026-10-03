@@ -3,7 +3,7 @@
 Living record of project state and decisions. Update this file whenever a major decision is made or a phase completes — this is the single source of truth for "where things stand," especially useful for onboarding teammates or resuming work with an AI coding assistant.
 
 **Last updated:** 2026-10-04
-**Current phase:** Scheduling availability extension is in progress on feature/scheduling-availability after the user authorized starting the improvement backlog. Live Gmail provider release e385e62/API 0.11.2 is independently verified: Render deployment succeeded, PostgreSQL connected and all 24 existing tenant policies verified. Render has EMAIL_PROVIDER=gmail, MAIL_FROM=sunilagrawal63323@gmail.com and the three masked Gmail credential keys saved. Actual inbox delivery and real-college administrator onboarding still require end-to-end verification; no full operational completion claim.
+**Current phase:** Scheduling availability code release 341ec9a is pushed; Vercel serves the new student/admin controls. Local checks pass, but Render deployment dep-db0l7svf3r2c73b73p5g completed its build without yet promoting the backend. Live API 0.11.2 remains healthy with PostgreSQL and 24 verified tenant policies; do not mark the 26-table extension live until API 0.12.0 is verified. Render has EMAIL_PROVIDER=gmail, MAIL_FROM=sunilagrawal63323@gmail.com and masked Gmail credential keys saved. Actual inbox delivery and real-college administrator onboarding still require end-to-end verification.
 
 ---
 
@@ -174,7 +174,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 - [x] Merged and pushed Student Core to `main` through `bb640a2`; Render deployment `dep-daovm3v40ujc73brlbc0` and the Vercel production deployment succeeded. Live Definition of Done demonstrated on 2026-09-22.
 
 ### 🚧 In Progress
-- Scheduling availability extension: implemented and locally verified; publication/live checks pending. Includes campus hours, student/panel windows, branch/campus exams, numbered rounds, named blocker explanations, fresh approval checks and two new FORCE RLS tables. All 96 distinct backend cases passed across the full regression and focused account rerun; 49 existing frontend checks, new calendar transport/render checks and the production build pass. Evidence: evaluations/scheduling-availability.json.
+- Scheduling availability extension: release 341ec9a pushed and frontend assets live; backend promotion/persistence checks pending. Includes campus hours, student/panel windows, branch/campus exams, numbered rounds, named blocker explanations, fresh approval checks and two new FORCE RLS tables. All 96 distinct backend cases passed across the full regression and focused account rerun; 49 existing frontend checks, new calendar transport/render checks and the production build pass. Local browser admin/student login and calendar controls/history verified without new browser bookings. Evidence: evaluations/scheduling-availability.json.
 - Real account activation for college 219: components and Gmail provider release are deployed. Owner saved EMAIL_PROVIDER=gmail, MAIL_FROM=sunilagrawal63323@gmail.com and masked OAuth values in Render. Actual inbox verification and college-219 administrator provisioning remain pending. Resend remains available but its default sender is owner-only.
 
 ### ⏭️ Next Up

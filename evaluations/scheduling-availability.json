@@ -4,28 +4,480 @@
   "scope": "First improvement-backlog item: scheduling availability only",
   "method": "Deterministic greedy constraint checking with human approval; no trained model, LLM or metaheuristic solver",
   "backend_checks": {
-    "full_regression": {"cases": 96, "passed": 95, "failed": 1, "seconds": 408.700},
+    "full_regression": {
+      "cases": 96,
+      "passed": 95,
+      "failed": 1,
+      "seconds": 408.7
+    },
     "initial_failure": "Existing account-workflow test assumed its approved student appeared on the first 10-candidate page. Repeated local fixture runs made that assertion unreliable.",
     "correction": "Test gathers every candidate page and checks total, page sizes, unique IDs, approved-student inclusion and non-student exclusion. Admission rules and product behavior were unchanged.",
-    "focused_account_rerun": {"cases": 17, "passed": 17, "failed": 0, "seconds": 19.425},
+    "focused_account_rerun": {
+      "cases": 17,
+      "passed": 17,
+      "failed": 0,
+      "seconds": 19.425
+    },
     "distinct_cases_passed_across_runs": 96,
     "single_clean_full_rerun_claimed": false,
     "calendar_cases_in_full_regression": 18,
     "database": "Isolated localhost PostgreSQL with a non-superuser, non-BYPASSRLS runtime role",
-    "coverage": ["student/panel positive-window intersection and whole-duration fit", "unavailability and campus/branch exam blocks", "configured working hours, local timezone and DST", "seven-day whole-interview search boundary", "numbered-round ordering and immutable reschedule identity", "stale approval and version checks", "concurrent booking approval", "student ownership and role guards", "application college filters and independent FORCE RLS reads/writes for both new tables", "complete account-to-shortlist-to-interview-to-offer workflow"],
+    "coverage": [
+      "student/panel positive-window intersection and whole-duration fit",
+      "unavailability and campus/branch exam blocks",
+      "configured working hours, local timezone and DST",
+      "seven-day whole-interview search boundary",
+      "numbered-round ordering and immutable reschedule identity",
+      "stale approval and version checks",
+      "concurrent booking approval",
+      "student ownership and role guards",
+      "application college filters and independent FORCE RLS reads/writes for both new tables",
+      "complete account-to-shortlist-to-interview-to-offer workflow"
+    ],
     "email_transport": "Mocked in account tests; no real inbox-delivery claim"
   },
   "frontend_checks": {
     "existing_cases_passed": 49,
-    "suites": {"navigation": 19, "dashboard_render": 19, "college_applications": 6, "market_roles": 5},
+    "suites": {
+      "navigation": 19,
+      "dashboard_render": 19,
+      "college_applications": 6,
+      "market_roles": 5
+    },
     "calendar_check_script": "frontend/scripts/check-scheduling.mjs",
     "calendar_checks": "Mocked Axios adapter checks all eight wrapper methods/paths, pagination and cancellation versions; server rendering checks date conversion, invalid windows, cancellation history, named calendar explanations and disabled reschedule round identity.",
     "production_build": "Passed; 730 modules transformed",
     "mocked_transport_is_live_evidence": false
   },
-  "schema": {"tenant_tables": 26, "new_tables": ["calendar_settings", "calendar_constraints"], "enforcement": "Application college_id filters plus PostgreSQL ENABLE/FORCE college_isolation USING and WITH CHECK", "migration": "Atomic, additive and idempotent; existing bookings gain default round 1 / Interview"},
-  "local_browser": {"admin_login_and_calendar_controls": "Verified against existing approved local test accounts and PostgreSQL", "student_availability_controls": "Verified own history, cancelled declarations, paging and new panel after student login", "calendar_changes_or_bookings_created_via_browser": false},
+  "schema": {
+    "tenant_tables": 26,
+    "new_tables": [
+      "calendar_settings",
+      "calendar_constraints"
+    ],
+    "enforcement": "Application college_id filters plus PostgreSQL ENABLE/FORCE college_isolation USING and WITH CHECK",
+    "migration": "Atomic, additive and idempotent; existing bookings gain default round 1 / Interview"
+  },
+  "local_browser": {
+    "admin_login_and_calendar_controls": "Verified against existing approved local test accounts and PostgreSQL",
+    "student_availability_controls": "Verified own history, cancelled declarations, paging and new panel after student login",
+    "calendar_changes_or_bookings_created_via_browser": false
+  },
   "code_release": "341ec9a",
-  "live_verification": {"status": "Frontend verified live; backend promotion and authenticated availability check pending", "frontend": "https://jobjugaad.vercel.app", "backend": "https://jobjugaad-api.onrender.com", "main_bundle": "/assets/index-DGNlSKTr.js", "admin_bundle": "/assets/AdminPage-7G33Dr_B.js", "frontend_controls_verified": true, "initial_render_deploy": "dep-db0l7svf3r2c73b73p5g", "initial_build": "Build successful; not yet promoted", "earlier_checks": ["First public API request timed out during deployment", "Subsequent checks returned healthy API 0.11.2 and 24 policies; new endpoints absent because the prior backend was still serving"]},
-  "limitations": ["Only recorded calendar facts are checked; administrators must configure institutional hours and required availability.", "Active positive windows restrict scheduling until cancelled or replaced, even when outside the search horizon.", "Confirmed bookings stay scheduled when calendar rules change; alerts request administrator review.", "Round labels organize bookings; they do not automatically pass or select a candidate.", "No external calendar sync, holiday import, room-capacity model, panel expertise or globally optimal timetable.", "Remaining improvement-backlog items are separate work."]
+  "live_verification": {
+    "status": "Verified live API, frontend assets and owned synthetic availability persistence",
+    "deployed_revision": "29a85d3",
+    "render_deploy": "dep-db0lgdvavr4c7388pou0",
+    "render_status": "Deploy succeeded | Live",
+    "frontend": "https://jobjugaad.vercel.app",
+    "backend": "https://jobjugaad-api.onrender.com",
+    "api_version": "0.12.0",
+    "public_checks": {
+      "checked_at": "2026-10-03T19:35:38.359884+00:00",
+      "api_version": "0.12.0",
+      "checks": [
+        {
+          "check": "deployed API version 0.12.0",
+          "passed": true
+        },
+        {
+          "check": "database connected",
+          "passed": true
+        },
+        {
+          "check": "restricted runtime role and verified isolation",
+          "passed": true
+        },
+        {
+          "check": "all 26 policies enabled, forced, college-scoped and verified",
+          "passed": true
+        },
+        {
+          "check": "both calendar tables included",
+          "passed": true
+        },
+        {
+          "check": "all eight new endpoint methods documented",
+          "passed": true
+        },
+        {
+          "check": "round identity in request and booking contracts",
+          "passed": true
+        },
+        {
+          "check": "named calendar blockers in proposal contracts",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: GET /admin/calendar/settings",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: PUT /admin/calendar/settings",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: GET /admin/calendar/constraints",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: POST /admin/calendar/constraints",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: PUT /admin/calendar/constraints/{constraint_id}/cancel",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: GET /students/{student_id}/availability",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: POST /students/{student_id}/availability",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: PUT /students/{student_id}/availability/{constraint_id}/cancel",
+          "passed": true
+        },
+        {
+          "check": "exact deployed origin permitted",
+          "passed": true
+        },
+        {
+          "check": "unrelated origin denied",
+          "passed": true
+        },
+        {
+          "check": "student availability controls served",
+          "passed": true
+        },
+        {
+          "check": "administrator calendar and round controls served",
+          "passed": true
+        }
+      ],
+      "authenticated_live_workflow": false,
+      "live_calendar_writes": false,
+      "tenant_policy_count": 26,
+      "policies": [
+        {
+          "table": "account_access",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "account_access_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "application_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "applications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "btech_model_profiles",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "calendar_constraints",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "calendar_settings",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "certifications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "companies",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "email_verification_tokens",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "interviews",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "jobs",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "match_overrides",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "matches",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "notifications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "offer_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "offers",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "placement_model_profiles",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "projects",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "risk_predictions",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "schedule_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "schedules",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "student_skills",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "students",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "support_reviews",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "users",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        }
+      ],
+      "database": "connected",
+      "main_bundle": "/assets/index-DGNlSKTr.js",
+      "admin_bundle": "/assets/AdminPage-7G33Dr_B.js",
+      "passed": 20,
+      "failed": 0
+    },
+    "synthetic_availability_checks": {
+      "checked_at": "2026-10-03T19:36:49.293353+00:00",
+      "checks": [
+        {
+          "check": "new release required before any synthetic write",
+          "passed": true
+        },
+        {
+          "check": "existing walkthrough account authenticated",
+          "passed": true
+        },
+        {
+          "check": "synthetic identity confirmed before write",
+          "passed": true
+        },
+        {
+          "check": "owned availability collection readable",
+          "passed": true
+        },
+        {
+          "check": "synthetic window persisted",
+          "passed": true
+        },
+        {
+          "check": "persisted row and version returned by fresh read",
+          "passed": true
+        },
+        {
+          "check": "student cannot access administrator calendar settings",
+          "passed": true
+        },
+        {
+          "check": "student cannot read another profile calendar",
+          "passed": true
+        },
+        {
+          "check": "versioned cancellation saved",
+          "passed": true
+        },
+        {
+          "check": "cancelled row preserved in fresh history read",
+          "passed": true
+        },
+        {
+          "check": "stale repeated cancellation rejected",
+          "passed": true
+        }
+      ],
+      "scope": "Existing synthetic Phase 4 walkthrough student in archived Demo College 1",
+      "real_college_changes": false,
+      "interview_or_offer_changes": false,
+      "credentials_published": false,
+      "constraint_id": 1,
+      "final_status": "cancelled",
+      "passed": 11,
+      "failed": 0
+    },
+    "checks_passed": 31,
+    "checks_failed": 0,
+    "full_authenticated_recruiter_admin_live_rehearsal_claimed": false,
+    "real_account_email_delivery_verified": false,
+    "earlier_attempt": {
+      "render_deploy": "dep-db0l7svf3r2c73b73p5g",
+      "status": "Build succeeded but promotion stalled; cancelled after 17m10s, then a manual retry succeeded",
+      "checks": [
+        "First public API request timed out during deployment",
+        "Subsequent checks returned healthy API 0.11.2 and 24 policies; new endpoints absent because the prior backend was still serving"
+      ]
+    }
+  },
+  "limitations": [
+    "Only recorded calendar facts are checked; administrators must configure institutional hours and required availability.",
+    "Active positive windows restrict scheduling until cancelled or replaced, even when outside the search horizon.",
+    "Confirmed bookings stay scheduled when calendar rules change; alerts request administrator review.",
+    "Round labels organize bookings; they do not automatically pass or select a candidate.",
+    "No external calendar sync, holiday import, room-capacity model, panel expertise or globally optimal timetable.",
+    "Remaining improvement-backlog items are separate work."
+  ]
 }

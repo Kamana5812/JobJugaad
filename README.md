@@ -22,7 +22,7 @@ After approval, upload a text-based resume PDF, review the extracted text, then 
 
 ## Scheduling availability
 
-The calendar extension adds campus working hours, dated student/panel availability, campus/branch exam blocks and named interview rounds to the deterministic greedy scheduler. Configure rules under **Admin → Scheduling**; students record their own windows under **My interviews**. Rules apply to new checks and are rechecked on approval. Changes affecting a confirmed booking produce an alert rather than silently cancelling it. Round labels organize bookings; human selection and offer decisions stay separate. [Click-by-click guide and limits](docs/SCHEDULING-AVAILABILITY.md).
+The calendar extension is live as API 0.12.0. It adds campus working hours, dated student/panel availability, campus/branch exam blocks and named interview rounds to the deterministic greedy scheduler. Configure rules under **Admin → Scheduling**; students record their own windows under **My interviews**. Rules apply to new checks and are rechecked on approval. Changes affecting a confirmed booking produce an alert rather than silently cancelling it. Round labels organize bookings; human selection and offer decisions stay separate. [Click-by-click guide and limits](docs/SCHEDULING-AVAILABILITY.md) · [local/live verification and all 26 policy statuses](evaluations/scheduling-availability.json).
 
 ## Readiness methodology
 

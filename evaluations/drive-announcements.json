@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-04",
+  "feature": "Officer-reviewed targeted drive announcements and manual in-app reminders",
+  "scope": "No email/SMS delivery, automatic timer, scoring change or new dependency",
+  "local": {
+    "database": "Local PostgreSQL under a restricted application role",
+    "backend_regression": {"passed": 111, "failed": 0, "seconds": 445.891},
+    "final_focused_retest": {
+      "passed": 15, "failed": 0, "seconds": 7.444,
+      "reason": "Correct the synthetic application fixture to include the ordinary frozen matching evidence consumed by the calendar reader; no product change"
+    },
+    "frontend": {
+      "existing_checks": 49,
+      "calendar_transport_render_check": "passed",
+      "announcement_transport_render_check": "passed",
+      "final_production_build": {"passed": true, "modules": 736, "seconds": 7.40}
+    },
+    "browser_walkthrough": {
+      "environment": "localhost API and Vite backed by the real local test database; synthetic fixtures only",
+      "admin_publication": 45,
+      "drive_id": 483,
+      "empty_applicant_audience": "Publish disabled at zero recipients",
+      "published_audience": "College student-role accounts narrowed to the fixture's CSE branch",
+      "recipient_count": 12,
+      "student_feed": "Manual drive reminder with frozen drive/company context and an applications link",
+      "read_receipt": "Student marked the notice read; refreshed administrator history showed one read and the owning recipient's timestamp",
+      "recipient_first_page": "Ten of twelve publication-time identity snapshots and the current read time observed",
+      "second_page": "Covered by the automated pagination case; optional browser check ended when the local session returned to sign-in"
+    },
+    "security_and_integrity_cases": [
+      "Current student role and real-college verified/approved admission",
+      "Archived administrator/recruiter retained-profile exclusions",
+      "Applicants, effective shortlist with independent rejection vetoes, scheduled status and explicit college-wide targeting",
+      "Normalized branch filters and whole-audience stale-preview detection beyond the ten-person sample",
+      "Concurrent same-key retries and conflicting-content refusal",
+      "Atomic rollback on a partial notification insertion failure",
+      "Recipient-owned read status and paginated frozen identities",
+      "Contextless and cross-college SQL reads/writes on both new FORCE-RLS tables"
+    ],
+    "swagger": "All five announcement endpoint methods visible in local /docs; authenticated behavior exercised by integration cases and the browser walkthrough",
+    "final_read_only_review": "No authorization, tenant-filter, transaction or concurrency blockers"
+  },
+  "deployment": {"status": "pending", "live_admin_publication_and_read_receipt": "not checked"},
+  "limitations": [
+    "Read means explicitly marked read, not email delivery, attendance or comprehension",
+    "Scheduled audience includes any booking still marked scheduled, including past bookings with unrecorded outcomes",
+    "Retries retain their identifier while the browser draft remains mounted; after leaving/reloading check history before creating a new notice",
+    "Independent application/account/profile writers are not reserved by publication; the audience is frozen at its query",
+    "No edit, retract or delete action; publish corrections separately",
+    "Branch filtering accepts at most eighty normalized characters; unusual Unicode uppercase expansion can exceed that limit",
+    "Actual Gmail receipt and real-college administrator onboarding remain separate unverified tasks"
+  ]
+}

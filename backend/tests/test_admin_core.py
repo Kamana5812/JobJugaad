@@ -247,7 +247,7 @@ class AdminIntegrationTests(unittest.TestCase):
         a,b=self.accounts;headers=a["headers"]
         self.assertEqual(self.client.get("/docs").status_code,200)
         paths=self.client.get("/openapi.json").json()["paths"]
-        self.assertEqual(sum(len([m for m in methods if m in ("get","post","put")]) for path,methods in paths.items() if path.startswith("/admin/")),21)
+        self.assertEqual(sum(len([m for m in methods if m in ("get","post","put")]) for path,methods in paths.items() if path.startswith("/admin/")),26)
         payload={**a["slot"],"scheduled_time":(self.start+timedelta(days=30)).isoformat()}
         proposal=self.client.post("/admin/schedules",headers=headers,json=payload).json()
         approved=self.client.post(f"/admin/schedules/{proposal['id']}/review",headers=headers,

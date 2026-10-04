@@ -133,7 +133,7 @@ notifications
 risk_predictions, simulations
 ```
 
-**Implemented tenant tables (26):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles, applications, application_events, account_access, account_access_events, email_verification_tokens, calendar_settings, calendar_constraints. All include college_id. Jobs represent drives; several conceptual entities above have no separate table.
+**Implemented tenant tables (28):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles, applications, application_events, account_access, account_access_events, email_verification_tokens, calendar_settings, calendar_constraints, drive_announcements, announcement_recipients. All include college_id. Jobs represent drives; several conceptual entities above have no separate table.
 
 ### Key Tables (fields)
 
@@ -178,6 +178,16 @@ risk_predictions, simulations
 Administrators create draft offers only after a selected interview, issue or withdraw letters, request document corrections, record verification and record joining. Only the owning student submits their document-status declaration or accepts/declines. Versions and row locks reject concurrent stale actions. Joining requires issued letter + student acceptance + verified submitted documents. Declined, withdrawn and joined/non-joined offers are closed. Every successful action adds an audit event and a simulated in-app notification in the same transaction; no email/SMS is sent. Student responses also notify college administrators.
 
 This prototype tracks declarations about documents exchanged through the college's external channel. It does not store offer-letter/document files, perform automatic document validation or track post-joining careers. Notification reads are idempotent and recipient-scoped. Offer lists and eligible-interview choices are paginated; the calendar contains all scheduled bookings and the latest 50 other records. Matching and support persistence uses batches without changing formulas or discarding human reviews/overrides.
+
+### Authorized targeted drive announcements — 2026-10-04
+
+Administrators preview and publish a plain-text drive update or immediate reminder to approved student-role accounts, optionally filtered by normalized branch. Four explicit audiences use recorded state: active applicants; saved application/matching shortlists (rejected or withdrawn applications and rejected matching overrides veto inclusion); confirmed interviews currently marked scheduled; or approved college students. Scheduled is a recorded status, not a claim that a booking is upcoming. Existing demonstration tenants remain separate and permit legacy accounts, while role checks exclude administrators/recruiters retaining old student profiles. Drives require an approved owning recruiter.
+
+`drive_announcements` stores immutable message/drive/company snapshots, author, publication time, audience, branch, request hash and college-unique retry identifier. `announcement_recipients` stores frozen recipient/student identities and name/branch snapshots, linked to the existing notification's tenant/recipient/event key. Both carry `college_id`, composite tenant foreign keys, application-level college filters and ENABLE/FORCE `college_isolation` RLS in the same schema transaction. The existing notification's `read_at` is the single read-status source; administrator history and recipient lists are paginated and recipient feeds remain owner-scoped.
+
+Preview hashes bind the content, drive identity and exact recipient snapshot. Publication rechecks the audience under a college-scoped transaction lock, refuses empty/stale previews, and commits announcement, recipients and feed records together in batches. A retry with the same identifier/content returns the saved publication; conflicting reuse is rejected. Later account/application/interview changes do not rewrite the frozen delivery history. Publication captures recorded state at the audience query; it is not a reservation on later hiring changes. Correct a message through a new publication; no edit/retraction/delete endpoint is implemented.
+
+Delivery is in-app only. Reminders are officer-published immediately, with no background delivery worker, email/SMS, LLM or autonomous hiring decision. Read receipts mean an explicit mark-as-read action, not proof of receipt on a device or understanding. This feature does not modify matching weights, readiness/support thresholds, admission rules or the separate Gmail verification provider. See [officer/student guide](docs/DRIVE-ANNOUNCEMENTS.md).
 
 ### Relationships
 ```
@@ -420,7 +430,7 @@ These are synthetic sanity checks against our own assumptions and a face-validit
 
 ### Phase 5 deployment verification
 
-`/health` checks actual PostgreSQL catalogs for all 26 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
+`/health` checks actual PostgreSQL catalogs for all 28 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
 
 ### Public-data placement classifier — measured evaluation (2026-09-24)
 

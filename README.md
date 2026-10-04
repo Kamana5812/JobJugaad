@@ -24,6 +24,10 @@ After approval, upload a text-based resume PDF, review the extracted text, then 
 
 The calendar extension is live as API 0.12.0. It adds campus working hours, dated student/panel availability, campus/branch exam blocks and named interview rounds to the deterministic greedy scheduler. Configure rules under **Admin → Scheduling**; students record their own windows under **My interviews**. Rules apply to new checks and are rechecked on approval. Changes affecting a confirmed booking produce an alert rather than silently cancelling it. Round labels organize bookings; human selection and offer decisions stay separate. [Click-by-click guide and limits](docs/SCHEDULING-AVAILABILITY.md) · [local/live verification and all 26 policy statuses](evaluations/scheduling-availability.json).
 
+## Targeted drive announcements
+
+Administrators use **Command Center → Announcements** to preview active applicants, recorded shortlists, scheduled interview students or college students, optionally narrowed by branch. Real-college audiences require inbox verification and college approval; archived demo accounts remain separate. Publication saves the message, author and recipient snapshot atomically with each in-app notice. Read receipts use the student's explicit mark-as-read action. Reminders are published immediately by an officer; there is no scheduled delivery, hiring email or SMS. Corrections require a new update. [Click-by-click guide](docs/DRIVE-ANNOUNCEMENTS.md).
+
 ## Readiness methodology
 
 This is a **proposed weighted rule**, not a trained model or a validated placement prediction.
@@ -75,7 +79,7 @@ py -3.12 -m venv backend/venv
 ./backend/venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
 ```
 
-The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 26 tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all.
+The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 28 tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all.
 
 Startup seeds only when SEED_DEMO_DATA=yes, idempotently creating the archived 4,800 synthetic profiles, 45 companies and simulated drives in Demo College 1. Normal real-college startup does not create synthetic records. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
 
@@ -90,7 +94,7 @@ Set VITE_API_URL=/api for local development. Vite proxies /api to http://127.0.0
 
 ## Tenant enforcement
 
-All 26 tenant tables, including admission, applications and the new calendar settings/constraints, carry college_id. See the current inventory in [ARCHITECTURE.md](ARCHITECTURE.md). Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
+All 28 tenant tables, including admission, applications, calendar settings/constraints and announcement history/recipients, carry college_id. See the current inventory in [ARCHITECTURE.md](ARCHITECTURE.md). Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
 
 RLS is the second tenant enforcement layer, not a replacement for application authorization. The runtime role owns the initial schema for startup DDL; FORCE RLS ensures normal owner queries are still restricted. Future production deployment should separate migrations from the runtime role.
 

@@ -898,3 +898,71 @@ class SchedulingApplicant(BaseModel):
     student_name: str
 
 SchedulingBoard.model_rebuild()
+
+# Targeted drive messages are plain-text, manually published in-app records.
+from uuid import UUID
+
+AnnouncementAudience = Literal["applicants", "shortlisted", "scheduled", "college_students"]
+AnnouncementKind = Literal["update", "reminder"]
+
+class AnnouncementInput(InputModel):
+    job_id: int = Field(gt=0, strict=True)
+    audience: AnnouncementAudience
+    branch: str | None = Field(default=None, min_length=1, max_length=80)
+    kind: AnnouncementKind
+    title: str = Field(min_length=3, max_length=160)
+    body: str = Field(min_length=10, max_length=4000)
+
+    @field_validator("branch", mode="before")
+    @classmethod
+    def normalize_announcement_branch(cls, value):
+        return " ".join(value.upper().split()) if isinstance(value, str) else value
+
+class AnnouncementPublishInput(AnnouncementInput):
+    preview_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    idempotency_key: UUID
+
+class AnnouncementSample(BaseModel):
+    student_id: int
+    name: str
+    branch: str
+
+class AnnouncementOptions(BaseModel):
+    jobs: list[NamedOption]
+    branches: list[str]
+    explanation: str
+
+class AnnouncementPreviewResponse(AnnouncementInput):
+    job_title: str
+    company_name: str
+    recipient_count: int
+    sample: list[AnnouncementSample]
+    preview_hash: str
+    explanation: str
+
+class AnnouncementResponse(AnnouncementInput):
+    id: int
+    job_title: str
+    company_name: str
+    published_by: int
+    published_at: datetime
+    recipient_count: int
+    read_count: int
+    explanation: str
+
+class AnnouncementList(BaseModel):
+    items: list[AnnouncementResponse]
+    total: int
+    offset: int
+    limit: int
+
+class AnnouncementRecipientResponse(AnnouncementSample):
+    notification_id: int
+    read_at: datetime | None
+
+class AnnouncementRecipientList(BaseModel):
+    items: list[AnnouncementRecipientResponse]
+    total: int
+    offset: int
+    limit: int
+    explanation: str

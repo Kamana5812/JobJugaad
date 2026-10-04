@@ -399,3 +399,47 @@ class EmailVerificationToken(TenantRow, Base):
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     __table_args__ = (ForeignKeyConstraint(["user_id", "college_id"], ["users.id", "users.college_id"]),)
+
+# Publication content and identities remain frozen; notification read_at is the
+# only read-status source. No email or automatic background reminder is created.
+class DriveAnnouncement(TenantRow, Base):
+    __tablename__ = "drive_announcements"
+    job_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    company_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    job_title: Mapped[str] = mapped_column(String(160), nullable=False)
+    company_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    audience: Mapped[str] = mapped_column(String(24), nullable=False)
+    branch: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    title: Mapped[str] = mapped_column(String(160), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    published_by: Mapped[int] = mapped_column(Integer, nullable=False)
+    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    recipient_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    idempotency_key: Mapped[str] = mapped_column(String(36), nullable=False)
+    request_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    preview_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    __table_args__ = (UniqueConstraint("id", "college_id"), UniqueConstraint("college_id", "idempotency_key"),
+        ForeignKeyConstraint(["job_id", "college_id"], ["jobs.id", "jobs.college_id"]),
+        ForeignKeyConstraint(["company_id", "college_id"], ["companies.id", "companies.college_id"]),
+        ForeignKeyConstraint(["published_by", "college_id"], ["users.id", "users.college_id"]),
+        CheckConstraint("recipient_count > 0"), CheckConstraint("kind IN ('update','reminder')"),
+        CheckConstraint("audience IN ('applicants','shortlisted','scheduled','college_students')"))
+
+class AnnouncementRecipient(TenantRow, Base):
+    __tablename__ = "announcement_recipients"
+    announcement_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    recipient_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    student_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    # Unicode uppercase normalization can expand a valid <=80-character source
+    # branch; snapshot storage must preserve the whole normalized declaration.
+    branch: Mapped[str] = mapped_column(Text, nullable=False)
+    event_key: Mapped[str] = mapped_column(String(160), nullable=False)
+    __table_args__ = (UniqueConstraint("college_id", "announcement_id", "student_id"),
+        UniqueConstraint("college_id", "announcement_id", "recipient_user_id"),
+        ForeignKeyConstraint(["announcement_id", "college_id"], ["drive_announcements.id", "drive_announcements.college_id"]),
+        ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),
+        ForeignKeyConstraint(["recipient_user_id", "college_id"], ["users.id", "users.college_id"]),
+        ForeignKeyConstraint(["college_id", "recipient_user_id", "event_key"],
+            ["notifications.college_id", "notifications.recipient_user_id", "notifications.event_key"]),)

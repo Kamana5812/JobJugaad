@@ -1,6 +1,8 @@
 """Prepare a disposable loopback CI database; never alters a hosted database."""
 import os
+from pathlib import Path
 import psycopg2
+Path('.local').mkdir(exist_ok=True)
 connection=psycopg2.connect(os.environ['CI_ADMIN_DATABASE_URL'])
 if connection.info.host not in ('127.0.0.1','localhost'): raise RuntimeError('Loopback CI database required.')
 connection.autocommit=True

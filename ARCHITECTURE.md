@@ -467,6 +467,25 @@ The public landing routes to `/auth`, which first presents Student / Recruiter /
 
 Dashboards retain existing readiness, optional BTech/MBA model limitations, recruiter overrides, admin approvals, offer tracking and simulated notifications. Public-data model outputs do not affect opportunity eligibility. The three portal banners are decorative generated illustrations; displayed metrics come from saved records or the unchanged engines.
 
+## Staff-recorded external assessment evidence — authorized 2026-10-04
+
+`assessments` stores college-scoped external aptitude, communication, interview
+and named-skill results with student, reviewer, provider/source, result reference,
+timezone-aware assessment date, original score/maximum, review reason and creation
+time. College administrators alone create records; students read only their own.
+Application college filters and composite tenant foreign keys accompany atomic
+ENABLE/FORCE `college_isolation` RLS, verified by the existing catalog audit.
+One row-locked withdrawal retains the original result plus reviewer, timestamp
+and reason; correction adds a new record rather than editing/deleting history.
+Normalization is score / maximum × 100, rounded half-up to two decimals and always
+explained. These are staff declarations, not independently authenticated exams.
+No real exam records are seeded. Manual entry is supported; imports, evidence-file
+uploads and recruiter visibility are not implemented. Existing self-reported
+profile inputs, readiness weights/bands, matching, support rules, public-data
+signals and saved decisions remain unchanged. Explicit score-input precedence
+is a separate future policy, not silently inferred from record dates. See
+[assessment workflow](docs/ASSESSMENT-EVIDENCE.md).
+
 ## Historical market-role reference library — authorized 2026-10-02
 
 Student workspace has a separate lazy-loaded “Explore market roles” catalogue. Source: Arsh Koneru's LinkedIn Job Postings 2023–2024, Kaggle version 13, publisher CC BY-SA 4.0. The adapted catalogue retains attribution/share-alike notice and a source CSV checksum. Reproducible importer selects a bounded entry-level/internship engineering/technology subset, preserving source title, company, location, experience, date, and original URL; description excerpts and fixed-rule keyword tags are disclosed. Catalogue records are historical references, not campus drives, verified current vacancies, applications, or partner companies. Search/filter/pagination operate on the static public asset. There is no new score, endpoint, tenant table, or change to matching/analytics. Public reference data contains no college/account information; all existing tenant data continues to use both application filters and PostgreSQL FORCE RLS. No salary/CGPA/branch/proficiency requirements are inferred. License and provenance: frontend/src/assets/market/README.md.

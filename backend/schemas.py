@@ -10,6 +10,49 @@ Name = Annotated[str, Field(min_length=1, max_length=100)]
 class InputModel(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
+class AssessmentInput(InputModel):
+    student_id: int = Field(gt=0)
+    kind: Literal['aptitude', 'communication', 'interview', 'skill']
+    skill_name: str | None = Field(None, min_length=1, max_length=80)
+    title: str = Field(min_length=1, max_length=160)
+    source: str = Field(min_length=1, max_length=160)
+    reference: str = Field(min_length=1, max_length=200)
+    assessed_on: str = Field(min_length=10, max_length=40)
+    score: float = Field(ge=0, le=100000, allow_inf_nan=False)
+    maximum: float = Field(gt=0, le=100000, allow_inf_nan=False)
+    reason: str = Field(min_length=10, max_length=1000)
+
+class AssessmentWithdrawal(InputModel):
+    reason: str = Field(min_length=10, max_length=1000)
+
+class AssessmentResponse(BaseModel):
+    id: int
+    student_id: int
+    student_name: str
+    kind: str
+    skill_name: str | None
+    title: str
+    source: str
+    reference: str
+    assessed_on: str
+    score: float
+    maximum: float
+    normalized_score: float
+    explanation: str
+    recorded_by: int
+    created_at: str
+    reason: str
+    withdrawn_at: str | None
+    withdrawn_by: int | None
+    withdrawal_reason: str | None
+
+class AssessmentList(BaseModel):
+    items: list[AssessmentResponse]
+    total: int
+    offset: int
+    limit: int
+    methodology: str = 'Staff-recorded evidence from external assessments; no independent exam authentication. Readiness, matching and support still use self-reported profile inputs.'
+
 class IsolationTableResponse(BaseModel):
     table: str
     college_id: bool

@@ -11,6 +11,7 @@ import PortalHero, { PortalSections } from '../../components/PortalHero'
 import OpportunitiesPanel from './OpportunitiesPanel'
 import InterviewsPanel from './InterviewsPanel'
 import ApplicationsPanel from './ApplicationsPanel'
+import AssessmentPanel from './AssessmentPanel'
 
 const MarketRolesPanel = lazy(() => import('./MarketRolesPanel'))
 
@@ -70,6 +71,7 @@ export default function ProfilePage() {
       <dl className="flex flex-wrap gap-8">{[['Skills', profile.skills.length], ['Projects', profile.projects.length], ['Certifications', profile.certifications.length]].map(([label, count]) => <div key={label}><dt className="text-xs text-muted">{label}</dt><dd className="mt-1 text-2xl font-bold text-navy">{count}</dd></div>)}</dl>
     </section>
     <div id="readiness" className="scroll-mt-6"><ReadinessCard readiness={profile.readiness} dirty={dirty} /></div>
+    <AssessmentPanel studentId={profile.id} />
     <OpportunitiesPanel key={revision} studentId={profile.id} revision={revision} dirty={dirty} onExpired={logout} />
     <ApplicationsPanel studentId={profile.id} dirty={dirty} onExpired={logout} />
     <InterviewsPanel studentId={profile.id} />

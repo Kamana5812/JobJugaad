@@ -1,11 +1,19 @@
 """Authenticated student resources; JWT tenant and ownership scope every operation."""
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
 from auth import student_session, owned_student
 from engines.profile import profile_response, save_profile, update_fields
 from engines.resume import extract_resume, MAX_BYTES
-from schemas import ProfileResponse, ProfileUpdate, ReadinessResponse, ResumeResponse
+from schemas import ProfileResponse, ProfileUpdate, ReadinessResponse, ResumeResponse, AssessmentList
+from engines import assessments
 
 router = APIRouter(prefix="/students", tags=["Students"])
+
+@router.get('/{student_id}/assessments', response_model=AssessmentList)
+def assessment_list(student_id: int, offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=50), context=Depends(student_session)):
+    session, user = context
+    owned_student(session, user, student_id)
+    return assessments.list_records(session, user, student_id, offset, limit)
 
 @router.get("/{student_id}", response_model=ProfileResponse)
 def get_profile(student_id: int, context=Depends(student_session)):

@@ -45,6 +45,33 @@ class StudentSkill(TenantRow, Base):
     __table_args__ = (ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),
         UniqueConstraint("student_id", "college_id", "skill_name"), CheckConstraint("proficiency BETWEEN 0 AND 100"))
 
+class Assessment(TenantRow, Base):
+    """Staff declarations; immutable results with one audited withdrawal, not exam authentication."""
+    __tablename__ = "assessments"
+    student_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    recorded_by: Mapped[int] = mapped_column(Integer, nullable=False)
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    skill_name: Mapped[str | None] = mapped_column(String(80))
+    title: Mapped[str] = mapped_column(String(160), nullable=False)
+    source: Mapped[str] = mapped_column(String(160), nullable=False)
+    reference: Mapped[str] = mapped_column(String(200), nullable=False)
+    assessed_on: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    score: Mapped[float] = mapped_column(Float, nullable=False)
+    maximum: Mapped[float] = mapped_column(Float, nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    withdrawn_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    withdrawn_by: Mapped[int | None] = mapped_column(Integer)
+    withdrawal_reason: Mapped[str | None] = mapped_column(Text)
+    __table_args__ = (
+        ForeignKeyConstraint(["student_id", "college_id"], ["students.id", "students.college_id"]),
+        ForeignKeyConstraint(["recorded_by", "college_id"], ["users.id", "users.college_id"]),
+        ForeignKeyConstraint(["withdrawn_by", "college_id"], ["users.id", "users.college_id"]),
+        CheckConstraint("kind IN ('aptitude','communication','interview','skill')"),
+        CheckConstraint("maximum > 0 AND maximum <= 100000 AND score >= 0 AND score <= maximum"),
+        CheckConstraint("(kind = 'skill' AND skill_name IS NOT NULL) OR (kind <> 'skill' AND skill_name IS NULL)"),
+        CheckConstraint("(withdrawn_at IS NULL AND withdrawn_by IS NULL AND withdrawal_reason IS NULL) OR (withdrawn_at IS NOT NULL AND withdrawn_by IS NOT NULL AND withdrawal_reason IS NOT NULL)"))
+
 class Project(TenantRow, Base):
     __tablename__ = "projects"
     student_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)

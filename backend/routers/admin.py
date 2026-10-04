@@ -4,11 +4,26 @@ from fastapi import APIRouter, Depends, Query
 from auth import admin_session
 from engines import analytics, scheduling, support
 from engines import post_selection
+from engines import assessments
 from schemas import (AnalyticsResponse, SchedulingBoard, ScheduleInput, SlotProposal, ScheduleResponse,
     ScheduleReviewInput, ScheduleRecheckInput, InterviewStatusInput, InterviewResponse,
-    SupportReport, SupportRunInput, SupportReviewInput, PostSelectionAnalytics)
+    SupportReport, SupportRunInput, SupportReviewInput, PostSelectionAnalytics,
+    AssessmentInput, AssessmentWithdrawal, AssessmentResponse, AssessmentList)
 
 router = APIRouter(prefix="/admin", tags=["Placement Command Center"])
+
+@router.get('/assessments', response_model=AssessmentList)
+def assessment_list(student_id: int | None = Query(None, gt=0), offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=50), context=Depends(admin_session)):
+    return assessments.list_records(*context, student_id, offset, limit)
+
+@router.post('/assessments', response_model=AssessmentResponse, status_code=201)
+def assessment_create(payload: AssessmentInput, context=Depends(admin_session)):
+    return assessments.create(*context, payload)
+
+@router.post('/assessments/{assessment_id}/withdraw', response_model=AssessmentResponse)
+def assessment_withdraw(assessment_id: int, payload: AssessmentWithdrawal, context=Depends(admin_session)):
+    return assessments.withdraw(*context, assessment_id, payload)
 
 @router.get("/analytics/overview", response_model=AnalyticsResponse)
 def overview(context=Depends(admin_session)):

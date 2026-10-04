@@ -133,7 +133,7 @@ notifications
 risk_predictions, simulations
 ```
 
-**Modeled tenant tables (30; document release verification pending):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles, applications, application_events, account_access, account_access_events, email_verification_tokens, calendar_settings, calendar_constraints, drive_announcements, announcement_recipients, offer_documents, document_events. All include college_id. Jobs represent drives; several conceptual entities above have no separate table. MEMORY.md records the current deployed inventory separately.
+**Implemented tenant tables (30; policies verified live on API 0.14.0):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles, applications, application_events, account_access, account_access_events, email_verification_tokens, calendar_settings, calendar_constraints, drive_announcements, announcement_recipients, offer_documents, document_events. All include college_id. Jobs represent drives; several conceptual entities above have no separate table. MEMORY.md records release evidence and remaining workflow verification separately.
 
 ### Key Tables (fields)
 
@@ -438,7 +438,7 @@ These are synthetic sanity checks against our own assumptions and a face-validit
 
 ### Phase 5 deployment verification
 
-`/health` checks actual PostgreSQL catalogs for all 28 modeled tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
+`/health` checks actual PostgreSQL catalogs for all 30 implemented tables and unexpected tenant tables. It verifies college_id, ENABLE/FORCE RLS, the sole ALL-command college_isolation policy with matching USING/WITH CHECK predicates, and a non-superuser/non-BYPASSRLS runtime role. Schema initialization fails closed on policy drift; unhealthy checks return 503. The public report contains policy status only, never tenant records, role names or credentials. See [Phase 5 audit](PHASE5_AUDIT.md), [current thirty-table release evidence](evaluations/offer-documents.json) and [demo guide](DEMO_GUIDE.md). Catalog checks complement cross-tenant integration tests and application ownership checks.
 
 ### Public-data placement classifier — measured evaluation (2026-09-24)
 

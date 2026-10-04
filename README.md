@@ -20,6 +20,10 @@ Create a student account in your real college workspace, verify your inbox and r
 
 After approval, upload a text-based resume PDF, review the extracted text, then record skills, projects, CGPA and existing assessment results. Save to recalculate readiness. Every score displays its factors and explanation. Inbox verification does not prove college affiliation: an administrator reviews that separately. Student JWTs cannot authorize recruiter actions or another student's profile; recruiters request a separate company account. Administrator signup is unavailable.
 
+## Private offer/document PDFs
+
+Release `c04e171` is live as API `0.14.0`: private PostgreSQL PDF storage, retained revisions, authenticated downloads and recorded human file review. Uploading/reviewing never automatically changes the five offer stages. Thirty actual tenant policies and 47 public/owned-synthetic release checks pass. The local upload → review → issuance → student visibility walkthrough passed; actual live file upload/review/download still awaits an administrator session. [Click-by-click workflow and limits](docs/OFFER-DOCUMENTS.md) · [verification evidence](evaluations/offer-documents.json). Files are limited to 2 MiB/20 pages, ten retained files/ten MiB per offer; malware scanning, retention automation and verified backups remain operational work.
+
 ## Scheduling availability
 
 The calendar extension is live as API 0.12.0. It adds campus working hours, dated student/panel availability, campus/branch exam blocks and named interview rounds to the deterministic greedy scheduler. Configure rules under **Admin → Scheduling**; students record their own windows under **My interviews**. Rules apply to new checks and are rechecked on approval. Changes affecting a confirmed booking produce an alert rather than silently cancelling it. Round labels organize bookings; human selection and offer decisions stay separate. [Click-by-click guide and limits](docs/SCHEDULING-AVAILABILITY.md) · [local/live verification and all 26 policy statuses](evaluations/scheduling-availability.json).

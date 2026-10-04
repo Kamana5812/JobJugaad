@@ -7,7 +7,18 @@
     "focused_passed": 21,
     "focused_seconds": 92.044,
     "database": "Isolated UTF8 localhost PostgreSQL; restricted application role, FORCE RLS",
-    "full_seeded_regression": {"cases": 132, "passed": 131, "seconds": 433.688, "final_targeted_retest": {"cases": 8, "passed": 8, "seconds": 37.389}, "distinct_cases_verified_across_runs": 132, "single_full_run_all_passed": false},
+    "full_seeded_regression": {
+      "cases": 132,
+      "passed": 131,
+      "seconds": 433.688,
+      "final_targeted_retest": {
+        "cases": 8,
+        "passed": 8,
+        "seconds": 37.389
+      },
+      "distinct_cases_verified_across_runs": 132,
+      "single_full_run_all_passed": false
+    },
     "earlier_runs": [
       "Fresh unseeded database: 127 of 132 cases passed; five existing cohort-dependent cases required the synthetic seed.",
       "A subsequent run stopped with 15 setup errors because the local PostgreSQL service was offline. This was not a passing regression result.",
@@ -25,10 +36,19 @@
   },
   "frontend": {
     "existing_named_checks_passed_across_runs": 49,
-    "additional_checks": ["Scheduling calendar controls", "Drive announcements", "Private PDF role/stage rendering and mocked multipart/Blob transport"],
-    "final_build": {"passed": true, "modules": 744, "seconds": 8.37},
-    "final_main_asset": "index-G8Fep7Am.js",
-    "final_admin_asset": "AdminPage-CuJkMHvp.js",
+    "additional_checks": [
+      "Scheduling calendar controls",
+      "Drive announcements",
+      "Private PDF role/stage rendering and mocked multipart/Blob transport"
+    ],
+    "final_build": {
+      "passed": true,
+      "modules": 744,
+      "seconds": 6.61,
+      "environment": "Explicit production API URL, Windows local build"
+    },
+    "final_main_asset": "index-_e1rYz1a.js",
+    "final_admin_asset": "AdminPage-Dg1uKqjM.js",
     "interactive_lost_response_retry_verified": false
   },
   "local_browser": {
@@ -46,11 +66,501 @@
     "limitations": "Browser download event timed out despite a successful API response; screenshot export runtime could not initialize. API integration tests separately verify exact downloaded bytes."
   },
   "independent_review": "No remaining concrete code blocker after adding the shared upload/review mutation lock; not a security certification.",
-  "live": {"release_verified": false, "actual_file_upload_review_download_verified": false},
+  "live": {
+    "checked_at": "2026-10-04T08:21:12.805715+00:00",
+    "checks": [
+      {
+        "check": "API 0.14.0 served",
+        "passed": true
+      },
+      {
+        "check": "PostgreSQL connected",
+        "passed": true
+      },
+      {
+        "check": "all 30 actual tenant policies and restricted runtime verified",
+        "passed": true
+      },
+      {
+        "check": "both private-file tables in actual policy catalog",
+        "passed": true
+      },
+      {
+        "check": "both trained placement models remain ready",
+        "passed": true
+      },
+      {
+        "check": "all nine document API methods documented",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied GET /admin/offers/2385/documents",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied POST /admin/offers/2385/documents",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied GET /admin/offers/2385/documents/9999999/download",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied GET /admin/offers/2385/documents/9999999/events",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied POST /admin/offers/2385/documents/9999999/review",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied GET /students/4805/offers/2385/documents",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied POST /students/4805/offers/2385/documents",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied GET /students/4805/offers/2385/documents/9999999/download",
+        "passed": true
+      },
+      {
+        "check": "anonymous denied GET /students/4805/offers/2385/documents/9999999/events",
+        "passed": true
+      },
+      {
+        "check": "exact-origin upload preflight https://jobjugaad.vercel.app",
+        "passed": true
+      },
+      {
+        "check": "exact-origin upload preflight https://jobjugaad.vercel.app.evil.example",
+        "passed": true
+      },
+      {
+        "check": "exact-origin upload preflight http://localhost:5178",
+        "passed": true
+      },
+      {
+        "check": "existing controlled synthetic student login",
+        "passed": true
+      },
+      {
+        "check": "student current role and archived college 1",
+        "passed": true
+      },
+      {
+        "check": "student denied staff-only GET /admin/offers/2385/documents",
+        "passed": true
+      },
+      {
+        "check": "student denied staff-only POST /admin/offers/2385/documents",
+        "passed": true
+      },
+      {
+        "check": "student denied staff-only GET /admin/offers/2385/documents/9999999/download",
+        "passed": true
+      },
+      {
+        "check": "student denied staff-only GET /admin/offers/2385/documents/9999999/events",
+        "passed": true
+      },
+      {
+        "check": "student denied staff-only POST /admin/offers/2385/documents/9999999/review",
+        "passed": true
+      },
+      {
+        "check": "existing controlled synthetic recruiter login",
+        "passed": true
+      },
+      {
+        "check": "recruiter current role and archived college 1",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied staff-only GET /admin/offers/2385/documents",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied staff-only POST /admin/offers/2385/documents",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied staff-only GET /admin/offers/2385/documents/9999999/download",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied staff-only GET /admin/offers/2385/documents/9999999/events",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied staff-only POST /admin/offers/2385/documents/9999999/review",
+        "passed": true
+      },
+      {
+        "check": "owned closed-offer document metadata loads",
+        "passed": true
+      },
+      {
+        "check": "metadata response never exposes PDF bytes",
+        "passed": true
+      },
+      {
+        "check": "missing file remains non-disclosing /9999999/download",
+        "passed": true
+      },
+      {
+        "check": "missing file remains non-disclosing /9999999/events",
+        "passed": true
+      },
+      {
+        "check": "other student profile denied",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied student private files",
+        "passed": true
+      },
+      {
+        "check": "closed-offer upload rejected before validation/write",
+        "passed": true
+      },
+      {
+        "check": "rejected checks leave all own offer stages/versions/audits unchanged",
+        "passed": true
+      },
+      {
+        "check": "Vercel reports successful deployment for source c04e171",
+        "passed": true
+      },
+      {
+        "check": "live HTML identifies its production main bundle",
+        "passed": true
+      },
+      {
+        "check": "actual production main bundle served as JavaScript",
+        "passed": true
+      },
+      {
+        "check": "actual served bundle contains private PDF controls",
+        "passed": true
+      },
+      {
+        "check": "actual served bundle contains the real API origin",
+        "passed": true
+      },
+      {
+        "check": "actual served bundle contains document download/review/history routes",
+        "passed": true
+      },
+      {
+        "check": "actual production admin chunk served as JavaScript",
+        "passed": true
+      }
+    ],
+    "live_file_upload_download_review": false,
+    "live_browser_walkthrough": false,
+    "api_version": "0.14.0",
+    "policies": [
+      {
+        "table": "account_access",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "account_access_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "announcement_recipients",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "application_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "applications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "btech_model_profiles",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "calendar_constraints",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "calendar_settings",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "certifications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "companies",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "document_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "drive_announcements",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "email_verification_tokens",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "interviews",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "jobs",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "match_overrides",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "matches",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "notifications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offer_documents",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offer_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offers",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "placement_model_profiles",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "projects",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "risk_predictions",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "schedule_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "schedules",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "student_skills",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "students",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "support_reviews",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "users",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      }
+    ],
+    "authenticated_scope": "Existing owned synthetic student/recruiter, archived college 1. Reads and expected rejected writes only; no file stored/reviewed/issued, no emails or real-college changes.",
+    "initial_bundle_comparison": [
+      {
+        "check": "current built frontend asset deployed AdminPage-Dg1uKqjM.js",
+        "passed": false
+      },
+      {
+        "check": "current built frontend asset deployed index-_e1rYz1a.js",
+        "passed": false
+      },
+      {
+        "check": "compiled private document controls located",
+        "passed": true
+      }
+    ],
+    "bundle_comparison_limit": "Windows local filenames differed from Vercel; explicit VITE_API_URL alone did not explain equality. Exact local-byte deployment equality is not claimed. Check source-commit deployment status and the actual HTML-referenced production bundles instead.",
+    "frontend_assets": [
+      "/assets/index-DGNjDI8E.js",
+      "/assets/AdminPage-BJQ7v55A.js"
+    ],
+    "source_commit": "c04e171499f5c91ad3d87950f09a5a5aafeb0937",
+    "release_verified": true
+  },
   "operational_limits": [
     "2 MiB and 20 pages per PDF; ten retained files and ten MiB per offer, including superseded revisions",
     "Format and resource checks plus human declarations; no antivirus or independent authenticity verification",
     "Private bytes share PostgreSQL capacity and backups; retention/deletion automation and backup/restore verification remain pending",
     "No production-scale capacity or performance claim; no real hiring email or SMS delivery"
-  ]
+  ],
+  "source_commit": "c04e171499f5c91ad3d87950f09a5a5aafeb0937"
 }

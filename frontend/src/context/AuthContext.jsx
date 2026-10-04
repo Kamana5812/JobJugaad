@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { getMe, setAccessToken } from '../api/student'
+import { revokeSessions } from '../api/accountData'
 
 const AuthContext = createContext(null)
 const TOKEN_KEY = 'jobjugaad-session'
@@ -22,7 +23,8 @@ export function AuthProvider({ children }) {
     setUser(result.user)
   }
   async function refreshUser() { const current = await getMe(); setUser(current); return current }
-  function logout() {
+  async function logout(localOnly = false) {
+    if (localOnly !== true && sessionStorage.getItem(TOKEN_KEY)) await revokeSessions()
     sessionStorage.removeItem(TOKEN_KEY)
     setAccessToken(null)
     setUser(null)

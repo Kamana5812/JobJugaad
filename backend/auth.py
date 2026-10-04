@@ -82,7 +82,7 @@ def authenticated_session(identity=Depends(current_identity)):
     with tenant_session(identity["college_id"]) as session:
         user = session.scalar(select(User).where(User.id == identity["user_id"],
             User.college_id == identity["college_id"], User.role == identity["role"]))
-        if user is None:
+        if user is None or user.disabled_at is not None:
             raise HTTPException(401, "Your account or role has changed. Please log in again.")
         if type(identity.get('token_version', 0)) is not int or identity.get('token_version', 0) != user.token_version:
             raise HTTPException(401, 'Your session was invalidated. Please log in again.')

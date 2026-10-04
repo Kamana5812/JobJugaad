@@ -12,6 +12,8 @@ import AccountsPanel from './AccountsPanel'
 import AdminAttention from './AdminAttention'
 import AnnouncementsPanel from './AnnouncementsPanel'
 import AssessmentsPanel from './AssessmentsPanel'
+import DataRequestsPanel from './DataRequestsPanel'
+import FairnessPanel from './FairnessPanel'
 export default function AdminPage() {
   const { user } = useAuth()
   const [tab, setTab] = useState('overview')
@@ -36,16 +38,18 @@ export default function AdminPage() {
     <PortalHero role="admin" collegeId={user.college_id} description="See the evidence. Coordinate your campus, review support needs, and keep people in the decision.">
       <button className={secondaryStyle} onClick={reload} disabled={busy}>{busy ? 'Refreshing…' : 'Refresh dashboard'}</button>
     </PortalHero>
-    {!['accounts', 'announcements', 'assessments'].includes(tab) && <Message error>{error}</Message>}
+    {!['accounts', 'announcements', 'assessments', 'data', 'fairness'].includes(tab) && <Message error>{error}</Message>}
     <nav aria-label="Command Center sections" className="flex flex-wrap gap-2 rounded-2xl border border-line bg-white p-2">
-      {[['overview', 'Overview'], ['scheduling', 'Scheduling' + (board?.conflicts.length ? ' · ' + board.conflicts.length + ' conflict(s)' : '')], ['announcements', 'Announcements'], ['assessments', 'Assessment evidence'], ['support', 'Placement support'], ['offers', 'Offers'], ['accounts', 'Account approvals']].map(([key, label]) =>
+      {[['overview', 'Overview'], ['scheduling', 'Scheduling' + (board?.conflicts.length ? ' · ' + board.conflicts.length + ' conflict(s)' : '')], ['announcements', 'Announcements'], ['assessments', 'Assessment evidence'], ['support', 'Placement support'], ['offers', 'Offers'], ['accounts', 'Account approvals'], ['data', 'Data requests'], ['fairness', 'Fairness review']].map(([key, label]) =>
         <button key={key} onClick={() => setTab(key)} aria-current={tab === key ? 'page' : undefined}
           className={'rounded-xl px-5 py-3 text-sm font-bold ' + (tab === key ? 'bg-navy text-white' : 'text-navy hover:bg-paper') + ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy'}>{label}</button>)}
     </nav>
     {tab === 'accounts' && <AccountsPanel />}
     {tab === 'announcements' && <AnnouncementsPanel />}
     {tab === 'assessments' && <AssessmentsPanel />}
-    {['accounts', 'announcements', 'assessments'].includes(tab) ? null : !data || !board ? <p role="status">{busy ? 'Loading college records…' : 'Use Refresh dashboard to retry.'}</p> : <>
+    {tab === 'data' && <DataRequestsPanel />}
+    {tab === 'fairness' && <FairnessPanel />}
+    {['accounts', 'announcements', 'assessments', 'data', 'fairness'].includes(tab) ? null : !data || !board ? <p role="status">{busy ? 'Loading college records…' : 'Use Refresh dashboard to retry.'}</p> : <>
       {tab === 'overview' && <><AnalyticsPanel data={data}><AdminAttention board={board} onSection={setTab} /></AnalyticsPanel><SupportPanel jobs={board.jobs} /></>}
       {tab === 'scheduling' && <SchedulingPanel board={board} refresh={refresh} />}
       {tab === 'support' && <SupportPanel jobs={board.jobs} />}

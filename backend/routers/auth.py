@@ -1,7 +1,7 @@
 """Role-specific self-selected college enrollment; clients cannot assign themselves privileged roles."""
 import os
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from auth import hash_password, verify_password, issue_token, authenticated_session, user_response
 from database import tenant_session
@@ -11,8 +11,9 @@ from schemas import SignupRequest, RecruiterSignupRequest, LoginRequest, TokenRe
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 DUMMY_HASH = hash_password("unused-password-for-timing")
+from engines.auth_limits import enforce
 
-@router.post("/signup", response_model=TokenResponse, status_code=201)
+@router.post("/signup", response_model=TokenResponse, status_code=201, dependencies=[Depends(enforce)])
 def signup(payload: SignupRequest):
     if payload.college_id in (1, 2) and os.environ.get("ALLOW_DEMO_SIGNUPS") != "yes":
         raise HTTPException(403, "Demo signup is closed. Choose your real college to create an account.")
@@ -29,7 +30,7 @@ def signup(payload: SignupRequest):
     except IntegrityError:
         raise HTTPException(409, "An account with this email already exists in this college.") from None
 
-@router.post("/recruiter/signup", response_model=TokenResponse, status_code=201)
+@router.post("/recruiter/signup", response_model=TokenResponse, status_code=201, dependencies=[Depends(enforce)])
 def recruiter_signup(payload: RecruiterSignupRequest):
     if payload.college_id in (1, 2) and os.environ.get("ALLOW_DEMO_SIGNUPS") != "yes":
         raise HTTPException(403, "Demo signup is closed. Choose your real college to create an account.")
@@ -46,12 +47,12 @@ def recruiter_signup(payload: RecruiterSignupRequest):
     except IntegrityError:
         raise HTTPException(409, "An account with this email already exists in this college.") from None
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse, dependencies=[Depends(enforce)])
 def login(payload: LoginRequest):
     with tenant_session(payload.college_id) as session:
         user = session.scalar(select(User).where(User.email == payload.email, User.college_id == payload.college_id))
         valid = verify_password(payload.password, user.password_hash if user else DUMMY_HASH)
-        if not user or not valid:
+        if not user or not valid or user.disabled_at:
             raise HTTPException(401, "Email, password, or college is incorrect.")
         if user.role == "student":
             student = session.scalar(select(Student).where(Student.user_id == user.id, Student.college_id == user.college_id))
@@ -77,6 +78,13 @@ from engines import accounts
 from schemas import DetailResponse, EmailVerificationInput, AccountAccessResponse, AccessRequestInput
 from schemas import PasswordResetRequest, PasswordResetInput
 from engines import password_recovery
+
+@router.post('/logout', response_model=DetailResponse)
+def logout(context=Depends(authenticated_session)):
+    session, user = context
+    session.execute(update(User).where(User.college_id == user.college_id, User.id == user.id)
+        .values(token_version=User.token_version + 1))
+    return {'detail':'All existing sessions have been revoked. Sign in again to continue.'}
 
 @router.post('/password-reset-request', response_model=DetailResponse)
 def password_reset_request(payload: PasswordResetRequest, background_tasks: BackgroundTasks):

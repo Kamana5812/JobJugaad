@@ -25,7 +25,7 @@ export default function TalentPage() {
     setLoading(true); setError('')
     Promise.all([getCompany(), getJobs()]).then(([c, j]) => {
       if (active) { setCompany(c); setJobs(j); setSelected(j[0] || null); setOffset(0) }
-    }).catch(failure => { if (active) { if (failure.response?.status === 401) logout(); else setError(errorMessage(failure)) } })
+    }).catch(failure => { if (active) { if (failure.response?.status === 401) logout(true); else setError(errorMessage(failure)) } })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
   }, [retry])

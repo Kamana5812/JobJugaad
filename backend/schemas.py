@@ -7,8 +7,36 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 Score = Annotated[float, Field(ge=0, le=100, allow_inf_nan=False)]
 Name = Annotated[str, Field(min_length=1, max_length=100)]
 
+from datetime import datetime
+
 class InputModel(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+class DataRequestInput(InputModel):
+    reason: str = Field(min_length=10, max_length=1000)
+    confirmation: Literal['REQUEST DELETION']
+
+class DataRequestReview(InputModel):
+    action: Literal['restrict','reject']
+    reason: str = Field(min_length=10, max_length=1000)
+
+class DataRequestResponse(BaseModel):
+    id: int
+    user_id: int
+    status: str
+    reason: str
+    review_reason: str | None
+    created_at: datetime
+    reviewed_at: datetime | None
+    retention_until: datetime | None
+    explanation: str
+
+class AccountExportResponse(BaseModel):
+    exported_at: datetime
+    college_id: int
+    account: dict
+    records: dict[str, list[dict]]
+    explanation: str
 
 class AssessmentInput(InputModel):
     student_id: int = Field(gt=0)

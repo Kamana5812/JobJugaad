@@ -1,0 +1,58 @@
+name: Regression and restore drill
+on:
+  push:
+    branches: [main, 'feature/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: regression-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: ci-only-admin-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 10s
+          --health-timeout 5s --health-retries 5
+    env:
+      CI_ADMIN_DATABASE_URL: postgresql://postgres:ci-only-admin-password@127.0.0.1:5432/postgres
+      DATABASE_URL: postgresql://jobjugaad_app:ci-only-disposable-password@127.0.0.1:5432/jobjugaad_ci
+      JWT_SECRET: ci-only-disposable-jwt-secret-at-least-32-characters
+      PYTHONPATH: backend
+      ALLOW_TEST_DATABASE: 'yes'
+      ALLOW_DEMO_SIGNUPS: 'yes'
+      SEED_DEMO_DATA: 'no'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: pip install -r backend/requirements.txt
+      - run: python scripts/ci-database.py
+      - run: python -m unittest discover -s backend/tests -v
+      - run: python scripts/ci-restore-drill.py
+      - run: npm ci
+        working-directory: frontend
+      - run: node scripts/check-navigation.mjs
+        working-directory: frontend
+      - run: node scripts/check-production-controls.mjs
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
+        env:
+          VITE_API_URL: https://jobjugaad-api.onrender.com

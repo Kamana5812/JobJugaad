@@ -6,6 +6,8 @@ import AuthPage from './pages/public/AuthPage'
 import VerifyEmailPage from './pages/public/VerifyEmailPage'
 import ForgotPasswordPage from './pages/public/ForgotPasswordPage'
 import ResetPasswordPage from './pages/public/ResetPasswordPage'
+import AccountPage from './pages/public/AccountPage'
+import PrivacyPage from './pages/public/PrivacyPage'
 import ProfilePage from './pages/student/ProfilePage'
 import OffersPage from './pages/student/OffersPage'
 import NotificationsPage from './components/NotificationsPage'
@@ -31,6 +33,8 @@ export function AppRoutes() {
     <Route path="/verify-email" element={<VerifyEmailPage />} />
     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
     <Route path="/reset-password" element={<ResetPasswordPage />} />
+    <Route path="/privacy" element={<PrivacyPage />} />
+    <Route path="/account" element={user ? <AccountPage /> : <Navigate to="/auth" replace />} />
     <Route path="/login" element={<Navigate to="/auth" replace />} /><Route path="/signup" element={<Navigate to="/auth?mode=signup" replace />} />
     <Route path="/recruiter/login" element={<Navigate to="/auth?role=recruiter&mode=login" replace />} />
     <Route path="/recruiter/signup" element={<Navigate to="/auth?role=recruiter&mode=signup" replace />} />

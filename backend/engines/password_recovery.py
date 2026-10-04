@@ -28,7 +28,7 @@ def request_reset(payload, background):
         if len(recent) >= 60 or len(own) >= 3 or any(row.created_at > now - timedelta(minutes=1) for row in own):
             raise HTTPException(429, 'Please wait before requesting another reset. The limit is one per minute, three per hour per address, and sixty per hour per college.')
         user = session.scalar(select(User).where(User.college_id == payload.college_id,
-            User.email == payload.email).with_for_update())
+            User.email == payload.email, User.disabled_at.is_(None)).with_for_update())
         raw = secrets.token_urlsafe(32)
         row = PasswordResetToken(college_id=payload.college_id, request_key=key,
             user_id=user.id if user else None, token_hash=hashlib.sha256(raw.encode()).hexdigest() if user else None,
@@ -75,7 +75,7 @@ def reset_password(payload):
         challenge = session.scalar(select(PasswordResetToken).where(PasswordResetToken.college_id == payload.college_id,
             PasswordResetToken.id == challenge.id).with_for_update().execution_options(populate_existing=True))
         now = datetime.now(timezone.utc)
-        if user is None or challenge.used_at or challenge.expires_at <= now or challenge.version_at_issue != user.token_version:
+        if user is None or user.disabled_at or challenge.used_at or challenge.expires_at <= now or challenge.version_at_issue != user.token_version:
             raise invalid
         session.execute(update(User).where(User.college_id == payload.college_id,
             User.id == user.id).values(password_hash=hash_password(payload.password), token_version=user.token_version + 1))

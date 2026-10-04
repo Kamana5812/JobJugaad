@@ -127,7 +127,7 @@ def request_verification(identity):
     with tenant_session(identity["college_id"]) as session:
         user = session.scalar(select(User).where(User.college_id == identity["college_id"],
             User.id == identity["user_id"], User.role == identity["role"],
-            User.token_version == identity.get('token_version', 0)))
+            User.token_version == identity.get('token_version', 0), User.disabled_at.is_(None)))
         if user is None:
             raise HTTPException(401, "Your session was invalidated. Please log in again.")
         if user.college_id in (1, 2):

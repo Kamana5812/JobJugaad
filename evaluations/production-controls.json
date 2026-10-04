@@ -1,0 +1,32 @@
+{
+  "production_backup": "not performed",
+  "production_frontend_checks": 5,
+  "deployment": "pending",
+  "remote_ci": "pending",
+  "local_restore": {
+    "scope": "Local synthetic fixture tenant 10271 only; no production backup performed.",
+    "backup": {
+      "encrypted_sha256": "b42edffb57c158a327c469f616b425caaef349e684d054c60b5ba17d054590ed",
+      "rows": 84,
+      "tables": 34,
+      "source_digest": "104e643797785dc9b6b38a286cd2ab251073899bd3125159ca0f504bae075811",
+      "coverage": "Listed tenants only; no production/global backup completeness claim."
+    },
+    "restore": {
+      "verified": true,
+      "tables": 34,
+      "rows": 84,
+      "source_digest": "104e643797785dc9b6b38a286cd2ab251073899bd3125159ca0f504bae075811",
+      "policies": "verified"
+    }
+  },
+  "release": "API 0.18.0 prepared",
+  "focused_backend_cases": 6,
+  "navigation_checks": 19,
+  "permanent_erasure": "administrative review pending",
+  "owner_inbox": "not tried",
+  "build": "passed",
+  "operations_fairness_cases": 3,
+  "backend_regression_cases": 179,
+  "backend_regression_seconds": 604.169
+}

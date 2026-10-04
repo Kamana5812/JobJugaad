@@ -1,0 +1,2288 @@
+{
+  "label": "Synthetic rule-behavior audit; not independently validated fairness or accuracy.",
+  "evaluated_at": "2026-10-04T17:09:59.205363+00:00",
+  "synthetic_profile_count": 4796,
+  "drives": [
+    {
+      "drive": "Simulated Python Backend Engineer",
+      "min_cgpa": 6.0,
+      "weights": {
+        "skills": 40,
+        "projects": 20,
+        "academics": 20,
+        "assessments": 15,
+        "certifications": 5
+      },
+      "groups": {
+        "cgpa_band": {
+          "6.5 to below 8": {
+            "count": 1915,
+            "eligible": 370,
+            "eligible_rate": 19.32,
+            "mean_match_score": 52.76,
+            "cgpa_exclusions": 0,
+            "strong_skill_project_count": 541,
+            "strong_skill_project_excluded": 222,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "370 of 1915 synthetic profiles meet the current hard rules and score threshold; 0 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "8 and above": {
+            "count": 1397,
+            "eligible": 527,
+            "eligible_rate": 37.72,
+            "mean_match_score": 61.25,
+            "cgpa_exclusions": 0,
+            "strong_skill_project_count": 468,
+            "strong_skill_project_excluded": 146,
+            "top20_count": 20,
+            "small_group": false,
+            "explanation": "527 of 1397 synthetic profiles meet the current hard rules and score threshold; 0 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "below 6.5": {
+            "count": 1484,
+            "eligible": 75,
+            "eligible_rate": 5.05,
+            "mean_match_score": 40.93,
+            "cgpa_exclusions": 922,
+            "strong_skill_project_count": 199,
+            "strong_skill_project_excluded": 144,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "75 of 1484 synthetic profiles meet the current hard rules and score threshold; 922 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          }
+        },
+        "branch": {
+          "CSE": {
+            "count": 2103,
+            "eligible": 634,
+            "eligible_rate": 30.15,
+            "mean_match_score": 52.1,
+            "cgpa_exclusions": 394,
+            "strong_skill_project_count": 538,
+            "strong_skill_project_excluded": 84,
+            "top20_count": 12,
+            "small_group": false,
+            "explanation": "634 of 2103 synthetic profiles meet the current hard rules and score threshold; 394 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "ECE": {
+            "count": 1178,
+            "eligible": 338,
+            "eligible_rate": 28.69,
+            "mean_match_score": 51.22,
+            "cgpa_exclusions": 225,
+            "strong_skill_project_count": 287,
+            "strong_skill_project_excluded": 45,
+            "top20_count": 8,
+            "small_group": false,
+            "explanation": "338 of 1178 synthetic profiles meet the current hard rules and score threshold; 225 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "EE": {
+            "count": 767,
+            "eligible": 0,
+            "eligible_rate": 0.0,
+            "mean_match_score": 50.63,
+            "cgpa_exclusions": 169,
+            "strong_skill_project_count": 191,
+            "strong_skill_project_excluded": 191,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "0 of 767 synthetic profiles meet the current hard rules and score threshold; 169 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "ME": {
+            "count": 748,
+            "eligible": 0,
+            "eligible_rate": 0.0,
+            "mean_match_score": 51.6,
+            "cgpa_exclusions": 134,
+            "strong_skill_project_count": 192,
+            "strong_skill_project_excluded": 192,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "0 of 748 synthetic profiles meet the current hard rules and score threshold; 134 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          }
+        }
+      },
+      "total": {
+        "count": 4796,
+        "eligible": 972,
+        "eligible_rate": 20.27,
+        "mean_match_score": 51.57,
+        "cgpa_exclusions": 922,
+        "strong_skill_project_count": 1208,
+        "strong_skill_project_excluded": 512,
+        "top20_count": 20,
+        "small_group": false,
+        "explanation": "972 of 4796 synthetic profiles meet the current hard rules and score threshold; 922 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+      }
+    },
+    {
+      "drive": "Simulated React Frontend Engineer",
+      "min_cgpa": 6.5,
+      "weights": {
+        "skills": 40,
+        "projects": 20,
+        "academics": 20,
+        "assessments": 15,
+        "certifications": 5
+      },
+      "groups": {
+        "cgpa_band": {
+          "6.5 to below 8": {
+            "count": 1915,
+            "eligible": 450,
+            "eligible_rate": 23.5,
+            "mean_match_score": 62.69,
+            "cgpa_exclusions": 0,
+            "strong_skill_project_count": 577,
+            "strong_skill_project_excluded": 200,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "450 of 1915 synthetic profiles meet the current hard rules and score threshold; 0 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "8 and above": {
+            "count": 1397,
+            "eligible": 850,
+            "eligible_rate": 60.84,
+            "mean_match_score": 69.19,
+            "cgpa_exclusions": 0,
+            "strong_skill_project_count": 417,
+            "strong_skill_project_excluded": 68,
+            "top20_count": 20,
+            "small_group": false,
+            "explanation": "850 of 1397 synthetic profiles meet the current hard rules and score threshold; 0 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "below 6.5": {
+            "count": 1484,
+            "eligible": 0,
+            "eligible_rate": 0.0,
+            "mean_match_score": 47.59,
+            "cgpa_exclusions": 1484,
+            "strong_skill_project_count": 179,
+            "strong_skill_project_excluded": 179,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "0 of 1484 synthetic profiles meet the current hard rules and score threshold; 1484 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          }
+        },
+        "branch": {
+          "CSE": {
+            "count": 2103,
+            "eligible": 684,
+            "eligible_rate": 32.52,
+            "mean_match_score": 59.96,
+            "cgpa_exclusions": 658,
+            "strong_skill_project_count": 500,
+            "strong_skill_project_excluded": 126,
+            "top20_count": 10,
+            "small_group": false,
+            "explanation": "684 of 2103 synthetic profiles meet the current hard rules and score threshold; 658 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "ECE": {
+            "count": 1178,
+            "eligible": 393,
+            "eligible_rate": 33.36,
+            "mean_match_score": 59.89,
+            "cgpa_exclusions": 349,
+            "strong_skill_project_count": 291,
+            "strong_skill_project_excluded": 73,
+            "top20_count": 5,
+            "small_group": false,
+            "explanation": "393 of 1178 synthetic profiles meet the current hard rules and score threshold; 349 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "EE": {
+            "count": 767,
+            "eligible": 223,
+            "eligible_rate": 29.07,
+            "mean_match_score": 59.19,
+            "cgpa_exclusions": 253,
+            "strong_skill_project_count": 189,
+            "strong_skill_project_excluded": 55,
+            "top20_count": 5,
+            "small_group": false,
+            "explanation": "223 of 767 synthetic profiles meet the current hard rules and score threshold; 253 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "ME": {
+            "count": 748,
+            "eligible": 0,
+            "eligible_rate": 0.0,
+            "mean_match_score": 60.54,
+            "cgpa_exclusions": 224,
+            "strong_skill_project_count": 193,
+            "strong_skill_project_excluded": 193,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "0 of 748 synthetic profiles meet the current hard rules and score threshold; 224 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          }
+        }
+      },
+      "total": {
+        "count": 4796,
+        "eligible": 1300,
+        "eligible_rate": 27.11,
+        "mean_match_score": 59.91,
+        "cgpa_exclusions": 1484,
+        "strong_skill_project_count": 1173,
+        "strong_skill_project_excluded": 447,
+        "top20_count": 20,
+        "small_group": false,
+        "explanation": "1300 of 4796 synthetic profiles meet the current hard rules and score threshold; 1484 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+      }
+    },
+    {
+      "drive": "Simulated Java Graduate Engineer",
+      "min_cgpa": 5.5,
+      "weights": {
+        "skills": 40,
+        "projects": 20,
+        "academics": 20,
+        "assessments": 15,
+        "certifications": 5
+      },
+      "groups": {
+        "cgpa_band": {
+          "6.5 to below 8": {
+            "count": 1915,
+            "eligible": 564,
+            "eligible_rate": 29.45,
+            "mean_match_score": 57.13,
+            "cgpa_exclusions": 0,
+            "strong_skill_project_count": 585,
+            "strong_skill_project_excluded": 59,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "564 of 1915 synthetic profiles meet the current hard rules and score threshold; 0 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "8 and above": {
+            "count": 1397,
+            "eligible": 441,
+            "eligible_rate": 31.57,
+            "mean_match_score": 63.23,
+            "cgpa_exclusions": 0,
+            "strong_skill_project_count": 435,
+            "strong_skill_project_excluded": 0,
+            "top20_count": 20,
+            "small_group": false,
+            "explanation": "441 of 1397 synthetic profiles meet the current hard rules and score threshold; 0 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "below 6.5": {
+            "count": 1484,
+            "eligible": 202,
+            "eligible_rate": 13.61,
+            "mean_match_score": 44.12,
+            "cgpa_exclusions": 524,
+            "strong_skill_project_count": 224,
+            "strong_skill_project_excluded": 71,
+            "top20_count": 0,
+            "small_group": false,
+            "explanation": "202 of 1484 synthetic profiles meet the current hard rules and score threshold; 524 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          }
+        },
+        "branch": {
+          "CSE": {
+            "count": 2103,
+            "eligible": 542,
+            "eligible_rate": 25.77,
+            "mean_match_score": 55.19,
+            "cgpa_exclusions": 223,
+            "strong_skill_project_count": 563,
+            "strong_skill_project_excluded": 63,
+            "top20_count": 10,
+            "small_group": false,
+            "explanation": "542 of 2103 synthetic profiles meet the current hard rules and score threshold; 223 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "ECE": {
+            "count": 1178,
+            "eligible": 313,
+            "eligible_rate": 26.57,
+            "mean_match_score": 55.29,
+            "cgpa_exclusions": 123,
+            "strong_skill_project_count": 316,
+            "strong_skill_project_excluded": 26,
+            "top20_count": 3,
+            "small_group": false,
+            "explanation": "313 of 1178 synthetic profiles meet the current hard rules and score threshold; 123 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "EE": {
+            "count": 767,
+            "eligible": 165,
+            "eligible_rate": 21.51,
+            "mean_match_score": 53.37,
+            "cgpa_exclusions": 99,
+            "strong_skill_project_count": 174,
+            "strong_skill_project_excluded": 21,
+            "top20_count": 3,
+            "small_group": false,
+            "explanation": "165 of 767 synthetic profiles meet the current hard rules and score threshold; 99 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          },
+          "ME": {
+            "count": 748,
+            "eligible": 187,
+            "eligible_rate": 25.0,
+            "mean_match_score": 54.91,
+            "cgpa_exclusions": 79,
+            "strong_skill_project_count": 191,
+            "strong_skill_project_excluded": 20,
+            "top20_count": 4,
+            "small_group": false,
+            "explanation": "187 of 748 synthetic profiles meet the current hard rules and score threshold; 79 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+          }
+        }
+      },
+      "total": {
+        "count": 4796,
+        "eligible": 1207,
+        "eligible_rate": 25.17,
+        "mean_match_score": 54.88,
+        "cgpa_exclusions": 524,
+        "strong_skill_project_count": 1244,
+        "strong_skill_project_excluded": 130,
+        "top20_count": 20,
+        "small_group": false,
+        "explanation": "1207 of 4796 synthetic profiles meet the current hard rules and score threshold; 524 fail the CGPA floor. Strong evidence means skill factor >=80 and project factor >=50. This is descriptive rule behavior, not proof of fairness."
+      }
+    }
+  ],
+  "counterfactuals": [
+    {
+      "drive": "Simulated Python Backend Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 40,
+      "lower_cgpa": {
+        "match_score": 72.33,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 73.33,
+            "weight": 40,
+            "contribution": 29.33,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 0 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "CGPA 5.5 does not meet 6/10",
+          "python proficiency 40/100 is below target 60/100",
+          "sql proficiency 40/100 is below target 50/100"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "python",
+            "proficiency": 40.0,
+            "required": 60.0,
+            "shortfall": 20.0,
+            "status": "gap",
+            "explanation": "python: recorded proficiency 40/100; role target 60/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical python project and review proficiency against 60/100."
+          },
+          {
+            "skill_name": "sql",
+            "proficiency": 40.0,
+            "required": 50.0,
+            "shortfall": 10.0,
+            "status": "gap",
+            "explanation": "sql: recorded proficiency 40/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical sql project and review proficiency against 50/100."
+          }
+        ],
+        "eligible": false,
+        "explanation": "Below Threshold: The student's CGPA 5.5 does not meet 6/10, but the required skill set shows a gap in python and CGPA 5.5 does not meet 6/10.",
+        "next_step": "Add a practical python project and review proficiency against 60/100. Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 79.33,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 73.33,
+            "weight": 40,
+            "contribution": 29.33,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 0 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "python proficiency 40/100 is below target 60/100",
+          "sql proficiency 40/100 is below target 50/100"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "python",
+            "proficiency": 40.0,
+            "required": 60.0,
+            "shortfall": 20.0,
+            "status": "gap",
+            "explanation": "python: recorded proficiency 40/100; role target 60/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical python project and review proficiency against 60/100."
+          },
+          {
+            "skill_name": "sql",
+            "proficiency": 40.0,
+            "required": 50.0,
+            "shortfall": 10.0,
+            "status": "gap",
+            "explanation": "sql: recorded proficiency 40/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical sql project and review proficiency against 50/100."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 79.33/100 against the 60/100 threshold; 0/2 skill targets are met.",
+        "next_step": "Add a practical python project and review proficiency against 60/100.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": true,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated Python Backend Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 65,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "CGPA 5.5 does not meet 6/10"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "python",
+            "proficiency": 65.0,
+            "required": 60.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "python: recorded proficiency 65/100; role target 60/100. Self-reported, not independently verified.",
+            "next_step": "Keep python evidence current for recruiter review."
+          },
+          {
+            "skill_name": "sql",
+            "proficiency": 65.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "sql: recorded proficiency 65/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep sql evidence current for recruiter review."
+          }
+        ],
+        "eligible": false,
+        "explanation": "Below Threshold: The student's CGPA 5.5 does not meet 6/10, but no required skill gap was found and CGPA 5.5 does not meet 6/10.",
+        "next_step": "Review and update the recorded profile evidence with the student. Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "python",
+            "proficiency": 65.0,
+            "required": 60.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "python: recorded proficiency 65/100; role target 60/100. Self-reported, not independently verified.",
+            "next_step": "Keep python evidence current for recruiter review."
+          },
+          {
+            "skill_name": "sql",
+            "proficiency": 65.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "sql: recorded proficiency 65/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep sql evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": true,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated Python Backend Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 85,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "CGPA 5.5 does not meet 6/10"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "python",
+            "proficiency": 85.0,
+            "required": 60.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "python: recorded proficiency 85/100; role target 60/100. Self-reported, not independently verified.",
+            "next_step": "Keep python evidence current for recruiter review."
+          },
+          {
+            "skill_name": "sql",
+            "proficiency": 85.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "sql: recorded proficiency 85/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep sql evidence current for recruiter review."
+          }
+        ],
+        "eligible": false,
+        "explanation": "Below Threshold: The student's CGPA 5.5 does not meet 6/10, but no required skill gap was found and CGPA 5.5 does not meet 6/10.",
+        "next_step": "Review and update the recorded profile evidence with the student. Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "python",
+            "proficiency": 85.0,
+            "required": 60.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "python: recorded proficiency 85/100; role target 60/100. Self-reported, not independently verified.",
+            "next_step": "Keep python evidence current for recruiter review."
+          },
+          {
+            "skill_name": "sql",
+            "proficiency": 85.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "sql: recorded proficiency 85/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep sql evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": true,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated Python Backend Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 100,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "CGPA 5.5 does not meet 6/10"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "python",
+            "proficiency": 100.0,
+            "required": 60.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "python: recorded proficiency 100/100; role target 60/100. Self-reported, not independently verified.",
+            "next_step": "Keep python evidence current for recruiter review."
+          },
+          {
+            "skill_name": "sql",
+            "proficiency": 100.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "sql: recorded proficiency 100/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep sql evidence current for recruiter review."
+          }
+        ],
+        "eligible": false,
+        "explanation": "Below Threshold: The student's CGPA 5.5 does not meet 6/10, but no required skill gap was found and CGPA 5.5 does not meet 6/10.",
+        "next_step": "Review and update the recorded profile evidence with the student. Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "python",
+            "proficiency": 100.0,
+            "required": 60.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "python: recorded proficiency 100/100; role target 60/100. Self-reported, not independently verified.",
+            "next_step": "Keep python evidence current for recruiter review."
+          },
+          {
+            "skill_name": "sql",
+            "proficiency": 100.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "sql: recorded proficiency 100/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep sql evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": true,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated React Frontend Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 40,
+      "lower_cgpa": {
+        "match_score": 71.31,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 70.77,
+            "weight": 40,
+            "contribution": 28.31,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 0 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "CGPA 5.5 does not meet 6.5/10",
+          "react proficiency 40/100 is below target 65/100",
+          "git proficiency 40/100 is below target 50/100"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "react",
+            "proficiency": 40.0,
+            "required": 65.0,
+            "shortfall": 25.0,
+            "status": "gap",
+            "explanation": "react: recorded proficiency 40/100; role target 65/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical react project and review proficiency against 65/100."
+          },
+          {
+            "skill_name": "git",
+            "proficiency": 40.0,
+            "required": 50.0,
+            "shortfall": 10.0,
+            "status": "gap",
+            "explanation": "git: recorded proficiency 40/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical git project and review proficiency against 50/100."
+          }
+        ],
+        "eligible": false,
+        "explanation": "Below Threshold: The student's CGPA 5.5 does not meet 6.5/10, but the required skill set shows a gap in react and CGPA 5.5 does not meet 6.5/10.",
+        "next_step": "Add a practical react project and review proficiency against 65/100. Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 78.31,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 70.77,
+            "weight": 40,
+            "contribution": 28.31,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 0 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "react proficiency 40/100 is below target 65/100",
+          "git proficiency 40/100 is below target 50/100"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "react",
+            "proficiency": 40.0,
+            "required": 65.0,
+            "shortfall": 25.0,
+            "status": "gap",
+            "explanation": "react: recorded proficiency 40/100; role target 65/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical react project and review proficiency against 65/100."
+          },
+          {
+            "skill_name": "git",
+            "proficiency": 40.0,
+            "required": 50.0,
+            "shortfall": 10.0,
+            "status": "gap",
+            "explanation": "git: recorded proficiency 40/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical git project and review proficiency against 50/100."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 78.31/100 against the 60/100 threshold; 0/2 skill targets are met.",
+        "next_step": "Add a practical react project and review proficiency against 65/100.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": true,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated React Frontend Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 65,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "CGPA 5.5 does not meet 6.5/10"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "react",
+            "proficiency": 65.0,
+            "required": 65.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "react: recorded proficiency 65/100; role target 65/100. Self-reported, not independently verified.",
+            "next_step": "Keep react evidence current for recruiter review."
+          },
+          {
+            "skill_name": "git",
+            "proficiency": 65.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "git: recorded proficiency 65/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep git evidence current for recruiter review."
+          }
+        ],
+        "eligible": false,
+        "explanation": "Below Threshold: The student's CGPA 5.5 does not meet 6.5/10, but no required skill gap was found and CGPA 5.5 does not meet 6.5/10.",
+        "next_step": "Review and update the recorded profile evidence with the student. Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "react",
+            "proficiency": 65.0,
+            "required": 65.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "react: recorded proficiency 65/100; role target 65/100. Self-reported, not independently verified.",
+            "next_step": "Keep react evidence current for recruiter review."
+          },
+          {
+            "skill_name": "git",
+            "proficiency": 65.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "git: recorded proficiency 65/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep git evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": true,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated React Frontend Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 85,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "CGPA 5.5 does not meet 6.5/10"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "react",
+            "proficiency": 85.0,
+            "required": 65.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "react: recorded proficiency 85/100; role target 65/100. Self-reported, not independently verified.",
+            "next_step": "Keep react evidence current for recruiter review."
+          },
+          {
+            "skill_name": "git",
+            "proficiency": 85.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "git: recorded proficiency 85/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep git evidence current for recruiter review."
+          }
+        ],
+        "eligible": false,
+        "explanation": "Below Threshold: The student's CGPA 5.5 does not meet 6.5/10, but no required skill gap was found and CGPA 5.5 does not meet 6.5/10.",
+        "next_step": "Review and update the recorded profile evidence with the student. Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "react",
+            "proficiency": 85.0,
+            "required": 65.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "react: recorded proficiency 85/100; role target 65/100. Self-reported, not independently verified.",
+            "next_step": "Keep react evidence current for recruiter review."
+          },
+          {
+            "skill_name": "git",
+            "proficiency": 85.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "git: recorded proficiency 85/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep git evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": true,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated React Frontend Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 100,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "CGPA 5.5 does not meet 6.5/10"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "react",
+            "proficiency": 100.0,
+            "required": 65.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "react: recorded proficiency 100/100; role target 65/100. Self-reported, not independently verified.",
+            "next_step": "Keep react evidence current for recruiter review."
+          },
+          {
+            "skill_name": "git",
+            "proficiency": 100.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "git: recorded proficiency 100/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep git evidence current for recruiter review."
+          }
+        ],
+        "eligible": false,
+        "explanation": "Below Threshold: The student's CGPA 5.5 does not meet 6.5/10, but no required skill gap was found and CGPA 5.5 does not meet 6.5/10.",
+        "next_step": "Review and update the recorded profile evidence with the student. Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "react",
+            "proficiency": 100.0,
+            "required": 65.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "react: recorded proficiency 100/100; role target 65/100. Self-reported, not independently verified.",
+            "next_step": "Keep react evidence current for recruiter review."
+          },
+          {
+            "skill_name": "git",
+            "proficiency": 100.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "git: recorded proficiency 100/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep git evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": true,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated Java Graduate Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 40,
+      "lower_cgpa": {
+        "match_score": 73.54,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 76.36,
+            "weight": 40,
+            "contribution": 30.54,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 0 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "java proficiency 40/100 is below target 55/100",
+          "communication proficiency 40/100 is below target 50/100"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "java",
+            "proficiency": 40.0,
+            "required": 55.0,
+            "shortfall": 15.0,
+            "status": "gap",
+            "explanation": "java: recorded proficiency 40/100; role target 55/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical java project and review proficiency against 55/100."
+          },
+          {
+            "skill_name": "communication",
+            "proficiency": 40.0,
+            "required": 50.0,
+            "shortfall": 10.0,
+            "status": "gap",
+            "explanation": "communication: recorded proficiency 40/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical communication project and review proficiency against 50/100."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 73.54/100 against the 60/100 threshold; 0/2 skill targets are met.",
+        "next_step": "Add a practical java project and review proficiency against 55/100.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 80.54,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 76.36,
+            "weight": 40,
+            "contribution": 30.54,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 0 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [
+          "java proficiency 40/100 is below target 55/100",
+          "communication proficiency 40/100 is below target 50/100"
+        ],
+        "skill_gaps": [
+          {
+            "skill_name": "java",
+            "proficiency": 40.0,
+            "required": 55.0,
+            "shortfall": 15.0,
+            "status": "gap",
+            "explanation": "java: recorded proficiency 40/100; role target 55/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical java project and review proficiency against 55/100."
+          },
+          {
+            "skill_name": "communication",
+            "proficiency": 40.0,
+            "required": 50.0,
+            "shortfall": 10.0,
+            "status": "gap",
+            "explanation": "communication: recorded proficiency 40/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Add a practical communication project and review proficiency against 50/100."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 80.54/100 against the 60/100 threshold; 0/2 skill targets are met.",
+        "next_step": "Add a practical java project and review proficiency against 55/100.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": false,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated Java Graduate Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 65,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "java",
+            "proficiency": 65.0,
+            "required": 55.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "java: recorded proficiency 65/100; role target 55/100. Self-reported, not independently verified.",
+            "next_step": "Keep java evidence current for recruiter review."
+          },
+          {
+            "skill_name": "communication",
+            "proficiency": 65.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "communication: recorded proficiency 65/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep communication evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 83/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "java",
+            "proficiency": 65.0,
+            "required": 55.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "java: recorded proficiency 65/100; role target 55/100. Self-reported, not independently verified.",
+            "next_step": "Keep java evidence current for recruiter review."
+          },
+          {
+            "skill_name": "communication",
+            "proficiency": 65.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "communication: recorded proficiency 65/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep communication evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": false,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated Java Graduate Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 85,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "java",
+            "proficiency": 85.0,
+            "required": 55.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "java: recorded proficiency 85/100; role target 55/100. Self-reported, not independently verified.",
+            "next_step": "Keep java evidence current for recruiter review."
+          },
+          {
+            "skill_name": "communication",
+            "proficiency": 85.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "communication: recorded proficiency 85/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep communication evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 83/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "java",
+            "proficiency": 85.0,
+            "required": 55.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "java: recorded proficiency 85/100; role target 55/100. Self-reported, not independently verified.",
+            "next_step": "Keep java evidence current for recruiter review."
+          },
+          {
+            "skill_name": "communication",
+            "proficiency": 85.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "communication: recorded proficiency 85/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep communication evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": false,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    },
+    {
+      "drive": "Simulated Java Graduate Engineer",
+      "changed_input": "CGPA only: 5.5 versus 9.0",
+      "skill_proficiency": 100,
+      "lower_cgpa": {
+        "match_score": 83.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 55.0,
+            "weight": 20,
+            "contribution": 11.0,
+            "evidence": "CGPA 5.5/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "java",
+            "proficiency": 100.0,
+            "required": 55.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "java: recorded proficiency 100/100; role target 55/100. Self-reported, not independently verified.",
+            "next_step": "Keep java evidence current for recruiter review."
+          },
+          {
+            "skill_name": "communication",
+            "proficiency": 100.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "communication: recorded proficiency 100/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep communication evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 83/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "higher_cgpa": {
+        "match_score": 90.0,
+        "factor_breakdown": [
+          {
+            "key": "skills",
+            "label": "Skill compatibility",
+            "value": 100.0,
+            "weight": 40,
+            "contribution": 40.0,
+            "evidence": "Mean capped proficiency/target across 2 exact skill names; 2 targets met.",
+            "missing": false
+          },
+          {
+            "key": "projects",
+            "label": "Project relevance",
+            "value": 100.0,
+            "weight": 20,
+            "contribution": 20.0,
+            "evidence": "2/2 required keywords appear in recorded projects; keyword evidence is not a quality assessment.",
+            "missing": false
+          },
+          {
+            "key": "academics",
+            "label": "Academics",
+            "value": 90.0,
+            "weight": 20,
+            "contribution": 18.0,
+            "evidence": "CGPA 9.0/10 multiplied by 10.",
+            "missing": false
+          },
+          {
+            "key": "assessments",
+            "label": "Assessment performance",
+            "value": 80.0,
+            "weight": 15,
+            "contribution": 12.0,
+            "evidence": "Mean of aptitude, communication and existing interview inputs; 0 missing input(s) contribute zero. Self-reported.",
+            "missing": false
+          },
+          {
+            "key": "certifications",
+            "label": "Certifications",
+            "value": 0.0,
+            "weight": 5,
+            "contribution": 0.0,
+            "evidence": "0 recorded certificates, 25 points each capped at 100; count proxy, not credential verification.",
+            "missing": true
+          }
+        ],
+        "missing_requirements": [],
+        "skill_gaps": [
+          {
+            "skill_name": "java",
+            "proficiency": 100.0,
+            "required": 55.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "java: recorded proficiency 100/100; role target 55/100. Self-reported, not independently verified.",
+            "next_step": "Keep java evidence current for recruiter review."
+          },
+          {
+            "skill_name": "communication",
+            "proficiency": 100.0,
+            "required": 50.0,
+            "shortfall": 0.0,
+            "status": "on-track",
+            "explanation": "communication: recorded proficiency 100/100; role target 50/100. Self-reported, not independently verified.",
+            "next_step": "Keep communication evidence current for recruiter review."
+          }
+        ],
+        "eligible": true,
+        "explanation": "Eligible for review: The student meets the CGPA, branch and backlog rules, with 90/100 against the 60/100 threshold; 2/2 skill targets are met.",
+        "next_step": "Review and update the recorded profile evidence with the student.",
+        "methodology": "Proposed weighted rule using exact skill keywords, project keyword coverage, CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped certificate-count proxy. Components are normalized to 0-100. Weights and thresholds are unvalidated assumptions; no trained model, calibrated confidence, or accuracy claim."
+      },
+      "score_difference": 7.0,
+      "eligibility_changed": false,
+      "interpretation": "Hard CGPA floors can exclude a skilled lower-CGPA candidate before ranking. The academic factor also changes the score when every other input is identical. Human overrides remain auditable exceptions, not evidence that this effect is fair."
+    }
+  ],
+  "limitations": [
+    "Synthetic correlated data and unvalidated starting weights do not establish real-world fairness.",
+    "No gender, caste, disability or socioeconomic labels are collected here; no protected-group parity claim is possible.",
+    "CGPA and branch eligibility restrictions are recruiter policies. Scores and top-20 rates are not calibrated outcome probabilities.",
+    "Missing groups and samples below 30 must not be interpreted as reliable population comparisons."
+  ],
+  "recommended_actions": [
+    "Review CGPA floors with recruiters when strong skills/projects are excluded.",
+    "Inspect named factors and missing evidence; record any human exception with a reason.",
+    "Collect consented, representative real outcomes before drawing subgroup fairness conclusions.",
+    "Do not change weights or thresholds automatically based on this synthetic audit."
+  ]
+}

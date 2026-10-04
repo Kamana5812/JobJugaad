@@ -35,7 +35,7 @@ export default function ProfilePage() {
   async function load() {
     setLoading(true); setError('')
     try { const value = await getProfile(user.student_id); setProfile(value); setForm(editable(value)); setDirty(false) }
-    catch (failure) { if (failure.response?.status === 401) logout(); else setError(errorMessage(failure)) }
+    catch (failure) { if (failure.response?.status === 401) logout(true); else setError(errorMessage(failure)) }
     finally { setLoading(false) }
   }
   useEffect(() => { load() }, [user.student_id])
@@ -56,7 +56,7 @@ export default function ProfilePage() {
       const saved = await saveProfile(profile.id, payload)
       setProfile(saved); setForm(editable(saved)); setDirty(false); setRevision(value => value + 1)
       setNotice('Jugaad Ho Gaya ✓ Profile saved and readiness recalculated.')
-    } catch (failure) { if (failure.response?.status === 401) logout(); else setError(errorMessage(failure)) }
+    } catch (failure) { if (failure.response?.status === 401) logout(true); else setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
   if (loading) return <p role="status" className="rounded-2xl border border-line bg-white p-8 text-navy">Loading your saved profile… The service may need a moment to wake up.</p>

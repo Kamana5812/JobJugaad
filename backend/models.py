@@ -13,6 +13,7 @@ class User(TenantRow, Base):
     email: Mapped[str] = mapped_column(String(254), nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     token_version: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    disabled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     role: Mapped[str] = mapped_column(String(20), default="student")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     __table_args__ = (UniqueConstraint("college_id", "email"), UniqueConstraint("id", "college_id"),
@@ -440,6 +441,29 @@ class PasswordResetToken(TenantRow, Base):
     delivery_status: Mapped[str] = mapped_column(String(20), default='not_sent', nullable=False)
     __table_args__ = (ForeignKeyConstraint(['user_id','college_id'], ['users.id','users.college_id']),
         CheckConstraint("delivery_status IN ('not_sent','pending','accepted','failed')"))
+
+class AuthLimit(TenantRow, Base):
+    """Hashed request keys; fixed windows shared by every API worker."""
+    __tablename__ = 'auth_limits'
+    request_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    window_start: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    __table_args__ = (UniqueConstraint('college_id','request_key','window_start'), CheckConstraint('attempts >= 0'))
+
+class DataRequest(TenantRow, Base):
+    """Deletion review and retained-record rationale; no fictional erasure claims."""
+    __tablename__ = 'data_requests'
+    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(String(30), nullable=False, default='requested')
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    review_reason: Mapped[str | None] = mapped_column(Text)
+    reviewed_by: Mapped[int | None] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    retention_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (ForeignKeyConstraint(['user_id','college_id'],['users.id','users.college_id']),
+        ForeignKeyConstraint(['reviewed_by','college_id'],['users.id','users.college_id']),
+        CheckConstraint("status IN ('requested','restricted_pending_erasure','rejected','withdrawn')"))
 
 # Publication content and identities remain frozen; notification read_at is the
 # only read-status source. No email or automatic background reminder is created.

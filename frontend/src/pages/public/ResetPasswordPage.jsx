@@ -25,7 +25,7 @@ export default function ResetPasswordPage() {
     setBusy(true)
     try {
       const result = await resetPassword({ ...link, password })
-      logout(); setPassword(''); setConfirmation(''); setLink({ token: '', college_id: 0 }); setMessage(result.detail)
+      await logout(true); setPassword(''); setConfirmation(''); setLink({ token: '', college_id: 0 }); setMessage(result.detail)
     } catch (failure) { setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }

@@ -1,0 +1,461 @@
+{
+  "checked_at": "2026-10-04T15:57:23.521670+00:00",
+  "source_commit": "bcdf639d24153a13c56192f062cf99033696bbbb",
+  "checks": [
+    {
+      "check": "API 0.16.0 served",
+      "passed": true
+    },
+    {
+      "check": "new operations documented /admin/assessments",
+      "passed": true
+    },
+    {
+      "check": "new operations documented /admin/assessments/{assessment_id}/withdraw",
+      "passed": true
+    },
+    {
+      "check": "new operations documented /students/{student_id}/assessments",
+      "passed": true
+    },
+    {
+      "check": "provenance original scale explanation and withdrawal documented",
+      "passed": true
+    },
+    {
+      "check": "all 31 actual policies and restricted role verified",
+      "passed": true
+    },
+    {
+      "check": "assessment policy exists",
+      "passed": true
+    },
+    {
+      "check": "existing trained models ready",
+      "passed": true
+    },
+    {
+      "check": "anonymous read denied /admin/assessments",
+      "passed": true
+    },
+    {
+      "check": "anonymous read denied /students/4805/assessments",
+      "passed": true
+    },
+    {
+      "check": "invalid bearer denied",
+      "passed": true
+    },
+    {
+      "check": "exact-origin preflight https://jobjugaad.vercel.app",
+      "passed": true
+    },
+    {
+      "check": "exact-origin preflight https://jobjugaad.vercel.app.evil.example",
+      "passed": true
+    },
+    {
+      "check": "owned synthetic student login",
+      "passed": true
+    },
+    {
+      "check": "student denied GET /admin/assessments",
+      "passed": true
+    },
+    {
+      "check": "student denied POST /admin/assessments",
+      "passed": true
+    },
+    {
+      "check": "student denied POST /admin/assessments/1/withdraw",
+      "passed": true
+    },
+    {
+      "check": "owned student evidence feed works",
+      "passed": true
+    },
+    {
+      "check": "other student evidence denied",
+      "passed": true
+    },
+    {
+      "check": "owned synthetic recruiter login",
+      "passed": true
+    },
+    {
+      "check": "recruiter denied GET /admin/assessments",
+      "passed": true
+    },
+    {
+      "check": "recruiter denied POST /admin/assessments",
+      "passed": true
+    },
+    {
+      "check": "recruiter denied POST /admin/assessments/1/withdraw",
+      "passed": true
+    },
+    {
+      "check": "live admin SPA served",
+      "passed": true
+    },
+    {
+      "check": "HTML-referenced JavaScript served",
+      "passed": true
+    },
+    {
+      "check": "correct deployed API origin",
+      "passed": true
+    },
+    {
+      "check": "student assessment panel served",
+      "passed": true
+    },
+    {
+      "check": "referenced administrator JavaScript served",
+      "passed": true
+    },
+    {
+      "check": "shared assessment API wrapper served",
+      "passed": true
+    },
+    {
+      "check": "served administrator control Record reviewed result",
+      "passed": true
+    },
+    {
+      "check": "served administrator control Review context / reason",
+      "passed": true
+    },
+    {
+      "check": "served administrator control Profile scores were not overwritten",
+      "passed": true
+    },
+    {
+      "check": "Vercel source deployment successful",
+      "passed": true
+    }
+  ],
+  "live_admin_workflow_verified": false,
+  "assessment_writes": false,
+  "policies": [
+    {
+      "table": "account_access",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "account_access_events",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "announcement_recipients",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "application_events",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "applications",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "assessments",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "btech_model_profiles",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "calendar_constraints",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "calendar_settings",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "certifications",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "companies",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "document_events",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "drive_announcements",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "email_verification_tokens",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "interviews",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "jobs",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "match_overrides",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "matches",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "notifications",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "offer_documents",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "offer_events",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "offers",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "placement_model_profiles",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "projects",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "risk_predictions",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "schedule_events",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "schedules",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "student_skills",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "students",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "support_reviews",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    },
+    {
+      "table": "users",
+      "college_id": true,
+      "enabled": true,
+      "forced": true,
+      "policy": "college_isolation",
+      "read_write_scoped": true,
+      "status": "verified"
+    }
+  ],
+  "frontend_entry": "/assets/index-DzIPs3JQ.js",
+  "frontend_admin": "/assets/AdminPage--XqIUsBD.js",
+  "vercel_status": [
+    {
+      "context": "Vercel",
+      "state": "success",
+      "target_url": "https://vercel.com/kamana5813/jobjugaad/23NNzehtgcSzPwqJ9jQUJhLrRqZB"
+    }
+  ],
+  "passed": 33,
+  "total": 33,
+  "all_passed": true,
+  "local_verification": {
+    "full_backend_cases": 164,
+    "full_backend_result": "pass",
+    "focused_assessment_cases": 6,
+    "admin_regression_cases": 12,
+    "assessment_frontend_assertions": 13,
+    "navigation_checks": 19,
+    "dashboard_checks": 19,
+    "production_build": "pass",
+    "swagger": "All four new operations exercised anonymously and returned 401.",
+    "browser": "Controlled local PostgreSQL admin created and withdrew assessment #5; owning student saw original score 35/50, normalization 70/100, provenance and withdrawal history with no admin controls."
+  },
+  "render_deployment": {
+    "state": "Live",
+    "source_commit": "bcdf639d24153a13c56192f062cf99033696bbbb",
+    "url": "https://dashboard.render.com/web/srv-daol1s5g1s2s738prvhg/deploys/dep-db17cidg1s2s739bii6g"
+  },
+  "limitations": [
+    "Signed-in live administrator walkthrough and owner acceptance remain pending.",
+    "Staff declaration does not independently authenticate an exam.",
+    "Manual entry only; no CSV import, result-file upload or recruiter browsing.",
+    "Existing self-reported readiness, matching and support inputs are unchanged.",
+    "No real assessment records seeded or created during deployment checks."
+  ],
+  "diagnostic_notes": [
+    "Initial live run passed 32/33; shared API wrapper was in entry JavaScript rather than the administrator chunk. Corrected checker location assertion; final 33/33 passes without a product-code change.",
+    "Development preview was blank; production-build local preview completed the authenticated admin/student workflow. A direct pre-release API version request timed out; final pooled live checks passed."
+  ]
+}

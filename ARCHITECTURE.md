@@ -133,7 +133,7 @@ notifications
 risk_predictions, simulations
 ```
 
-**Implemented tenant tables (30; policies verified live on API 0.14.0):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles, applications, application_events, account_access, account_access_events, email_verification_tokens, calendar_settings, calendar_constraints, drive_announcements, announcement_recipients, offer_documents, document_events. All include college_id. Jobs represent drives; several conceptual entities above have no separate table. MEMORY.md records release evidence and remaining workflow verification separately.
+**Implemented tenant tables (31; policies verified live on API 0.16.0):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles, applications, application_events, account_access, account_access_events, email_verification_tokens, calendar_settings, calendar_constraints, drive_announcements, announcement_recipients, offer_documents, document_events, assessments. All include college_id. Jobs represent drives; several conceptual entities above have no separate table. MEMORY.md records release evidence and remaining workflow verification separately.
 
 ### Key Tables (fields)
 

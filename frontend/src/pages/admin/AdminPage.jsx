@@ -54,6 +54,7 @@ export default function AdminPage() {
       <div className="mt-4 space-y-3 text-muted"><p><strong>Who confirms a schedule?</strong> An administrator approves a proposal with a reason. Availability is checked again, so a stale proposal can be refused.</p>
         <p><strong>What do support indicators mean?</strong> They are proposed rule thresholds using recorded skills, self-reported interview scores and recent completed interview records. Review opportunity and missing records before acting.</p>
         <p><strong>What does placement percentage mean?</strong> It counts students with an issued, accepted offer, excluding recorded non-joining. Joining is reported separately. Synthetic offers are included and labeled; branch and skill charts still show shortlist conversion.</p>
+        <p><strong>What does the post-selection journey count?</strong> Each student and drive form one pair, regardless of interview rounds. The funnel counts recorded milestones, while closures show recorded withdrawal, decline or non-joining. Use its record filter to separate college workflow from synthetic/archive records; its rates are not predictions or proof of employment.</p>
         <p>This is a static help panel.</p></div>
     </details>
   </div>

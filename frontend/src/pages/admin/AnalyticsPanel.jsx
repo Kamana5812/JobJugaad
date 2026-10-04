@@ -1,5 +1,6 @@
 import DashboardCard, { displayTime } from '../../components/DashboardCard'
 import ConversionChart from '../../components/ConversionChart'
+import PostSelectionPanel from './PostSelectionPanel'
 export default function AnalyticsPanel({ data, children }) {
   const tiles = [['Students', data.students], ['Placement %', data.placement_percent === null ? '—' : data.placement_percent + '%'],
     ['Recruiters', data.recruiters], ['Drives', data.drives]]
@@ -23,6 +24,7 @@ export default function AnalyticsPanel({ data, children }) {
       <h3 className="mb-3 mt-6 font-bold text-navy">CTC for active accepted offers</h3>
       <dl className="grid gap-5 sm:grid-cols-3">{[['Minimum', data.accepted_ctc_min_lpa], ['Mean', data.accepted_ctc_mean_lpa], ['Maximum', data.accepted_ctc_max_lpa]].map(([label, value]) => <div key={label}><dt className="text-sm text-muted">{label}</dt><dd className="text-2xl font-bold text-navy">{amount(value)}</dd></div>)}</dl>
     </DashboardCard>
+    <PostSelectionPanel refreshKey={data.generated_at} />
     <p className="text-xs leading-6 text-muted">{data.methodology}<br />Updated {displayTime(data.generated_at)}.</p>
   </div>
 }

@@ -1,0 +1,43 @@
+{
+  "checked_on": "2026-10-04",
+  "feature": "Descriptive post-selection journey and recorded closures",
+  "release_status": "local verification passed; publication pending",
+  "api_version": "0.15.0",
+  "unit": "distinct student-drive pair",
+  "methodology": "Cumulative ever-recorded milestones, independent acceptance/verification evidence, and explicit current terminal offer closures. No predicted dropout, fabricated reason, or independently verified employment claim.",
+  "tenant_tables_added": 0,
+  "expected_existing_policy_inventory": 30,
+  "local_checks": {
+    "focused_postgresql_tests": {"passed": 26, "total": 26, "seconds": 7.570},
+    "frontend_post_selection_checks": {"passed": 13, "total": 13, "includes": "10 rendering/authenticated-transport checks plus 3 actual PostgreSQL response samples"},
+    "frontend_navigation_checks": {"passed": 19, "total": 19},
+    "frontend_dashboard_checks": {"passed": 19, "total": 19},
+    "production_build": {"passed": true, "modules": 751, "seconds": 2.33, "api_origin": "https://jobjugaad-api.onrender.com"},
+    "swagger_anonymous_request": {"status": 401, "observed_in_browser": true},
+    "full_backend_regression": {"passed": 158, "total": 158, "unittest_seconds": 345.507, "wrapper_seconds": 363.393, "seed_demo_data": false},
+    "authenticated_browser_rehearsal": {
+      "passed": true,
+      "environment": "isolated local PostgreSQL, controlled dummy college/account/drive",
+      "recorded_stage_counts": [3, 2, 1, 1, 1],
+      "all_stage_counts": [4, 3, 2, 2, 1],
+      "observed": ["administrator login", "default recorded filter", "five stage counts and explained denominators", "college drive filter", "all scope", "literal human decline reason", "separately labeled synthetic import note", "visual layout"],
+      "writes_to_live_workflow": false,
+      "note": "The first local preview encountered an older incomplete direct-DB test application in another test tenant. The browser rehearsal used a fresh controlled tenant without deleting old fixtures or changing product code. Startup delays were resolved by starting the saved local database; no deployment failure is inferred."
+    }
+  },
+  "live_checks": "pending deployment",
+  "operational_observation": {
+    "source": "Render database Info page, read on 2026-10-04",
+    "url": "https://dashboard.render.com/d/dpg-daokrdjm8hqs73f3cm60-a/info",
+    "plan": "Free",
+    "status": "Available",
+    "displayed_expiry": "2026-10-21",
+    "continuity_or_backup_verified": false
+  },
+  "limitations": [
+    "Recorded milestones and reasons are human declarations, not independent employment verification.",
+    "Incomplete history does not establish event timing or a cause for missing progress.",
+    "Synthetic import notes are shown as generation notes, not observed dropout reasons.",
+    "The feature does not complete pending live file/announcement walkthroughs, inbox delivery, real-college administrator onboarding, verified assessments, fairness, account security, privacy workflows, or database continuity."
+  ]
+}

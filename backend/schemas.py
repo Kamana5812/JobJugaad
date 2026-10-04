@@ -560,6 +560,85 @@ class AnalyticsResponse(BaseModel):
     methodology: str
     generated_at: datetime
 
+class PostSelectionDrive(BaseModel):
+    id: int
+    title: str
+
+class PostSelectionCohort(BaseModel):
+    selected_pairs: int
+    distinct_students: int
+    offers: int
+    without_offer: int
+    synthetic_pairs: int
+    recorded_pairs: int
+    excluded_pairs: int
+
+class PostSelectionStage(BaseModel):
+    key: Literal["selected", "issued", "accepted", "verified", "joined"]
+    label: str
+    count: int
+    distinct_students: int
+    previous_count: int | None
+    conversion_percent: float | None
+    not_reached_from_previous: int
+    pending_from_previous: int
+    closed_from_previous: int
+    explanation: str
+
+class PostSelectionMilestone(BaseModel):
+    key: Literal["issued", "accepted", "verified", "joined", "verified_without_acceptance"]
+    label: str
+    count: int
+    distinct_students: int
+    explanation: str
+
+class PostSelectionClosure(BaseModel):
+    key: Literal["withdrawn", "declined", "not_joined"]
+    label: str
+    count: int
+    distinct_students: int
+    missing_reason_count: int
+    explanation: str
+
+class PostSelectionReason(BaseModel):
+    closure: Literal["withdrawn", "declined", "not_joined"]
+    reason: str
+    reason_source: Literal["recorded_action", "synthetic_import", "missing"]
+    count: int
+    synthetic_count: int
+    recorded_count: int
+
+class PostSelectionDataQuality(BaseModel):
+    offers_without_history: int
+    invalid_offer_history_events: int
+    invalid_selection_history_events: int
+    withdrawn_without_issuance_evidence: int
+    accepted_without_issuance_evidence: int
+    selection_from_linked_offer: int
+    selection_from_history: int
+    offers_with_mismatched_interview: int
+    historical_selection_no_current_selection: int
+
+class PostSelectionAnalytics(BaseModel):
+    scope: Literal["recorded", "synthetic", "all"]
+    college_id: int
+    job_id: int | None
+    archive_demo: bool
+    scope_explanation: str
+    drives: list[PostSelectionDrive]
+    cohort: PostSelectionCohort
+    stages: list[PostSelectionStage]
+    milestones: list[PostSelectionMilestone]
+    closures: list[PostSelectionClosure]
+    reasons: list[PostSelectionReason]
+    reason_total: int
+    offset: int
+    limit: int
+    data_quality: PostSelectionDataQuality
+    methodology: str
+    limitations: list[str]
+    generated_at: datetime
+
 class SupportFactor(BaseModel):
     key: str
     label: str

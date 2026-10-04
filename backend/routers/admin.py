@@ -1,16 +1,24 @@
 """Placement Command Center: explicit admin, tenant and approval boundaries."""
+from typing import Literal
 from fastapi import APIRouter, Depends, Query
 from auth import admin_session
 from engines import analytics, scheduling, support
+from engines import post_selection
 from schemas import (AnalyticsResponse, SchedulingBoard, ScheduleInput, SlotProposal, ScheduleResponse,
     ScheduleReviewInput, ScheduleRecheckInput, InterviewStatusInput, InterviewResponse,
-    SupportReport, SupportRunInput, SupportReviewInput)
+    SupportReport, SupportRunInput, SupportReviewInput, PostSelectionAnalytics)
 
 router = APIRouter(prefix="/admin", tags=["Placement Command Center"])
 
 @router.get("/analytics/overview", response_model=AnalyticsResponse)
 def overview(context=Depends(admin_session)):
     return analytics.overview(*context)
+
+@router.get("/analytics/post-selection", response_model=PostSelectionAnalytics)
+def post_selection_analytics(scope: Literal["recorded", "synthetic", "all"] = "recorded",
+    job_id: int | None = Query(None, gt=0), offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=50), context=Depends(admin_session)):
+    return post_selection.report(*context, scope, job_id, offset, limit)
 
 @router.get("/schedules", response_model=SchedulingBoard)
 def calendar(context=Depends(admin_session)):
@@ -70,7 +78,6 @@ def update_offer(offer_id:int,payload:OfferAdminUpdate,context=Depends(admin_ses
     return offers.admin_update(*context,offer_id,payload)
 
 
-from typing import Literal
 from engines import accounts
 from schemas import AccessQueue, AccessReviewInput, AccountAccessResponse
 

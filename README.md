@@ -26,6 +26,8 @@ The calendar extension is live as API 0.12.0. It adds campus working hours, date
 
 ## Targeted drive announcements
 
+Release `01664bb` is deployed as API `0.13.0`. All 28 actual tenant policies and 35 public/owned-synthetic live checks pass; the local officer → student → read-receipt browser walkthrough passes. Actual live officer publication is still awaiting the owner administrator session. [Release evidence](evaluations/drive-announcements.json) distinguishes these checks.
+
 Administrators use **Command Center → Announcements** to preview active applicants, recorded shortlists, scheduled interview students or college students, optionally narrowed by branch. Real-college audiences require inbox verification and college approval; archived demo accounts remain separate. Publication saves the message, author and recipient snapshot atomically with each in-app notice. Read receipts use the student's explicit mark-as-read action. Reminders are published immediately by an officer; there is no scheduled delivery, hiring email or SMS. Corrections require a new update. [Click-by-click guide](docs/DRIVE-ANNOUNCEMENTS.md).
 
 ## Readiness methodology

@@ -4,16 +4,26 @@
   "scope": "No email/SMS delivery, automatic timer, scoring change or new dependency",
   "local": {
     "database": "Local PostgreSQL under a restricted application role",
-    "backend_regression": {"passed": 111, "failed": 0, "seconds": 445.891},
+    "backend_regression": {
+      "passed": 111,
+      "failed": 0,
+      "seconds": 445.891
+    },
     "final_focused_retest": {
-      "passed": 15, "failed": 0, "seconds": 7.444,
+      "passed": 15,
+      "failed": 0,
+      "seconds": 7.444,
       "reason": "Correct the synthetic application fixture to include the ordinary frozen matching evidence consumed by the calendar reader; no product change"
     },
     "frontend": {
       "existing_checks": 49,
       "calendar_transport_render_check": "passed",
       "announcement_transport_render_check": "passed",
-      "final_production_build": {"passed": true, "modules": 736, "seconds": 7.40}
+      "final_production_build": {
+        "passed": true,
+        "modules": 736,
+        "seconds": 7.4
+      }
     },
     "browser_walkthrough": {
       "environment": "localhost API and Vite backed by the real local test database; synthetic fixtures only",
@@ -40,7 +50,453 @@
     "swagger": "All five announcement endpoint methods visible in local /docs; authenticated behavior exercised by integration cases and the browser walkthrough",
     "final_read_only_review": "No authorization, tenant-filter, transaction or concurrency blockers"
   },
-  "deployment": {"status": "pending", "live_admin_publication_and_read_receipt": "not checked"},
+  "deployment": {
+    "status": "deployed; actual live administrator publication pending",
+    "revision": "01664bb",
+    "render_deployment": "dep-db0r048jo6nc739umam0",
+    "render_status": "Deploy succeeded | Live",
+    "render_duration": "1m49s",
+    "frontend_url": "https://jobjugaad.vercel.app",
+    "backend_url": "https://jobjugaad-api.onrender.com",
+    "public": {
+      "checked_at": "2026-10-04T01:49:25.805430+00:00",
+      "checks": [
+        {
+          "check": "API 0.13.0 served",
+          "passed": true
+        },
+        {
+          "check": "PostgreSQL connected",
+          "passed": true
+        },
+        {
+          "check": "non-bypass runtime and fail-closed isolation report",
+          "passed": true
+        },
+        {
+          "check": "all 28 tenant policies ENABLE/FORCE and scoped for reads/writes",
+          "passed": true
+        },
+        {
+          "check": "both announcement tables in actual policy catalog",
+          "passed": true
+        },
+        {
+          "check": "all five announcement endpoint methods documented",
+          "passed": true
+        },
+        {
+          "check": "preview payload includes explicit targeting and content",
+          "passed": true
+        },
+        {
+          "check": "publication requires preview and retry identifier",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: GET /admin/announcements/options",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: POST /admin/announcements/preview",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: GET /admin/announcements",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: POST /admin/announcements",
+          "passed": true
+        },
+        {
+          "check": "anonymous denied: GET /admin/announcements/{announcement_id}/recipients",
+          "passed": true
+        },
+        {
+          "check": "exact Vercel origin allowed",
+          "passed": true
+        },
+        {
+          "check": "unrelated origin refused",
+          "passed": true
+        },
+        {
+          "check": "Vercel serves announcement controls",
+          "passed": true
+        },
+        {
+          "check": "student feed distinguishes update/reminder kinds",
+          "passed": true
+        }
+      ],
+      "live_publication": false,
+      "authenticated_live_reads": false,
+      "api_version": "0.13.0",
+      "policies": [
+        {
+          "table": "account_access",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "account_access_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "announcement_recipients",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "application_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "applications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "btech_model_profiles",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "calendar_constraints",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "calendar_settings",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "certifications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "companies",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "drive_announcements",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "email_verification_tokens",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "interviews",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "jobs",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "match_overrides",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "matches",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "notifications",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "offer_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "offers",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "placement_model_profiles",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "projects",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "risk_predictions",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "schedule_events",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "schedules",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "student_skills",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "students",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "support_reviews",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        },
+        {
+          "table": "users",
+          "college_id": true,
+          "enabled": true,
+          "forced": true,
+          "policy": "college_isolation",
+          "read_write_scoped": true,
+          "status": "verified"
+        }
+      ],
+      "tenant_policy_count": 28,
+      "database": "connected",
+      "main_bundle": "/assets/index-DKntbTa3.js",
+      "admin_bundle": "/assets/AdminPage-CbApSASs.js",
+      "passed": 17,
+      "failed": 0
+    },
+    "owned_synthetic_read_and_guard_checks": {
+      "checked_at": "2026-10-04T01:50:39.607466+00:00",
+      "checks": [
+        {
+          "check": "existing synthetic student can log in",
+          "passed": true
+        },
+        {
+          "check": "student has current expected role/tenant",
+          "passed": true
+        },
+        {
+          "check": "student denied GET /admin/announcements/options",
+          "passed": true
+        },
+        {
+          "check": "student denied POST /admin/announcements/preview",
+          "passed": true
+        },
+        {
+          "check": "student denied GET /admin/announcements",
+          "passed": true
+        },
+        {
+          "check": "student denied POST /admin/announcements",
+          "passed": true
+        },
+        {
+          "check": "student denied GET /admin/announcements/1/recipients",
+          "passed": true
+        },
+        {
+          "check": "existing synthetic recruiter can log in",
+          "passed": true
+        },
+        {
+          "check": "recruiter has current expected role/tenant",
+          "passed": true
+        },
+        {
+          "check": "recruiter denied GET /admin/announcements/options",
+          "passed": true
+        },
+        {
+          "check": "recruiter denied POST /admin/announcements/preview",
+          "passed": true
+        },
+        {
+          "check": "recruiter denied GET /admin/announcements",
+          "passed": true
+        },
+        {
+          "check": "recruiter denied POST /admin/announcements",
+          "passed": true
+        },
+        {
+          "check": "recruiter denied GET /admin/announcements/1/recipients",
+          "passed": true
+        },
+        {
+          "check": "owned fixture profile remains synthetic and accessible",
+          "passed": true
+        },
+        {
+          "check": "owning student notification feed still loads",
+          "passed": true
+        },
+        {
+          "check": "owning student application history still loads",
+          "passed": true
+        },
+        {
+          "check": "owning recruiter application history still loads",
+          "passed": true
+        }
+      ],
+      "scope": "Existing owned synthetic student #4805/recruiter in archived college 1; no publication, application, interview, offer, account or email mutations",
+      "controlled_drive_applications": {
+        "total": 1,
+        "active_fixture_applications": 0,
+        "other_active_applications_on_page": 0
+      },
+      "passed": 18,
+      "failed": 0
+    },
+    "controlled_live_fixture": {
+      "college_id": 1,
+      "student_id": 4805,
+      "student_name": "Synthetic Phase 4 Lifecycle Check",
+      "job_id": 18,
+      "job_title": "Synthetic Announcement Workflow Check 2026-10-04",
+      "company_name": "Synthetic Phase 4 Workflow Company",
+      "application_id": 2,
+      "application_version": 1,
+      "application_status": "submitted",
+      "audience": "applicants",
+      "branch": "CSE",
+      "expected_recipient_count": 1,
+      "scope": "One new clearly synthetic test drive/application under existing owned college-1 fixtures. No matching run, interview, offer, real-college or external email mutation."
+    },
+    "live_admin_publication_and_read_receipt": "Awaiting owner administrator session; no live announcement has been published by the agent",
+    "transition": "An initial public request timed out during deployment; subsequent complete public and authenticated checks passed"
+  },
   "limitations": [
     "Read means explicitly marked read, not email delivery, attendance or comprehension",
     "Scheduled audience includes any booking still marked scheduled, including past bookings with unrecorded outcomes",

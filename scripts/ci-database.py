@@ -6,7 +6,8 @@ if connection.info.host not in ('127.0.0.1','localhost'): raise RuntimeError('Lo
 connection.autocommit=True
 with connection.cursor() as cursor:
     cursor.execute("CREATE ROLE jobjugaad_app LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD 'ci-only-disposable-password'")
-    cursor.execute('CREATE DATABASE jobjugaad_ci OWNER jobjugaad_app')
+    cursor.execute('CREATE DATABASE jobjugaad_test_utf8 OWNER jobjugaad_app')
     cursor.execute('CREATE DATABASE jobjugaad_restore_ci OWNER jobjugaad_app')
 connection.close()
 print('Disposable CI databases prepared with a non-bypass runtime role.')
+

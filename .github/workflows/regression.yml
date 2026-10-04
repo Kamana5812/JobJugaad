@@ -24,7 +24,7 @@ jobs:
           --health-timeout 5s --health-retries 5
     env:
       CI_ADMIN_DATABASE_URL: postgresql://postgres:ci-only-admin-password@127.0.0.1:5432/postgres
-      DATABASE_URL: postgresql://jobjugaad_app:ci-only-disposable-password@127.0.0.1:5432/jobjugaad_ci
+      DATABASE_URL: postgresql://jobjugaad_app:ci-only-disposable-password@127.0.0.1:5432/jobjugaad_test_utf8
       JWT_SECRET: ci-only-disposable-jwt-secret-at-least-32-characters
       PYTHONPATH: backend
       ALLOW_TEST_DATABASE: 'yes'
@@ -56,3 +56,4 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_URL: https://jobjugaad-api.onrender.com
+

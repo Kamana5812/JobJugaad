@@ -122,14 +122,15 @@ def review(session, admin, access_id, payload):
 
 
 def request_verification(identity):
-    if not email_delivery.configured():
-        raise HTTPException(503, "Email delivery is not configured. The service owner must configure email delivery before activation.")
     now = datetime.now(timezone.utc)
     # Commit the hashed challenge before sending; no plaintext token is stored or returned by API.
     with tenant_session(identity["college_id"]) as session:
         user = session.scalar(select(User).where(User.college_id == identity["college_id"],
-            User.id == identity["user_id"], User.role == identity["role"]))
-        if user is None or user.college_id in (1, 2):
+            User.id == identity["user_id"], User.role == identity["role"],
+            User.token_version == identity.get('token_version', 0)))
+        if user is None:
+            raise HTTPException(401, "Your session was invalidated. Please log in again.")
+        if user.college_id in (1, 2):
             raise HTTPException(403, "Use a real college account for email verification.")
         if not email_delivery.configured(user.email):
             raise HTTPException(503, "Email delivery is unavailable for this account. The default Resend sender is limited to the service owner's test inbox; other users need a verified sending domain.")

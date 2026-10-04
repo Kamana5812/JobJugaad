@@ -39,6 +39,7 @@ def initialize_schema():
         if connection.execute(text("SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = current_user")).scalar_one():
             raise RuntimeError("Database runtime role must not be superuser or BYPASSRLS.")
         Base.metadata.create_all(connection)
+        connection.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version integer NOT NULL DEFAULT 0'))
         for name in ("schedules", "interviews"):
             connection.execute(text(f"ALTER TABLE {name} ADD COLUMN IF NOT EXISTS round_number integer NOT NULL DEFAULT 1"))
             connection.execute(text(f"ALTER TABLE {name} ADD COLUMN IF NOT EXISTS round_name varchar(80) NOT NULL DEFAULT 'Interview'"))

@@ -43,7 +43,11 @@ def configured(recipient=None):
     return domain not in MAILBOX_DOMAINS
 
 
-def send_verification(recipient, link, event_key):
+def send_password_reset(recipient, link, event_key):
+    return send_verification(recipient, link, event_key, purpose='password_reset')
+
+
+def send_verification(recipient, link, event_key, purpose='verification'):
     if not configured(recipient):
         raise HTTPException(503, "Email delivery is unavailable for this account. Please contact your college administrator.")
     try:
@@ -52,8 +56,13 @@ def send_verification(recipient, link, event_key):
             "text": "Verify your email to continue your college account request:\n\n" + link +
                 "\n\nThis link expires in one hour. If you did not request this, ignore this email. "
                 "Inbox verification does not confirm college affiliation."}
+        if purpose == 'password_reset':
+            body['subject'] = 'Reset your JobJugaad password'
+            body['text'] = ('You requested a JobJugaad password reset:\n\n' + link +
+                '\n\nThis single-use link expires in 30 minutes. If you did not request it, ignore this email. '
+                'Your password is unchanged until you complete the reset. JobJugaad never asks you to share your password or reset link in chat.')
         if provider() == "gmail":
-            return send_gmail(recipient, body["text"])
+            return send_gmail(recipient, body["text"], subject=body['subject'])
         request = Request("https://api.resend.com/emails", data=json.dumps(body).encode("utf-8"),
             headers={"Authorization": "Bearer " + os.environ["RESEND_API_KEY"].strip(),
                 "Content-Type": "application/json", "Idempotency-Key": event_key,
@@ -68,7 +77,7 @@ def send_verification(recipient, link, event_key):
         raise HTTPException(503, "Verification email could not be delivered. Please retry after one minute or contact your administrator.") from None
 
 
-def send_gmail(recipient, text):
+def send_gmail(recipient, text, subject='Verify your JobJugaad email'):
     # Owner authorizes gmail.send only. Students do not connect Google or grant mailbox access.
     credentials = urlencode({"client_id": os.environ["GMAIL_CLIENT_ID"].strip(),
         "client_secret": os.environ["GMAIL_CLIENT_SECRET"].strip(),
@@ -82,7 +91,7 @@ def send_gmail(recipient, text):
     message = EmailMessage()
     message["From"] = "JobJugaad <" + os.environ["MAIL_FROM"].strip() + ">"
     message["To"] = recipient
-    message["Subject"] = "Verify your JobJugaad email"
+    message["Subject"] = subject
     message.set_content(text)
     raw = base64.urlsafe_b64encode(message.as_bytes()).decode("ascii")
     request = Request("https://gmail.googleapis.com/gmail/v1/users/me/messages/send",

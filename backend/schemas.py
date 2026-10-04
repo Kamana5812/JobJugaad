@@ -112,6 +112,36 @@ class SignupRequest(LoginRequest):
     def trim_name(cls, value):
         return value.strip() if isinstance(value, str) else value
 
+class PasswordResetRequest(InputModel):
+    email: str = Field(min_length=3, max_length=254)
+    college_id: int = Field(ge=1, strict=True)
+
+    @field_validator('email')
+    @classmethod
+    def email_address(cls, value):
+        return LoginRequest.valid_email(value)
+
+    @field_validator('college_id')
+    @classmethod
+    def college(cls, value):
+        return LoginRequest.registered_college(value)
+
+class PasswordResetInput(InputModel):
+    model_config = ConfigDict(extra='forbid', str_strip_whitespace=False)
+    college_id: int = Field(ge=1, strict=True)
+    token: str = Field(pattern=r'^[A-Za-z0-9_-]{43}$')
+    password: str = Field(min_length=10, max_length=72)
+
+    @field_validator('college_id')
+    @classmethod
+    def college(cls, value):
+        return LoginRequest.registered_college(value)
+
+    @field_validator('password')
+    @classmethod
+    def password_bytes(cls, value):
+        return LoginRequest.password_bytes(value)
+
 class UserResponse(BaseModel):
     email_verified: bool = False
     access_status: Literal["unverified", "pending", "approved", "rejected", "legacy_demo"] = "unverified"

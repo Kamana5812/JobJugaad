@@ -1,6 +1,6 @@
 """Role-specific self-selected college enrollment; clients cannot assign themselves privileged roles."""
 import os
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from auth import hash_password, verify_password, issue_token, authenticated_session, user_response
@@ -75,6 +75,16 @@ def me(context=Depends(authenticated_session)):
 from auth import current_identity
 from engines import accounts
 from schemas import DetailResponse, EmailVerificationInput, AccountAccessResponse, AccessRequestInput
+from schemas import PasswordResetRequest, PasswordResetInput
+from engines import password_recovery
+
+@router.post('/password-reset-request', response_model=DetailResponse)
+def password_reset_request(payload: PasswordResetRequest, background_tasks: BackgroundTasks):
+    return password_recovery.request_reset(payload, background_tasks)
+
+@router.post('/reset-password', response_model=DetailResponse)
+def reset_password(payload: PasswordResetInput):
+    return password_recovery.reset_password(payload)
 
 @router.post("/email-verification", response_model=DetailResponse)
 def request_email_verification(identity=Depends(current_identity)):

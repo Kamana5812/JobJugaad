@@ -4,6 +4,8 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import LandingPage from './pages/public/LandingPage'
 import AuthPage from './pages/public/AuthPage'
 import VerifyEmailPage from './pages/public/VerifyEmailPage'
+import ForgotPasswordPage from './pages/public/ForgotPasswordPage'
+import ResetPasswordPage from './pages/public/ResetPasswordPage'
 import ProfilePage from './pages/student/ProfilePage'
 import OffersPage from './pages/student/OffersPage'
 import NotificationsPage from './components/NotificationsPage'
@@ -27,6 +29,8 @@ export function AppRoutes() {
   return <Routes>
     <Route path="/" element={<LandingPage />} /><Route path="/auth" element={<AuthPage />} />
     <Route path="/verify-email" element={<VerifyEmailPage />} />
+    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+    <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/login" element={<Navigate to="/auth" replace />} /><Route path="/signup" element={<Navigate to="/auth?mode=signup" replace />} />
     <Route path="/recruiter/login" element={<Navigate to="/auth?role=recruiter&mode=login" replace />} />
     <Route path="/recruiter/signup" element={<Navigate to="/auth?role=recruiter&mode=signup" replace />} />

@@ -12,6 +12,7 @@ class User(TenantRow, Base):
     __tablename__ = "users"
     email: Mapped[str] = mapped_column(String(254), nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    token_version: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     role: Mapped[str] = mapped_column(String(20), default="student")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     __table_args__ = (UniqueConstraint("college_id", "email"), UniqueConstraint("id", "college_id"),
@@ -426,6 +427,19 @@ class EmailVerificationToken(TenantRow, Base):
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     __table_args__ = (ForeignKeyConstraint(["user_id", "college_id"], ["users.id", "users.college_id"]),)
+
+class PasswordResetToken(TenantRow, Base):
+    __tablename__ = 'password_reset_tokens'
+    user_id: Mapped[int | None] = mapped_column(Integer, index=True)
+    request_key: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
+    version_at_issue: Mapped[int | None] = mapped_column(Integer)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    delivery_status: Mapped[str] = mapped_column(String(20), default='not_sent', nullable=False)
+    __table_args__ = (ForeignKeyConstraint(['user_id','college_id'], ['users.id','users.college_id']),
+        CheckConstraint("delivery_status IN ('not_sent','pending','accepted','failed')"))
 
 # Publication content and identities remain frozen; notification read_at is the
 # only read-status source. No email or automatic background reminder is created.

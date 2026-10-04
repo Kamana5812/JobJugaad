@@ -52,7 +52,7 @@ def user_response(session, user):
 def issue_token(user, student=None, company=None, session=None):
     now = datetime.now(timezone.utc)
     token = jwt.encode({"sub": str(user.id), "user_id": user.id, "role": user.role,
-        "college_id": user.college_id, "iat": now, "exp": now + timedelta(seconds=TOKEN_SECONDS),
+        "college_id": user.college_id, "token_version": user.token_version, "iat": now, "exp": now + timedelta(seconds=TOKEN_SECONDS),
         "iss": ISSUER, "aud": AUDIENCE}, signing_secret(), algorithm="HS256")
     return TokenResponse(access_token=token, expires_in=TOKEN_SECONDS,
         user=UserResponse(**identity_fields(session, user), college_name=college_name(user.college_id), user_id=user.id, student_id=student.id if student else None,
@@ -69,7 +69,8 @@ def current_identity(credentials: HTTPAuthorizationCredentials | None = Depends(
             issuer=ISSUER, audience=AUDIENCE, options={"require_exp": True, "require_iat": True, "require_sub": True})
         if (type(claims.get("college_id")) is not int or not valid_college(claims["college_id"])
             or type(claims.get("user_id")) is not int or claims["user_id"] < 1
-            or claims["sub"] != str(claims["user_id"])):
+            or claims["sub"] != str(claims["user_id"])
+            or type(claims.get("token_version", 0)) is not int or claims.get("token_version", 0) < 0):
             raise unauthorized
         if claims.get("role") not in ("student", "recruiter", "admin"):
             raise HTTPException(403, "This role is not available in the current phase.")
@@ -83,6 +84,8 @@ def authenticated_session(identity=Depends(current_identity)):
             User.college_id == identity["college_id"], User.role == identity["role"]))
         if user is None:
             raise HTTPException(401, "Your account or role has changed. Please log in again.")
+        if type(identity.get('token_version', 0)) is not int or identity.get('token_version', 0) != user.token_version:
+            raise HTTPException(401, 'Your session was invalidated. Please log in again.')
         if user.role == "admin" and not is_allowed_admin(user):
             raise HTTPException(403, "Administrator access is not enabled for this account.")
         yield session, user

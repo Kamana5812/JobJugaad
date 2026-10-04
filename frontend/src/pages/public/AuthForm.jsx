@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../../api/student'
 import { authenticateAccount } from '../../api/authentication'
 import { roleHome } from '../../context/roleHome'
@@ -30,6 +30,7 @@ export default function AuthForm({ role, signup, onAuthenticated }) {
     <FormField label="Password" type="password" autoComplete={creating ? 'new-password' : 'current-password'} required minLength="10" maxLength="72" hint={creating ? 'At least 10 characters; up to 72 UTF-8 bytes.' : undefined} value={form.password} onChange={change('password')} disabled={busy} />
     <CollegeSelector allowDemo={legacy && !creating} value={form.college_id} onChange={change('college_id')} disabled={busy} />
     {!creating && <details className="text-xs text-muted"><summary className="cursor-pointer">Existing demonstration account</summary><label className="mt-2 flex gap-2"><input type="checkbox" checked={legacy} onChange={e => { setLegacy(e.target.checked); setForm({ ...form, college_id: e.target.checked ? '1' : '10219' }) }} />Access archived demo colleges (existing accounts only)</label></details>}
+    {!creating && <Link className="inline-block text-sm font-semibold text-navy underline" to={`/forgot-password?college_id=${form.college_id}`}>Forgot password?</Link>}
     <Message error>{error}</Message>
     <button disabled={busy} className={buttonStyle + ' w-full'}>{busy ? 'Connecting…' : creating ? `Create ${role} account` : `Sign in as ${role}`}</button>
     <p className="text-xs leading-5 text-muted">Your account’s verified role determines which portal opens. Choosing a card does not change your access.</p>

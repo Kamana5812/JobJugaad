@@ -30,7 +30,7 @@ async def lifespan(app):
     logging.getLogger("uvicorn.error").info("Tenant RLS initialized; admin accounts provisioned: %s", admins)
     yield
 
-app = FastAPI(title="JobJugaad API", version="0.16.0",
+app = FastAPI(title="JobJugaad API", version="0.17.0",
     description="Explainability-first Student Core, Talent Finder and Placement Command Center. Weighted rules plus separate public-data engineering and MBA Random Forest placement signals.",
     lifespan=lifespan)
 # Exact production origin. CORS is a browser boundary, not a substitute for JWT/RBAC/RLS.

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { FormField, Message, buttonStyle } from './FormField'
 import { respondToOffer, updateOffer } from '../api/offers'
 import { errorMessage } from '../api/student'
@@ -22,28 +22,29 @@ function availableActions(offer, admin) {
   }
   return actions
 }
-export default function OfferActions({ offer, admin = false, onSaved }) {
+export default function OfferActions({ offer, admin = false, onSaved, disabled = false, onBusyChange = () => {} }) {
   const actions = availableActions(offer, admin)
   const [choice, setChoice] = useState('')
   const [reason, setReason] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const guard = useRef(false)
   async function submit(event) {
-    event.preventDefault(); setBusy(true); setError('')
+    event.preventDefault(); if (disabled || guard.current) return; guard.current = true; setBusy(true); onBusyChange(true); setError('')
     try {
       const input = { version: offer.version, reason }
       if (admin) { const [stage, value] = choice.split(':'); await updateOffer(offer.id, { ...input, stage, value }) }
       else await respondToOffer(offer.student_id, offer.id, { ...input, action: choice })
       setReason(''); setChoice(''); await onSaved()
-    } catch (failure) { setError(errorMessage(failure)) } finally { setBusy(false) }
+    } catch (failure) { setError(errorMessage(failure)) } finally { guard.current = false; setBusy(false); onBusyChange(false) }
   }
   if (!actions.length) return null
   return <form onSubmit={submit} className="mt-5 space-y-3 border-t border-line pt-5">
     <Message error>{error}</Message>
-    <FormField label="Record an action" value={choice} onChange={e => setChoice(e.target.value)} required disabled={busy}>
+    <FormField label="Record an action" value={choice} onChange={e => setChoice(e.target.value)} required disabled={busy || disabled}>
       <option value="">Choose an action</option>{actions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
     </FormField>
-    <FormField label="Reason / supporting context" hint="This action and reason will remain in the offer history. Exchange documents through your college’s agreed channel." value={reason} onChange={e => setReason(e.target.value)} minLength={10} maxLength={1000} required disabled={busy} />
-    <button className={buttonStyle} disabled={busy || !choice}>{busy ? 'Saving…' : 'Confirm action'}</button>
+    <FormField label="Reason / supporting context" hint="This action and reason remain in stage history. Upload private PDFs above or use the college’s agreed external channel; file upload/review does not perform this stage action." value={reason} onChange={e => setReason(e.target.value)} minLength={10} maxLength={1000} required disabled={busy || disabled} />
+    <button className={buttonStyle} disabled={busy || disabled || !choice}>{busy ? 'Saving…' : 'Confirm action'}</button>
   </form>
 }

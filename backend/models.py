@@ -1,6 +1,6 @@
 """Phase 1 models; composite foreign keys enforce tenant consistency."""
 from datetime import datetime, timezone
-from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKeyConstraint, Integer, String, Text, UniqueConstraint
+from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKeyConstraint, Integer, String, Text, UniqueConstraint, LargeBinary, Uuid, Index, text
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
 
@@ -443,3 +443,65 @@ class AnnouncementRecipient(TenantRow, Base):
         ForeignKeyConstraint(["recipient_user_id", "college_id"], ["users.id", "users.college_id"]),
         ForeignKeyConstraint(["college_id", "recipient_user_id", "event_key"],
             ["notifications.college_id", "notifications.recipient_user_id", "notifications.event_key"]),)
+
+
+class OfferDocument(TenantRow, Base):
+    """Private immutable PDF revisions; replacing a file retains its bytes/history."""
+    __tablename__ = "offer_documents"
+    offer_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    kind: Mapped[str] = mapped_column(String(24), nullable=False)
+    label: Mapped[str] = mapped_column(String(160), nullable=False)
+    original_filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    page_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    # Deferred bytea avoids loading private PDF content during metadata/history reads.
+    content: Mapped[bytes] = mapped_column(LargeBinary, nullable=False, deferred=True)
+    uploaded_by: Mapped[int] = mapped_column(Integer, nullable=False)
+    uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    uploaded_offer_version: Mapped[int] = mapped_column(Integer, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    supersedes_document_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    review_status: Mapped[str] = mapped_column(String(20), default="pending", nullable=False)
+    reviewed_by: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    review_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    idempotency_key: Mapped[str] = mapped_column(Uuid(as_uuid=False), nullable=False)
+    request_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    __table_args__ = (
+        UniqueConstraint("id", "college_id"),
+        UniqueConstraint("id", "offer_id", "college_id"),
+        UniqueConstraint("college_id", "idempotency_key"),
+        ForeignKeyConstraint(["offer_id", "college_id"], ["offers.id", "offers.college_id"]),
+        ForeignKeyConstraint(["uploaded_by", "college_id"], ["users.id", "users.college_id"]),
+        ForeignKeyConstraint(["reviewed_by", "college_id"], ["users.id", "users.college_id"]),
+        # A retained predecessor must belong to this exact offer and college.
+        ForeignKeyConstraint(["supersedes_document_id", "offer_id", "college_id"],
+            ["offer_documents.id", "offer_documents.offer_id", "offer_documents.college_id"]),
+        CheckConstraint("kind IN ('offer_letter','supporting_document')"),
+        CheckConstraint("size_bytes BETWEEN 1 AND 2097152"),
+        CheckConstraint("octet_length(content) = size_bytes"),
+        CheckConstraint("page_count BETWEEN 1 AND 20"),
+        CheckConstraint("length(sha256) = 64 AND length(request_hash) = 64"),
+        CheckConstraint("uploaded_offer_version > 0"),
+        CheckConstraint("review_status IN ('pending','verified','rejected')"),
+        CheckConstraint("(review_status = 'pending' AND reviewed_by IS NULL AND reviewed_at IS NULL AND review_reason IS NULL) OR "
+            "(review_status != 'pending' AND reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL AND review_reason IS NOT NULL)"),
+        Index("uq_active_offer_letter", "college_id", "offer_id", unique=True,
+            postgresql_where=text("is_active AND kind = 'offer_letter'")),)
+
+
+class OfferDocumentEvent(TenantRow, Base):
+    """Human file actions and download requests; a request is not a receipt/read proof."""
+    __tablename__ = "document_events"
+    document_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    offer_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    actor_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    action: Mapped[str] = mapped_column(String(32), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (
+        ForeignKeyConstraint(["document_id", "offer_id", "college_id"],
+            ["offer_documents.id", "offer_documents.offer_id", "offer_documents.college_id"]),
+        ForeignKeyConstraint(["actor_user_id", "college_id"], ["users.id", "users.college_id"]),
+        CheckConstraint("action IN ('document_uploaded','document_reviewed','document_superseded','download_requested')"),)

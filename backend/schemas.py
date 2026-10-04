@@ -1,5 +1,6 @@
 """Validated contracts; every readiness response includes factors and explanation."""
 import re
+from uuid import UUID
 from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -674,6 +675,95 @@ class OfferCandidateList(BaseModel):
     offset: int
     limit: int
 
+
+class OfferDocumentUpload(InputModel):
+    # Multipart values arrive as strings; JSON review still uses strict version integers.
+    version: int = Field(ge=1)
+    label: str = Field(min_length=3, max_length=160)
+    reason: str = Field(min_length=10, max_length=1000)
+    idempotency_key: UUID
+    replaces_document_id: int | None = Field(default=None, gt=0)
+
+    @field_validator("label", "reason")
+    @classmethod
+    def plain_text_without_null(cls, value):
+        if "\x00" in value:
+            raise ValueError("Use plain text without null characters.")
+        return value
+
+
+class OfferDocumentReview(InputModel):
+    version: int = Field(ge=1, strict=True)
+    review_status: Literal["verified", "rejected"]
+    reason: str = Field(min_length=10, max_length=1000)
+
+    @field_validator("reason")
+    @classmethod
+    def plain_text_without_null(cls, value):
+        if "\x00" in value:
+            raise ValueError("Use plain text without null characters.")
+        return value
+
+
+class OfferDocumentResponse(BaseModel):
+    id: int
+    offer_id: int
+    kind: Literal["offer_letter", "supporting_document"]
+    label: str
+    original_filename: str
+    size_bytes: int
+    sha256: str
+    page_count: int
+    uploaded_by: int
+    uploaded_at: datetime
+    uploaded_offer_version: int
+    is_active: bool
+    supersedes_document_id: int | None
+    review_status: Literal["pending", "verified", "rejected"]
+    reviewed_by: int | None
+    reviewed_at: datetime | None
+    review_reason: str | None
+
+
+class OfferDocumentLimits(BaseModel):
+    max_bytes: int
+    max_pages: int
+    max_files: int
+    max_offer_bytes: int
+    stored_files: int
+    stored_bytes: int
+
+
+class OfferDocumentList(BaseModel):
+    items: list[OfferDocumentResponse]
+    total: int
+    offset: int
+    limit: int
+    offer_version: int
+    limits: OfferDocumentLimits
+    explanation: str
+
+
+class OfferDocumentMutation(BaseModel):
+    offer: OfferResponse
+    document: OfferDocumentResponse
+
+
+class OfferDocumentEventResponse(BaseModel):
+    id: int
+    actor_user_id: int
+    action: str
+    reason: str
+    created_at: datetime
+
+
+class OfferDocumentEventList(BaseModel):
+    items: list[OfferDocumentEventResponse]
+    total: int
+    offset: int
+    limit: int
+    explanation: str
+
 class NotificationResponse(BaseModel):
     id: int
     kind: str
@@ -900,7 +990,6 @@ class SchedulingApplicant(BaseModel):
 SchedulingBoard.model_rebuild()
 
 # Targeted drive messages are plain-text, manually published in-app records.
-from uuid import UUID
 
 AnnouncementAudience = Literal["applicants", "shortlisted", "scheduled", "college_students"]
 AnnouncementKind = Literal["update", "reminder"]

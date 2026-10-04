@@ -81,7 +81,7 @@ py -3.12 -m venv backend/venv
 ./backend/venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
 ```
 
-The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 28 tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all.
+The backend reads environment variables directly; it does not automatically load .env files. Startup requires DATABASE_URL and JWT_SECRET. Before serving, one transaction creates all 30 modeled tenant tables and enables + forces college-scoped RLS. Runtime roles able to bypass RLS are rejected. Schema creation is idempotent for the current schema; later schema changes need explicit migrations rather than relying on create_all. MEMORY.md records which revision and inventory have been verified live.
 
 Startup seeds only when SEED_DEMO_DATA=yes, idempotently creating the archived 4,800 synthetic profiles, 45 companies and simulated drives in Demo College 1. Normal real-college startup does not create synthetic records. Their generated passwords are not shared and seed accounts are not public demo logins. Running the script again preserves existing profiles.
 
@@ -96,7 +96,7 @@ Set VITE_API_URL=/api for local development. Vite proxies /api to http://127.0.0
 
 ## Tenant enforcement
 
-All 28 tenant tables, including admission, applications, calendar settings/constraints and announcement history/recipients, carry college_id. See the current inventory in [ARCHITECTURE.md](ARCHITECTURE.md). Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college.
+All 30 modeled tenant tables, including admission, applications, calendar settings/constraints, announcement history/recipients and private file bytes/events, carry college_id. See the current inventory in [ARCHITECTURE.md](ARCHITECTURE.md). Application queries include college filters; profile endpoints also require the JWT user to own the student row. Every table has ENABLE and FORCE ROW LEVEL SECURITY with both USING and WITH CHECK scoped to transaction-local app.college_id. Transaction completion clears that setting before connection reuse. Composite foreign keys prevent linking children to a student in a different college. Deployed catalog verification is recorded in MEMORY.md.
 
 RLS is the second tenant enforcement layer, not a replacement for application authorization. The runtime role owns the initial schema for startup DDL; FORCE RLS ensures normal owner queries are still restricted. Future production deployment should separate migrations from the runtime role.
 
@@ -140,7 +140,7 @@ For the synthetic demo, open Scheduling to inspect the deliberately imported ove
 
 ## Phase 4 offers and notifications
 
-Students open **My offers** to inspect letter, documents, verification, acceptance and joining separately. Administrators open **Command Center → Offers**, choose a selected interview and create a draft; issue the letter before the student records a response. Students exchange documents through the college's agreed external channel and record submission here. Administrators verify externally and record verification before joining. Reasons and before/after stages remain in history; stale concurrent changes are rejected.
+Students open **My offers** to inspect letter, documents, verification, acceptance and joining separately. Administrators open **Command Center → Offers**, choose a selected interview and create a draft; issue the letter before the student records a response. The private-PDF extension adds retained offer letters/supporting files and explicit human file reviews; see [workflow and limits](docs/OFFER-DOCUMENTS.md) and MEMORY.md for release verification. Uploading never performs a lifecycle action. Original offers without files retain their external-document declarations. Reasons and before/after stages remain in history; stale concurrent changes are rejected.
 
 **Notifications** is a recipient-scoped simulated feed. Interview and offer actions create in-app records; no email/SMS is sent. Offer records are paginated and synthetic examples are labeled. Accepted-offer statistics include synthetic records and do not prove joining; joining has its own count.
 
@@ -155,7 +155,7 @@ Use the existing **Synthetic Phase 4 Lifecycle Check** student and **Synthetic P
 
 1. In Scheduling, verify the correct student's booking is approved. After its scheduled end, record **Selected** with a synthetic-test reason.
 2. In Offers, find that selected interview, create a draft and record **letter issued**.
-3. From the owning synthetic student account, record **acceptance** and **documents submitted**. This declares external document exchange; there is no document upload/automatic verification feature.
+3. From the owning synthetic student account, record **acceptance** and **documents submitted**. This historical Phase 4 check declared external document exchange, before the later private-PDF extension; it did not demonstrate file upload or automatic verification.
 4. From the administrator account, record **verified**, then **joined**, with reasons.
 5. Check all five stages, audit history, the student/admin notification feeds and the changed accepted/joined analytics. Notifications are in-app only.
 

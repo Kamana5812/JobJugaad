@@ -1,0 +1,56 @@
+{
+  "feature": "Private offer-letter and supporting-document PDFs with recorded human review",
+  "recorded_at": "2026-10-04",
+  "api_version": "0.14.0",
+  "backend": {
+    "focused_cases": 21,
+    "focused_passed": 21,
+    "focused_seconds": 92.044,
+    "database": "Isolated UTF8 localhost PostgreSQL; restricted application role, FORCE RLS",
+    "full_seeded_regression": {"cases": 132, "passed": 131, "seconds": 433.688, "final_targeted_retest": {"cases": 8, "passed": 8, "seconds": 37.389}, "distinct_cases_verified_across_runs": 132, "single_full_run_all_passed": false},
+    "earlier_runs": [
+      "Fresh unseeded database: 127 of 132 cases passed; five existing cohort-dependent cases required the synthetic seed.",
+      "A subsequent run stopped with 15 setup errors because the local PostgreSQL service was offline. This was not a passing regression result.",
+      "The seeded 132-case run found one test selecting an earlier fixture by a shared drive title. Actual seeded drives each had 4,841 explained matches. The assertion now selects the seeded recruiter, retaining the original >=4,800 coverage requirement; production matching was unchanged."
+    ],
+    "covered": [
+      "Stored PDF bytes and SHA-256 survive a separate Python process; Unicode metadata",
+      "Direct FORCE-RLS cross-college read and write denial on both new tables",
+      "Current role/admission, owning student, private draft and recruiter denial",
+      "Malformed, encrypted, active-content, excessive-page and excessive-body rejection; parser deadline cleanup",
+      "Retained revision/byte limits, replacement history and immutable stored bytes",
+      "Human review, corrections and independent five-stage lifecycle actions",
+      "Unchanged retry, changed identifier reuse, stale version, concurrency and transaction rollback"
+    ]
+  },
+  "frontend": {
+    "existing_named_checks_passed_across_runs": 49,
+    "additional_checks": ["Scheduling calendar controls", "Drive announcements", "Private PDF role/stage rendering and mocked multipart/Blob transport"],
+    "final_build": {"passed": true, "modules": 744, "seconds": 8.37},
+    "final_main_asset": "index-G8Fep7Am.js",
+    "final_admin_asset": "AdminPage-CuJkMHvp.js",
+    "interactive_lost_response_retry_verified": false
+  },
+  "local_browser": {
+    "synthetic_offer_id": 44,
+    "document_id": 77,
+    "letter_uploaded": true,
+    "human_file_review_recorded": true,
+    "separate_letter_issuance_recorded": true,
+    "owning_student_saw_issued_file_and_review": true,
+    "student_download_http_status": 200,
+    "desktop_download_saved_verified": false,
+    "supporting_document_browser_walkthrough_verified": false,
+    "screenshot_visually_inspected": true,
+    "standalone_screenshot_exported": false,
+    "limitations": "Browser download event timed out despite a successful API response; screenshot export runtime could not initialize. API integration tests separately verify exact downloaded bytes."
+  },
+  "independent_review": "No remaining concrete code blocker after adding the shared upload/review mutation lock; not a security certification.",
+  "live": {"release_verified": false, "actual_file_upload_review_download_verified": false},
+  "operational_limits": [
+    "2 MiB and 20 pages per PDF; ten retained files and ten MiB per offer, including superseded revisions",
+    "Format and resource checks plus human declarations; no antivirus or independent authenticity verification",
+    "Private bytes share PostgreSQL capacity and backups; retention/deletion automation and backup/restore verification remain pending",
+    "No production-scale capacity or performance claim; no real hiring email or SMS delivery"
+  ]
+}

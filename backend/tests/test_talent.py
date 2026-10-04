@@ -188,8 +188,13 @@ class TalentIntegrationTests(unittest.TestCase):
         with tenant_session(1) as session:
             count = session.scalar(select(func.count(Company.id)).where(Company.college_id == 1, Company.name.like("Synthetic Company %")))
             self.assertEqual(count, 45)
-            for demo in DEMO_DRIVES:
-                job = session.scalar(select(Job).where(Job.college_id == 1, Job.title == demo.title).order_by(Job.id))
+            for index, demo in enumerate(DEMO_DRIVES, 1):
+                # Other integration fixtures deliberately reuse these titles; identify the seeded owner.
+                job = session.scalar(select(Job).join(Company, Company.id == Job.company_id)
+                    .join(User, User.id == Company.recruiter_user_id).where(Job.college_id == 1,
+                        Company.college_id == 1, User.college_id == 1, Job.title == demo.title,
+                        User.email == f"recruiter{index:02d}@demo.jobjugaad.test"))
+                self.assertIsNotNone(job)
                 matches = session.scalars(select(Match).where(Match.college_id == 1, Match.job_id == job.id)).all()
                 self.assertGreaterEqual(len(matches), 4800)
                 self.assertTrue(all(m.factor_breakdown and m.explanation for m in matches))

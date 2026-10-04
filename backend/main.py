@@ -9,7 +9,8 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from auth import signing_secret
 from database import check_database, initialize_schema, isolation_report
-from routers import auth, students, recruiters, admin, notifications, announcements
+from routers import auth, students, recruiters, admin, notifications, announcements, offer_documents
+from upload_limits import DocumentUploadLimitMiddleware
 from schemas import HealthResponse
 from engines.placement_model import load_model, model_status
 from engines import btech_model
@@ -29,10 +30,12 @@ async def lifespan(app):
     logging.getLogger("uvicorn.error").info("Tenant RLS initialized; admin accounts provisioned: %s", admins)
     yield
 
-app = FastAPI(title="JobJugaad API", version="0.13.0",
+app = FastAPI(title="JobJugaad API", version="0.14.0",
     description="Explainability-first Student Core, Talent Finder and Placement Command Center. Weighted rules plus separate public-data engineering and MBA Random Forest placement signals.",
     lifespan=lifespan)
 # Exact production origin. CORS is a browser boundary, not a substitute for JWT/RBAC/RLS.
+# Added first so CORS wraps even early upload-limit/authentication responses.
+app.add_middleware(DocumentUploadLimitMiddleware)
 app.add_middleware(CORSMiddleware, allow_origins=["https://jobjugaad.vercel.app"], allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "OPTIONS"], allow_headers=["Authorization", "Content-Type"])
 app.include_router(auth.router)
@@ -41,6 +44,7 @@ app.include_router(recruiters.router)
 app.include_router(admin.router)
 app.include_router(notifications.router)
 app.include_router(announcements.router)
+app.include_router(offer_documents.router)
 
 @app.exception_handler(RequestValidationError)
 async def validation_error(request: Request, error: RequestValidationError):

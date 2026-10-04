@@ -1,31 +1,523 @@
 {
   "checked_on": "2026-10-04",
   "feature": "Descriptive post-selection journey and recorded closures",
-  "release_status": "local verification passed; publication pending",
+  "release_status": "deployed; authenticated live administrator read pending owner sign-in",
   "api_version": "0.15.0",
   "unit": "distinct student-drive pair",
   "methodology": "Cumulative ever-recorded milestones, independent acceptance/verification evidence, and explicit current terminal offer closures. No predicted dropout, fabricated reason, or independently verified employment claim.",
   "tenant_tables_added": 0,
   "expected_existing_policy_inventory": 30,
   "local_checks": {
-    "focused_postgresql_tests": {"passed": 26, "total": 26, "seconds": 7.570},
-    "frontend_post_selection_checks": {"passed": 13, "total": 13, "includes": "10 rendering/authenticated-transport checks plus 3 actual PostgreSQL response samples"},
-    "frontend_navigation_checks": {"passed": 19, "total": 19},
-    "frontend_dashboard_checks": {"passed": 19, "total": 19},
-    "production_build": {"passed": true, "modules": 751, "seconds": 2.33, "api_origin": "https://jobjugaad-api.onrender.com"},
-    "swagger_anonymous_request": {"status": 401, "observed_in_browser": true},
-    "full_backend_regression": {"passed": 158, "total": 158, "unittest_seconds": 345.507, "wrapper_seconds": 363.393, "seed_demo_data": false},
+    "focused_postgresql_tests": {
+      "passed": 26,
+      "total": 26,
+      "seconds": 7.57
+    },
+    "frontend_post_selection_checks": {
+      "passed": 13,
+      "total": 13,
+      "includes": "10 rendering/authenticated-transport checks plus 3 actual PostgreSQL response samples"
+    },
+    "frontend_navigation_checks": {
+      "passed": 19,
+      "total": 19
+    },
+    "frontend_dashboard_checks": {
+      "passed": 19,
+      "total": 19
+    },
+    "production_build": {
+      "passed": true,
+      "modules": 751,
+      "seconds": 2.33,
+      "api_origin": "https://jobjugaad-api.onrender.com"
+    },
+    "swagger_anonymous_request": {
+      "status": 401,
+      "observed_in_browser": true
+    },
+    "full_backend_regression": {
+      "passed": 158,
+      "total": 158,
+      "unittest_seconds": 345.507,
+      "wrapper_seconds": 363.393,
+      "seed_demo_data": false
+    },
     "authenticated_browser_rehearsal": {
       "passed": true,
       "environment": "isolated local PostgreSQL, controlled dummy college/account/drive",
-      "recorded_stage_counts": [3, 2, 1, 1, 1],
-      "all_stage_counts": [4, 3, 2, 2, 1],
-      "observed": ["administrator login", "default recorded filter", "five stage counts and explained denominators", "college drive filter", "all scope", "literal human decline reason", "separately labeled synthetic import note", "visual layout"],
+      "recorded_stage_counts": [
+        3,
+        2,
+        1,
+        1,
+        1
+      ],
+      "all_stage_counts": [
+        4,
+        3,
+        2,
+        2,
+        1
+      ],
+      "observed": [
+        "administrator login",
+        "default recorded filter",
+        "five stage counts and explained denominators",
+        "college drive filter",
+        "all scope",
+        "literal human decline reason",
+        "separately labeled synthetic import note",
+        "visual layout"
+      ],
       "writes_to_live_workflow": false,
       "note": "The first local preview encountered an older incomplete direct-DB test application in another test tenant. The browser rehearsal used a fresh controlled tenant without deleting old fixtures or changing product code. Startup delays were resolved by starting the saved local database; no deployment failure is inferred."
     }
   },
-  "live_checks": "pending deployment",
+  "live_checks": {
+    "checked_at": "2026-10-04T20:18:46.835725+05:30",
+    "source_commit": "955e28c42fc8d0feb941842d674a3fee944009e8",
+    "checks": [
+      {
+        "check": "API 0.15.0 served",
+        "passed": true
+      },
+      {
+        "check": "read-only analytics operation documented",
+        "passed": true
+      },
+      {
+        "check": "all 32 admin operations documented",
+        "passed": true
+      },
+      {
+        "check": "analytics explanations and evidence fields documented",
+        "passed": true
+      },
+      {
+        "check": "live Swagger available",
+        "passed": true
+      },
+      {
+        "check": "PostgreSQL connected",
+        "passed": true
+      },
+      {
+        "check": "all 30 actual policies and restricted role verified",
+        "passed": true
+      },
+      {
+        "check": "both existing trained models ready",
+        "passed": true
+      },
+      {
+        "check": "anonymous analytics denied default",
+        "passed": true
+      },
+      {
+        "check": "anonymous analytics denied ?scope=synthetic",
+        "passed": true
+      },
+      {
+        "check": "anonymous analytics denied ?scope=all&job_id=17",
+        "passed": true
+      },
+      {
+        "check": "invalid bearer denied",
+        "passed": true
+      },
+      {
+        "check": "exact-origin analytics preflight https://jobjugaad.vercel.app",
+        "passed": true
+      },
+      {
+        "check": "exact-origin analytics preflight https://jobjugaad.vercel.app.evil.example",
+        "passed": true
+      },
+      {
+        "check": "exact-origin analytics preflight http://localhost:5179",
+        "passed": true
+      },
+      {
+        "check": "existing owned synthetic student login",
+        "passed": true
+      },
+      {
+        "check": "student current archived role",
+        "passed": true
+      },
+      {
+        "check": "student denied administrator analytics default",
+        "passed": true
+      },
+      {
+        "check": "student denied administrator analytics ?scope=synthetic",
+        "passed": true
+      },
+      {
+        "check": "student denied administrator analytics ?scope=all&job_id=17",
+        "passed": true
+      },
+      {
+        "check": "existing owned synthetic recruiter login",
+        "passed": true
+      },
+      {
+        "check": "recruiter current archived role",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied administrator analytics default",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied administrator analytics ?scope=synthetic",
+        "passed": true
+      },
+      {
+        "check": "recruiter denied administrator analytics ?scope=all&job_id=17",
+        "passed": true
+      },
+      {
+        "check": "existing owning student offer view unaffected",
+        "passed": true
+      },
+      {
+        "check": "live admin SPA route served",
+        "passed": true
+      },
+      {
+        "check": "HTML-referenced entry JavaScript served",
+        "passed": true
+      },
+      {
+        "check": "production API origin in served entry",
+        "passed": true
+      },
+      {
+        "check": "entry-referenced admin JavaScript served",
+        "passed": true
+      },
+      {
+        "check": "new served admin control: 05 Post-selection journey",
+        "passed": true
+      },
+      {
+        "check": "new served admin control: /admin/analytics/post-selection",
+        "passed": true
+      },
+      {
+        "check": "new served admin control: Synthetic import note",
+        "passed": true
+      },
+      {
+        "check": "new served admin control: Recorded action reason",
+        "passed": true
+      },
+      {
+        "check": "new served admin control: Evidence coverage and missing history",
+        "passed": true
+      },
+      {
+        "check": "new served admin control: without a recorded offer closure",
+        "passed": true
+      },
+      {
+        "check": "Vercel source commit deployment successful",
+        "passed": true
+      }
+    ],
+    "live_authenticated_admin_read": false,
+    "workflow_writes": false,
+    "last_request": "GET https://api.github.com/repos/Kamana5812/JobJugaad/commits/955e28c42fc8d0feb941842d674a3fee944009e8/status",
+    "last_http_status": 200,
+    "api_version": "0.15.0",
+    "policies": [
+      {
+        "table": "account_access",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "account_access_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "announcement_recipients",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "application_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "applications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "btech_model_profiles",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "calendar_constraints",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "calendar_settings",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "certifications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "companies",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "document_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "drive_announcements",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "email_verification_tokens",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "interviews",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "jobs",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "match_overrides",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "matches",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "notifications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offer_documents",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offer_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offers",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "placement_model_profiles",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "projects",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "risk_predictions",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "schedule_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "schedules",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "student_skills",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "students",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "support_reviews",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "users",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      }
+    ],
+    "frontend_entry": "/assets/index-DHbZbOE4.js",
+    "frontend_admin": "/assets/AdminPage-CVBvvzuV.js",
+    "vercel_status": [
+      {
+        "context": "Vercel",
+        "state": "success",
+        "target_url": "https://vercel.com/kamana5813/jobjugaad/8Se6ZT6Y7vYLRoQ48t222PgdLrdV"
+      }
+    ],
+    "scope": "Public metadata/assets, existing owned synthetic student/recruiter logins and reads; no emails, privileged session fabrication or hiring/file mutations.",
+    "passed": 37,
+    "total": 37,
+    "all_passed": true
+  },
   "operational_observation": {
     "source": "Render database Info page, read on 2026-10-04",
     "url": "https://dashboard.render.com/d/dpg-daokrdjm8hqs73f3cm60-a/info",
@@ -39,5 +531,34 @@
     "Incomplete history does not establish event timing or a cause for missing progress.",
     "Synthetic import notes are shown as generation notes, not observed dropout reasons.",
     "The feature does not complete pending live file/announcement walkthroughs, inbox delivery, real-college administrator onboarding, verified assessments, fairness, account security, privacy workflows, or database continuity."
+  ],
+  "live_urls": {
+    "backend": "https://jobjugaad-api.onrender.com",
+    "frontend": "https://jobjugaad.vercel.app"
+  },
+  "render_deployment": {
+    "observed_in_browser": true,
+    "source_commit": "955e28c42fc8d0feb941842d674a3fee944009e8",
+    "status": "Live",
+    "url": "https://dashboard.render.com/web/srv-daol1s5g1s2s738prvhg/deploys/dep-db168i5g1s2s739a9um0"
+  },
+  "transport_diagnostics": [
+    {
+      "error_type": "TimeoutError",
+      "attempt": 1,
+      "passed_before_timeout": 10
+    },
+    {
+      "error_type": "TimeoutError",
+      "attempt": 2,
+      "passed_before_timeout": 22
+    },
+    {
+      "note": "Reused the existing HTTP client connection pool. No production code was changed to obtain a pass.",
+      "total": 37,
+      "attempt": 3,
+      "passed": 37,
+      "all_passed": true
+    }
   ]
 }

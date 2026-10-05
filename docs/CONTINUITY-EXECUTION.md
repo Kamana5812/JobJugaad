@@ -28,6 +28,13 @@ production deletion, production archive or destination import has occurred.
    tenant archive with `operations.backup`, including private PDF bytes. Store
    the archive and encryption key separately in private owner-controlled storage.
    Record time, coverage, hashes and counts; never commit an archive or key.
+   API 0.18.1 includes an operator gate, disabled by default: set
+   MIGRATION_MAINTENANCE=yes only in an approved cutover window. It returns 503
+   and Retry-After for all data routes, including GET calculations that may
+   write cached results; /health remains available and CORS still applies.
+   Let existing requests finish before the final snapshot. Startup provisioning
+   and other operator jobs must also remain idle. Remove the flag only after
+   destination equality, isolation and controlled workflow checks pass.
 5. Restore the archive into a new empty local drill database and verify every
    normalized row/file byte, sequence and policy. The existing restore tool is
    deliberately local-only; do not weaken its guard for a remote import.

@@ -13,6 +13,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--commit', required=True)
     parser.add_argument('--output', required=True)
+    parser.add_argument('--version', default='0.19.0')
+    parser.add_argument('--nlp', action='store_true')
     args = parser.parse_args()
     result = {'source_commit': args.commit, 'checked_at': datetime.now(timezone.utc).isoformat(),
         'checks': [], 'authenticated_walkthrough': False, 'emails_sent': False, 'production_records_changed': False}
@@ -20,7 +22,7 @@ def main():
         result['checks'].append({'check': name, 'passed': bool(value)})
     with httpx.Client(timeout=45, follow_redirects=True) as client:
         spec = client.get(API + '/openapi.json').json()
-        check('API 0.19.0', spec['info']['version'] == '0.19.0')
+        check('API ' + args.version, spec['info']['version'] == args.version)
         health = client.get(API + '/health').json()
         isolation = health.get('isolation', {})
         result['policies'] = isolation.get('tables', [])
@@ -36,6 +38,9 @@ def main():
             '/admin/jobs/1/applications/1/profile': 'get', '/admin/jobs/1/state': 'post',
             '/admin/analytics/demand': 'get', '/admin/reminders/run': 'post',
             '/recruiters/analytics/demand': 'get', '/recruiters/jobs/description/review': 'post'}
+        if args.nlp:
+            routes.update({'/students/1/resume/suggestions': 'get', '/students/1/semantic-match/1': 'post',
+                '/recruiters/jobs/1/applications/1/semantic': 'post', '/admin/jobs/1/applications/1/semantic': 'post'})
         for route, method in routes.items():
             documented = re.sub(r'/1(?=/|$)', '/{id}', route)
             available = any(re.sub(r'\{[^}]+\}', '{id}', path) == documented
@@ -58,6 +63,9 @@ def main():
         result['frontend_entry'] = entry
         bundle = client.get(FRONT + entry).text
         check('production API configured', API in bundle)
+        if args.nlp:
+            check('semantic evidence controls served', 'Compare semantic evidence' in bundle and 'does not alter eligibility' in bundle)
+            check('review-only resume suggestions served', 'Preview extracted fields' in bundle and 'Nothing is selected or saved automatically' in bundle)
         check('new recruiter/profile controls served', 'Reopen drive' in bundle and 'Separate lexical comparison' in bundle)
         admin = re.search(r'AdminPage-[\w-]+\.js', bundle)
         check('admin chunk referenced', admin is not None)

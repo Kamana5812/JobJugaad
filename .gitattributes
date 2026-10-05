@@ -3,3 +3,5 @@ backend/data/engineering/collegePlace.csv -text
 backend/data/Placement_Data_Full_Class.csv -text
 backend/ml/training_protocol.json -text
 backend/ml/engineering/training_protocol.json -text
+backend/ml/semantic/model.onnx -text
+backend/ml/semantic/tokenizer.json -text

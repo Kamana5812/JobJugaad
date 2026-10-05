@@ -1,0 +1,115 @@
+{
+  "id": 37305973634,
+  "head_sha": "eee6a3e615bb03d8fc6e4ab8ca89b77eb2d9e244",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/Kamana5812/JobJugaad/actions/runs/37305973634",
+  "jobs": [
+    {
+      "id": 111749626339,
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run pip install -r backend/requirements.txt",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python scripts/ci-database.py",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m seed",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m unittest discover -s backend/tests -v",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python scripts/ci-restore-drill.py",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/check-navigation.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/check-production-controls.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node scripts/check-kt-completion.mjs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "source_commit": "edee96fd532fd456b5ec2442938d019b4f5a7ca1",
+  "run": "https://github.com/Kamana5812/JobJugaad/actions/runs/37333790316",
+  "conclusion": "success",
+  "verified_steps": ["dependency installation", "clean PostgreSQL setup", "synthetic cohort seeding", "full backend regression including actual pinned encoder", "encrypted restore drill", "frontend navigation, production controls, completion and NLP checks", "production frontend build"],
+  "local_checks": {"focused_nlp_passed": 8, "navigation_passed": 19, "dashboard_passed": 19, "nlp_and_completion_rendering": "passed", "production_build": "passed", "full_database_regression": "unavailable due local PostgreSQL connection timeouts"},
+  "model_accuracy_evaluation": false,
+  "live_authenticated_walkthrough": false,
+  "limitations": "Controlled correctness and synthetic sanity checks; no validated semantic, extraction or placement accuracy claim."
+}

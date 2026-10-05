@@ -44,3 +44,5 @@ Complete encrypted production archive and isolated local restore: 87,362 rows, 3
 ## Release evidence
 
 Final full local regression: 200/200 cases pass in 521.040 seconds. The new completion-interface SSR checks and final production build pass. Earlier focused checks were separate runs, not additional distinct cases. PDF saturation is checked separately; concurrent upload tests honour Retry-After before verifying idempotency/version protection. Existing frontend checks passed earlier in this session. Build reports large bundle/logo assets; no load-time benchmark or uptime guarantee is claimed. Deployment and remote CI status will be recorded only after observation.
+
+Implementation 9e2e0aa is deployed on Render (dep-db1os45g1s2s739t7pmg) and Vercel. All 41 public release checks pass, including API 0.19.0, all 34 policies, anonymous denial and served browser headers. The first remote CI run exposed a fresh-install JSON-default declaration error before regression; corrected using a SQL expression and verified on a new isolated local database. Remote rerun evidence is still pending; no authenticated live acceptance is inferred.

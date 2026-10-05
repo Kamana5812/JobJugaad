@@ -108,7 +108,7 @@ class Job(TenantRow, Base):
     description: Mapped[str] = mapped_column(Text, nullable=False, default='', server_default='')
     is_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default='true')
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default='1')
-    lifecycle_events: Mapped[list] = mapped_column(JSON, nullable=False, default=list, server_default="'[]'::json")
+    lifecycle_events: Mapped[list] = mapped_column(JSON, nullable=False, default=list, server_default=text("'[]'::json"))
     ctc: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)  # INR lakh per annum
     min_cgpa: Mapped[float] = mapped_column(Float, nullable=False)
     max_backlogs: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

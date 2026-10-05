@@ -133,7 +133,7 @@ notifications
 risk_predictions, simulations
 ```
 
-**Implemented tenant tables (34 in the prepared API 0.18.0 release; prior 32 verified live on API 0.17.0):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles, applications, application_events, account_access, account_access_events, email_verification_tokens, calendar_settings, calendar_constraints, drive_announcements, announcement_recipients, offer_documents, document_events, assessments, password_reset_tokens, auth_limits, data_requests. All include college_id. Jobs represent drives; several conceptual entities above have no separate table. MEMORY.md records release evidence and remaining workflow verification separately.
+**Implemented tenant tables (34; all policies verified live on API 0.18.0, 2026-10-05):** users, students, student_skills, projects, certifications, companies, jobs, matches, match_overrides, schedules, interviews, schedule_events, risk_predictions, support_reviews, offers, offer_events, notifications, placement_model_profiles, btech_model_profiles, applications, application_events, account_access, account_access_events, email_verification_tokens, calendar_settings, calendar_constraints, drive_announcements, announcement_recipients, offer_documents, document_events, assessments, password_reset_tokens, auth_limits, data_requests. All include college_id. Jobs represent drives; several conceptual entities above have no separate table. MEMORY.md records release evidence and remaining workflow verification separately.
 
 ### Key Tables (fields)
 
@@ -532,3 +532,4 @@ AuthLimit persists hashed address/college fixed-window login/signup counts. Data
 The static admin fairness audit compares CGPA/branch eligibility across 4,796 synthetic profiles and twelve CGPA-only pairs for three drives. Every paired score retains its factor breakdown and explanation. No weights change, protected-group parity, validated fairness or accuracy claim is made. See evaluations/fairness-report.md and fairness-results.json.
 
 GitHub regression uses disposable non-BYPASSRLS PostgreSQL, backend/frontend checks and encrypted restore comparison. Public health monitoring checks actual policies/connectivity. The owner-controlled encrypted backup tool reads explicitly listed tenants under RLS, includes private PDF bytes, and permits restore only into empty loopback rehearsal databases. Local verification covers 84 fixture rows/all 34 tables; production backup/off-site continuity remain separate acceptance work. See docs/OPERATIONS.md.
+

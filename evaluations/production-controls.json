@@ -1,7 +1,7 @@
 {
   "production_backup": "not performed",
   "production_frontend_checks": 5,
-  "deployment": "initiated after passing CI",
+  "deployment": "Render Live and Vercel source success observed for a366db8",
   "remote_ci": "passed: https://github.com/Kamana5812/JobJugaad/actions/runs/37256477073",
   "local_restore": {
     "scope": "Local synthetic fixture tenant 10271 only; no production backup performed.",
@@ -20,7 +20,7 @@
       "policies": "verified"
     }
   },
-  "release": "API 0.18.0 prepared",
+  "release": "API 0.18.0 deployed",
   "focused_backend_cases": 6,
   "navigation_checks": 19,
   "permanent_erasure": "administrative review pending",
@@ -32,5 +32,492 @@
   "local_api_version": "0.18.0",
   "local_tenant_policies": 34,
   "local_browser": "Privacy, admin fairness/data queue and owned account controls observed with disposable local account",
-  "tested_source_commit": "7cfbf6b3f9fdb7584dbe0295554bef1de2a1768d"
+  "tested_source_commit": "7cfbf6b3f9fdb7584dbe0295554bef1de2a1768d",
+  "live_verification": {
+    "checked_at": "2026-10-05T08:21:21.148957+05:30",
+    "source_commit": "a366db8e5cc1ab9f4ca708a2b7287d7272b16e55",
+    "checks": [
+      {
+        "check": "API 0.18.0 served",
+        "passed": true
+      },
+      {
+        "check": "recovery POST documented /auth/password-reset-request",
+        "passed": true
+      },
+      {
+        "check": "missing recovery fields rejected /auth/password-reset-request",
+        "passed": true
+      },
+      {
+        "check": "recovery POST documented /auth/reset-password",
+        "passed": true
+      },
+      {
+        "check": "missing recovery fields rejected /auth/reset-password",
+        "passed": true
+      },
+      {
+        "check": "34 actual policies verified under restricted runtime role",
+        "passed": true
+      },
+      {
+        "check": "password recovery policy exists",
+        "passed": true
+      },
+      {
+        "check": "new policy auth_limits",
+        "passed": true
+      },
+      {
+        "check": "new policy data_requests",
+        "passed": true
+      },
+      {
+        "check": "protected GET documented /account/export",
+        "passed": true
+      },
+      {
+        "check": "anonymous read rejected /account/export",
+        "passed": true
+      },
+      {
+        "check": "protected GET documented /account/data-requests",
+        "passed": true
+      },
+      {
+        "check": "anonymous read rejected /account/data-requests",
+        "passed": true
+      },
+      {
+        "check": "protected GET documented /admin/data-requests",
+        "passed": true
+      },
+      {
+        "check": "anonymous read rejected /admin/data-requests",
+        "passed": true
+      },
+      {
+        "check": "server logout documented",
+        "passed": true
+      },
+      {
+        "check": "anonymous logout rejected",
+        "passed": true
+      },
+      {
+        "check": "trained models still ready",
+        "passed": true
+      },
+      {
+        "check": "anonymous account read denied",
+        "passed": true
+      },
+      {
+        "check": "exact-origin CORS https://jobjugaad.vercel.app",
+        "passed": true
+      },
+      {
+        "check": "exact-origin CORS https://jobjugaad.vercel.app.evil.example",
+        "passed": true
+      },
+      {
+        "check": "live recovery SPA served /forgot-password",
+        "passed": true
+      },
+      {
+        "check": "live recovery SPA served /reset-password",
+        "passed": true
+      },
+      {
+        "check": "referenced frontend bundle served",
+        "passed": true
+      },
+      {
+        "check": "configured production API origin",
+        "passed": true
+      },
+      {
+        "check": "deployed account control Account & data",
+        "passed": true
+      },
+      {
+        "check": "deployed account control Sign out everywhere",
+        "passed": true
+      },
+      {
+        "check": "deployed account control Privacy & retention",
+        "passed": true
+      },
+      {
+        "check": "deployed account control /auth/logout",
+        "passed": true
+      },
+      {
+        "check": "deployed account control REQUEST DELETION",
+        "passed": true
+      },
+      {
+        "check": "deployed recovery control Forgot password?",
+        "passed": true
+      },
+      {
+        "check": "deployed recovery control Recover your account",
+        "passed": true
+      },
+      {
+        "check": "deployed recovery control Choose a new password",
+        "passed": true
+      },
+      {
+        "check": "deployed recovery control Send reset link",
+        "passed": true
+      },
+      {
+        "check": "deployed recovery control Save new password",
+        "passed": true
+      },
+      {
+        "check": "deployed recovery control /auth/password-reset-request",
+        "passed": true
+      },
+      {
+        "check": "deployed recovery control /auth/reset-password",
+        "passed": true
+      },
+      {
+        "check": "referrer policy served",
+        "passed": true
+      },
+      {
+        "check": "Vercel source deployment successful",
+        "passed": true
+      }
+    ],
+    "real_email_sent": false,
+    "user_password_changed": false,
+    "actual_inbox_verified": false,
+    "policies": [
+      {
+        "table": "account_access",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "account_access_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "announcement_recipients",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "application_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "applications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "assessments",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "auth_limits",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "btech_model_profiles",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "calendar_constraints",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "calendar_settings",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "certifications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "companies",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "data_requests",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "document_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "drive_announcements",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "email_verification_tokens",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "interviews",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "jobs",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "match_overrides",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "matches",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "notifications",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offer_documents",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offer_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "offers",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "password_reset_tokens",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "placement_model_profiles",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "projects",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "risk_predictions",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "schedule_events",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "schedules",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "student_skills",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "students",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "support_reviews",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      },
+      {
+        "table": "users",
+        "college_id": true,
+        "enabled": true,
+        "forced": true,
+        "policy": "college_isolation",
+        "read_write_scoped": true,
+        "status": "verified"
+      }
+    ],
+    "frontend_entry": "/assets/index-BVBjVLoI.js",
+    "vercel_status": [
+      {
+        "context": "Vercel",
+        "state": "success",
+        "target_url": "https://vercel.com/kamana5813/jobjugaad/Ez8CSnJAWtVhDd69SgpXVdw8TyHR"
+      }
+    ],
+    "passed": 39,
+    "total": 39,
+    "all_passed": true
+  },
+  "health_monitor_check": "passed against live services; alert receipt remains unverified",
+  "database_expiry": "2026-10-21, Render Free/Available verified 2026-10-05",
+  "deployed_main_ci": "passed: https://github.com/Kamana5812/JobJugaad/actions/runs/37256877506"
 }

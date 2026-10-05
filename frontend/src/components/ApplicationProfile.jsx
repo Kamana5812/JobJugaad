@@ -3,6 +3,7 @@ import { getApplicationProfile } from '../api/driveWorkflow'
 import { errorMessage } from '../api/student'
 import { Message, secondaryStyle } from './FormField'
 import ReadinessCard from './ReadinessCard'
+import SemanticComparison from './SemanticComparison'
 
 export default function ApplicationProfile({ jobId, application, admin, onExpired }) {
   const [profile, setProfile] = useState(null)
@@ -21,6 +22,7 @@ export default function ApplicationProfile({ jobId, application, admin, onExpire
     {profile && <div className="space-y-4"><p className="text-xs text-muted">Current self-reported profile, shared through this active application. The submission’s frozen evidence remains unchanged.</p>
       <p className="font-bold text-navy">{profile.name} · {profile.branch} · CGPA {profile.cgpa ?? 'not recorded'}</p>
       <ReadinessCard readiness={profile.readiness} />
+      <SemanticComparison jobId={jobId} applicationId={application.id} admin={admin} onExpired={onExpired} />
       <p className="text-sm text-navy">Skills: {profile.skills.map(s => `${s.skill_name} (${s.proficiency}/100)`).join(', ') || 'None recorded'}</p>
       {['projects', 'certifications'].map(kind => <section key={kind}><h4 className="font-bold capitalize text-navy">{kind}</h4>{profile[kind].map((item, i) => <p className="mt-2 whitespace-pre-wrap text-sm" key={i}><strong>{item.title}</strong> — {item.description}</p>)}</section>)}
       <section><h4 className="font-bold text-navy">Experience</h4>{profile.experiences.map((item, i) => <p key={i} className="mt-2 whitespace-pre-wrap text-sm"><strong>{item.role} · {item.organization}</strong> ({item.kind})<br />{item.description}<br />{item.reference}</p>)}</section>

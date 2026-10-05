@@ -408,6 +408,18 @@ class DescriptionReview(BaseModel):
     skills: list[str]
     explanation: str
     methodology: str
+    mentions: list[dict[str, str]] = Field(default_factory=list)
+
+class ResumeSuggestion(BaseModel):
+    field: Literal['name', 'branch', 'cgpa', 'skill', 'project', 'certification']
+    value: str
+    detail: str = ''
+    source: str
+
+class ResumeSuggestions(BaseModel):
+    suggestions: list[ResumeSuggestion]
+    explanation: str
+    methodology: str
 
 class MatchCalculation(BaseModel):
     match_score: float

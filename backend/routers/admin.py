@@ -12,6 +12,19 @@ from schemas import (AnalyticsResponse, SchedulingBoard, ScheduleInput, SlotProp
 
 router = APIRouter(prefix="/admin", tags=["Placement Command Center"])
 
+from schemas import TextEvidence
+from engines import semantic
+
+@router.post('/jobs/{job_id}/applications/{application_id}/semantic', response_model=TextEvidence)
+def staff_semantic(job_id: int, application_id: int, context=Depends(admin_session)):
+    from engines import applications, talent
+    session, user = context
+    job = talent.college_job(session, user, job_id)
+    profile = applications.review_profile(session, user, job, application_id)
+    from engines.auth_limits import consume
+    consume(user.college_id, str(user.id), 'semantic')
+    return semantic.compare(job.description, profile)
+
 from engines import demand
 from schemas import DemandReport, ReminderRunResponse
 

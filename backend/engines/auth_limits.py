@@ -14,6 +14,8 @@ def consume(college, email, operation):
     period = 900 if operation == 'login' else 3600
     window = datetime.fromtimestamp(int(datetime.now(timezone.utc).timestamp()) // period * period, timezone.utc)
     quotas = [(operation + ':' + email, 8 if operation == 'login' else 3), (operation + ':college', 1000 if operation == 'login' else 200)]
+    if operation == 'semantic':
+        quotas = [('semantic:' + email, 30), ('semantic:college', 600)]
     # Only explicitly authorized loopback test databases get high fixture quotas.
     testing = os.environ.get('ALLOW_TEST_DATABASE') == 'yes' and engine.url.host in ('127.0.0.1','localhost')
     exhausted = False
@@ -33,7 +35,7 @@ def consume(college, email, operation):
                 row.attempts += 1
     if exhausted:
         retry = max(1, int(window.timestamp()) + period - int(datetime.now(timezone.utc).timestamp()))
-        raise HTTPException(429, 'Too many account requests. Please wait before trying again.', headers={'Retry-After':str(retry)})
+        raise HTTPException(429, 'Too many requests. Please wait before trying again.', headers={'Retry-After':str(retry)})
 
 async def enforce(request: Request):
     payload = await request.json()

@@ -7,6 +7,7 @@ import PlacementModelPanel from './PlacementModelPanel'
 import ReadinessCard from '../../components/ReadinessCard'
 import EvidenceEditor from '../../components/EvidenceEditor'
 import ResumeUpload from '../../components/ResumeUpload'
+import ResumeSuggestions from '../../components/ResumeSuggestions'
 import PortalHero, { PortalSections } from '../../components/PortalHero'
 import OpportunitiesPanel from './OpportunitiesPanel'
 import InterviewsPanel from './InterviewsPanel'
@@ -47,6 +48,18 @@ export default function ProfilePage() {
     return () => window.removeEventListener('beforeunload', warn)
   }, [dirty])
   function change(key, value) { setForm((current) => ({ ...current, [key]: value })); setDirty(true); setNotice('') }
+  function suggested(items) {
+    setForm(current => {
+      const next = { ...current, skills: [...current.skills], projects: [...current.projects], certifications: [...current.certifications] }
+      for (const item of items) {
+        if (['name', 'branch', 'cgpa'].includes(item.field)) next[item.field] = item.value
+        if (item.field === 'skill' && next.skills.length < 30 && !next.skills.some(s => s.skill_name.toLowerCase() === item.value)) next.skills.push({ skill_name: item.value, proficiency: item.proficiency })
+        const key = item.field === 'project' ? 'projects' : item.field === 'certification' ? 'certifications' : null
+        if (key && next[key].length < 20 && !next[key].some(e => e.title === item.value)) next[key].push({ title: item.value, description: item.detail || item.source })
+      }
+      return next
+    }); setDirty(true); setNotice('Resume suggestions are in your unsaved editor. Review every field before saving; duplicates and collection limits are preserved.')
+  }
   async function save(event) {
     event.preventDefault(); setBusy(true); setError(''); setNotice('')
     try {
@@ -78,6 +91,7 @@ export default function ProfilePage() {
     <InterviewsPanel studentId={profile.id} />
     <Suspense fallback={<p role="status">Loading historical market references…</p>}><MarketRolesPanel /></Suspense>
     <div id="resume" className="scroll-mt-6"><ResumeUpload sectionNumber="04" profile={profile} disabled={busy} onBusyChange={setUploading} onExpired={logout} onUploaded={(value) => setProfile(value)} /></div>
+    <ResumeSuggestions profile={profile} disabled={busy || uploading} onSuggested={suggested} onExpired={logout} />
     <section id="profile-editor" aria-labelledby="profile-title" className="scroll-mt-6 rounded-xl border border-line bg-white p-6 sm:p-8">
       <h2 id="profile-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron-deep">05</span>Build your profile evidence.</h2>
       <p className="mt-2 text-sm leading-6 text-muted">Keep it accurate. Staff-adopted results take precedence in scoring and are named in the breakdown; your self-reports stay editable. Leave unknown assessments blank; missing information contributes zero, not a judgment of ability.</p>

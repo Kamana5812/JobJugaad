@@ -7,8 +7,9 @@ from engines.matching import calculate_match
 class JobTextTests(unittest.TestCase):
     def test_vocabulary_boundaries_and_review_warning(self):
         review = review_description('JavaScript and PostgreSQL required. Docker optional; no Java needed.')
-        self.assertEqual(review.skills, ['java', 'javascript', 'sql', 'docker'])
-        self.assertIn('optional, negated', review.explanation)
+        self.assertEqual(review.skills, ['javascript', 'sql', 'docker'])
+        self.assertIn('negated', review.explanation)
+        self.assertEqual(next(m['status'] for m in review.mentions if m['skill']=='java'), 'negated')
         self.assertNotIn('java', review_description('JavaScript only').skills)
 
     def test_lexical_contributions_and_determinism(self):

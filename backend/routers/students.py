@@ -8,6 +8,31 @@ from engines import assessments
 
 router = APIRouter(prefix="/students", tags=["Students"])
 
+from schemas import ResumeSuggestions, TextEvidence
+from engines import resume_fields, semantic
+
+@router.get('/{student_id}/resume/suggestions', response_model=ResumeSuggestions)
+def resume_suggestions(student_id: int, context=Depends(student_session)):
+    session, user = context
+    student = owned_student(session, user, student_id)
+    return resume_fields.suggest(student.resume_text or '')
+
+@router.post('/{student_id}/semantic-match/{job_id}', response_model=TextEvidence)
+def semantic_match(student_id: int, job_id: int, context=Depends(student_session)):
+    from models import Job, Company
+    from sqlalchemy import select
+    from engines.accounts import approved_scope
+    session, user = context
+    student = owned_student(session, user, student_id)
+    job = session.scalar(select(Job).join(Company, (Company.id == Job.company_id) & (Company.college_id == Job.college_id)).where(
+        Job.college_id == user.college_id, Company.college_id == user.college_id, Job.id == job_id,
+        Job.is_open.is_(True), approved_scope(Company.recruiter_user_id, user.college_id, 'recruiter')))
+    if job is None:
+        raise HTTPException(404, 'Active college drive not found.')
+    from engines.auth_limits import consume
+    consume(user.college_id, str(user.id), 'semantic')
+    return semantic.compare(job.description, profile_response(session, student))
+
 @router.get('/{student_id}/assessments', response_model=AssessmentList)
 def assessment_list(student_id: int, offset: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=50), context=Depends(student_session)):

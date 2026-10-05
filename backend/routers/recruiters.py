@@ -9,6 +9,19 @@ from schemas import CompanyInput, CompanyResponse, JobInput, JobResponse, MatchS
 
 router = APIRouter(prefix="/recruiters", tags=["Talent Finder"])
 
+from schemas import TextEvidence
+from engines import semantic
+
+@router.post('/jobs/{job_id}/applications/{application_id}/semantic', response_model=TextEvidence)
+def application_semantic(job_id: int, application_id: int, context=Depends(recruiter_session)):
+    from engines.applications import review_profile
+    session, user = context
+    job = talent.owned_job(session, user, job_id)
+    profile = review_profile(session, user, job, application_id)
+    from engines.auth_limits import consume
+    consume(user.college_id, str(user.id), 'semantic')
+    return semantic.compare(job.description, profile)
+
 from engines import demand
 from schemas import DemandReport
 

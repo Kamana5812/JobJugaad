@@ -5,6 +5,8 @@ import unittest
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from unittest.mock import patch
+from schemas import TextEvidence
 from fastapi.testclient import TestClient
 from sqlalchemy import select, func, update
 from sqlalchemy.exc import DBAPIError
@@ -68,6 +70,7 @@ class ApplicationsTests(unittest.TestCase):
         self.assertEqual(len([c for c in data["colleges"] if c["kind"] == "bput_directory"]), 169)
         self.assertEqual([c["id"] for c in data["colleges"] if c["kind"] == "demo"], [1, 2])
         self.assertIn("2022", data["source_year"])
+
         for credentials, user, headers in self.accounts:
             r = self.client.post("/auth/login", json=credentials)
             self.assertEqual(r.status_code, 200, r.text)
@@ -78,6 +81,30 @@ class ApplicationsTests(unittest.TestCase):
         self.assertEqual(self.client.post("/auth/login", json={**credentials, "college_id": self.colleges[1]}).status_code, 401)
         for value in [999999, True, "1"]:
             self.assertEqual(self.client.post("/auth/login", json={**credentials, "college_id": value}).status_code, 422)
+
+    def test_semantic_access_requires_ownership_college_and_live_consent(self):
+        created = self.client.post('/recruiters/jobs', headers=self.recruiters[0], json=dict(
+            title='Synthetic NLP consent check', description='Python web services', ctc=6, min_cgpa=0,
+            eligible_branches=['CSE'], required_skills=[dict(skill_name='python', min_proficiency=60)]))
+        self.assertEqual(created.status_code, 201, created.text)
+        job = created.json()['id']
+        row = self.submit(job)
+        student = self.accounts[0][1]['student_id']
+        path = f'/students/{student}/semantic-match/{job}'
+        review = f'/recruiters/jobs/{job}/applications/{row["id"]}/semantic'
+        result = TextEvidence(score=10, factor_breakdown=[dict(term='Synthetic evidence', contribution=10)],
+            explanation='Controlled authorization fixture.', methodology='Model tested separately.')
+        with patch('engines.semantic.compare', return_value=result):
+            self.assertEqual(self.client.post(path, headers=self.headers).status_code, 200)
+            self.assertEqual(self.client.post(path, headers=self.accounts[1][2]).status_code, 404)
+            self.assertEqual(self.client.post(path).status_code, 401)
+            self.assertEqual(self.client.post(review, headers=self.recruiters[0]).status_code, 200)
+            self.assertEqual(self.client.post(review, headers=self.recruiters[2]).status_code, 404)
+            self.assertEqual(self.client.post(review, headers=self.headers).status_code, 403)
+            withdrawn = self.client.post(self.path + f'/{row["id"]}/withdraw', headers=self.headers,
+                json=dict(version=row['version'], reason='Synthetic consent withdrawal for NLP test'))
+            self.assertEqual(withdrawn.status_code, 200, withdrawn.text)
+            self.assertEqual(self.client.post(review, headers=self.recruiters[0]).status_code, 404)
 
     def test_profile_review_requires_owned_active_consent(self):
         row = self.submit(self.jobs[0][5])

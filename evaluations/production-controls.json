@@ -1,8 +1,8 @@
 {
   "production_backup": "not performed",
   "production_frontend_checks": 5,
-  "deployment": "pending",
-  "remote_ci": "pending",
+  "deployment": "initiated after passing CI",
+  "remote_ci": "passed: https://github.com/Kamana5812/JobJugaad/actions/runs/37256477073",
   "local_restore": {
     "scope": "Local synthetic fixture tenant 10271 only; no production backup performed.",
     "backup": {
@@ -28,5 +28,9 @@
   "build": "passed",
   "operations_fairness_cases": 3,
   "backend_regression_cases": 179,
-  "backend_regression_seconds": 604.169
+  "backend_regression_seconds": 604.169,
+  "local_api_version": "0.18.0",
+  "local_tenant_policies": 34,
+  "local_browser": "Privacy, admin fairness/data queue and owned account controls observed with disposable local account",
+  "tested_source_commit": "7cfbf6b3f9fdb7584dbe0295554bef1de2a1768d"
 }

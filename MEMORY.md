@@ -281,6 +281,14 @@ _Do not put actual secret values here — only where to find them._
 
 ## 8. Session Handoff Notes
 
+### 2026-10-05 — Remaining acceptance and continuity execution
+
+User requested completion of the remaining acceptance/operations list and selected Neon free PostgreSQL. The signed-in Neon form was prepared as jobjugaad in Singapore, PostgreSQL only, displaying 0.5 GB capacity; owner reports creation and receiving its connection string. No live DATABASE_URL switch, credential extraction, source backup or remote import occurred. Private ignored .local/migration-config.json is prepared for owner-only source/destination entry. Compare actual source size and complete tenant coverage before migration; Render October 21 expiry remains unresolved until verified cutover.
+
+Manually dispatched existing GitHub health workflow run 37259593089 and observed Success on main 0a048fa. Remote monitoring execution is now verified; actual failed-run alert receipt remains unverified. Added a read-only 34-table account dependency inventory following indirect document/audit references; its real local PostgreSQL integration test passes, preserves rows and denies a different college. No destructive/apply mode is exposed. College-specific retention policy and JSON/free-text/off-site reconciliation remain required before permanent erasure. Execution checklist: docs/CONTINUITY-EXECUTION.md.
+
+Owner admin recovery was requested again; no inbox receipt or signed-in live walkthrough is claimed. Announcement/file/funnel/assessment and real-college approval checks await owner access. Preserve unrelated evaluations/navigation-live-security.json edit. No paid services, production deletion, real hiring changes or new password entry by the agent.
+
 _When ending a work session, leave a short note here for whoever (or whatever AI agent) picks this up next._
 
 > _(example format)_

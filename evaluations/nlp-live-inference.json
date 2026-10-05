@@ -1,0 +1,83 @@
+{
+  "checks": [
+    {
+      "check": "HTTP 200 /openapi.json",
+      "passed": true
+    },
+    {
+      "check": "API 0.20.0",
+      "passed": true
+    },
+    {
+      "check": "HTTP 200 /auth/login",
+      "passed": true
+    },
+    {
+      "check": "Owned archived synthetic student",
+      "passed": true
+    },
+    {
+      "check": "Previously authorized synthetic student",
+      "passed": true
+    },
+    {
+      "check": "HTTP 200 /auth/login",
+      "passed": true
+    },
+    {
+      "check": "Owned archived synthetic recruiter",
+      "passed": true
+    },
+    {
+      "check": "HTTP 200 /students/4805",
+      "passed": true
+    },
+    {
+      "check": "HTTP 200 /students/4805/resume/suggestions",
+      "passed": true
+    },
+    {
+      "check": "Suggestions have source excerpts and review explanation",
+      "passed": true
+    },
+    {
+      "check": "HTTP 201 /recruiters/jobs",
+      "passed": true
+    },
+    {
+      "check": "HTTP 200 /students/4805/semantic-match/19",
+      "passed": true
+    },
+    {
+      "check": "Actual live semantic factors reconcile",
+      "passed": true
+    },
+    {
+      "check": "Full semantic explanation and methodology returned",
+      "passed": true
+    },
+    {
+      "check": "HTTP 200 /students/4805",
+      "passed": true
+    },
+    {
+      "check": "Stored profile and weighted readiness unchanged",
+      "passed": true
+    },
+    {
+      "check": "HTTP 200 /recruiters/jobs/19/state",
+      "passed": true
+    },
+    {
+      "check": "Closed drive excluded from student semantic comparison",
+      "passed": true
+    }
+  ],
+  "scope": "Owned synthetic accounts in archived Demo College 1 only",
+  "emails_sent": false,
+  "applications_created": false,
+  "hiring_decisions_changed": false,
+  "all_passed": true,
+  "test_drive_id": 19,
+  "test_drive_closed_with_audit_reason": true
+}

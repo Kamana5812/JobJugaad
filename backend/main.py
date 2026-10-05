@@ -1,6 +1,8 @@
 """JobJugaad API: explainability-first student core."""
 import logging
 import os
+import asyncio
+from contextlib import suppress
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -29,9 +31,19 @@ async def lifespan(app):
         seed_students(); seed_companies(); seed_phase3(); seed_phase4()
     admins = provision_admin_accounts()
     logging.getLogger("uvicorn.error").info("Tenant RLS initialized; admin accounts provisioned: %s", admins)
-    yield
+    from engines import reminders
+    stop = asyncio.Event()
+    reminder_task = asyncio.create_task(reminders.worker(stop)) if reminders.configured_colleges() else None
+    try:
+        yield
+    finally:
+        stop.set()
+        if reminder_task:
+            reminder_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await reminder_task
 
-app = FastAPI(title="JobJugaad API", version="0.18.1",
+app = FastAPI(title="JobJugaad API", version="0.19.0",
     description="Explainability-first Student Core, Talent Finder and Placement Command Center. Weighted rules plus separate public-data engineering and MBA Random Forest placement signals.",
     lifespan=lifespan)
 # Exact production origin. CORS is a browser boundary, not a substitute for JWT/RBAC/RLS.

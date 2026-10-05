@@ -17,7 +17,7 @@ export default function AssessmentPanel({ studentId }) {
   useEffect(() => { load() }, [studentId, offset])
   return <section id="assessment-evidence" className="scroll-mt-6 space-y-5 rounded-xl border border-line bg-white p-6">
     <h2 className="text-xl font-bold text-navy">Assessment evidence</h2>
-    <p className="text-sm leading-6 text-muted">Your college can record external assessment results with a source and review context. You cannot mark your own scores verified. These are staff declarations, not independently authenticated exams. Readiness, matching and support still use your self-reported profile inputs.</p>
+    <p className="text-sm leading-6 text-muted">Your college can record external results with provenance. Only results explicitly adopted by staff replace the corresponding scoring input; latest assessment date wins. Your original self-report remains saved. Staff declarations are not independently authenticated exams. Refresh your profile to see current readiness; matching and support snapshots need a rerun.</p>
     <button disabled={busy} className={secondaryStyle} onClick={load}>{busy ? 'Loading…' : 'Refresh evidence'}</button>
     <Message error>{error}</Message>
     {data && <><AssessmentRecords items={data.items} />{!data.items.length && <p className="text-sm text-muted">No staff-recorded assessments on this page. No result is inferred from your profile.</p>}

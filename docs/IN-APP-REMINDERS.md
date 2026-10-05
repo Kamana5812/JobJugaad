@@ -1,0 +1,9 @@
+# Persisted in-app event reminders
+
+Upcoming scheduled interview and external-assessment events generate at most one reminder per student/event/bucket. The 24-hour bucket covers more than one hour through 24 hours before the event; the one-hour bucket covers more than zero through one hour. Cancelled, ended, disabled or unapproved real-college accounts are skipped. Notifications use the existing college/recipient/event-key uniqueness constraint, application filters and FORCE RLS. Repeated checks are idempotent; the processed-booking count is not a delivery/read count.
+
+The student's notification feed checks their own due events. An authorised administrator can choose **Drive review → Check due in-app reminders** for the college. To enable unattended checks while the API runs, configure `REMINDER_COLLEGE_IDS` as a JSON list of registered tenant IDs, for example `[10219]`, in Render. There are no credentials in this setting. The worker waits sixty seconds between sweeps, retries errors next time without logging records/secrets, and honours `MIGRATION_MAINTENANCE=yes`.
+
+The event records and reminder notifications survive process restarts. Free Render sleep/outages can delay or miss the opportunity to issue a pre-event reminder; opening the feed catches due future events. No email/SMS/push or on-time delivery guarantee is claimed. The timestamp shown uses the recorded UTC event time and the calendar renders the browser timezone. Always confirm the current calendar; a previously issued reminder is not an attendance confirmation. No reminder creates an application, shortlist, selection or offer.
+
+External-assessment events only reserve the configured student/venue/panel resources. They do not host a test, proctor a student, infer scores or build AI Mock Interview. Staff records reviewed external results in Assessment evidence.

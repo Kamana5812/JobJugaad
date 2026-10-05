@@ -31,7 +31,7 @@ The 4,800 synthetic cohort and 45 companies come from seed.py. The #4805/#17 lif
 
 1. Log in with the private synthetic **recruiter** credentials and **Demo College 1**. The page title is **Talent Finder**.
 2. In the drive list select **Synthetic Phase 4 Lifecycle Drive**. Confirm CTC 6.50, branch CSE, minimum CGPA 6 and Python/SQL targets 60.
-3. Click **Run AI Matching**. Read the adjacent disclosure: keyword matching and a weighted rule, no trained model, unvalidated starting weights.
+3. Click **Run explained matching**. Read the adjacent disclosure: keyword matching and a weighted rule, no trained hiring model, unvalidated starting weights. When a full job description is recorded, inspect the separate lexical TF-IDF evidence; it does not alter the weighted score or eligibility.
 4. In **Candidate view**, keep **Shortlisted for review**. Use the first named synthetic candidate identified in the dated fixture check below. Show the score **together with** the five-row factor table and explanation. Expand **Kahan Kami Hai? · Skill-by-skill comparison**.
 5. Change **Candidate view** to **Excluded / manually rejected**. Use the named excluded fixture below. Read the whole **Below Threshold** explanation and missing requirements; do not present a diagnostic score as proof of eligibility.
 6. Optional human decision: expand **Human review · promote or reject**, choose **Promote to shortlist**, enter `Synthetic demonstration: recruiter reviewed the stated gap`, then **Record decision**. Expand **Audit history → Evidence at decision time** to show the preserved score, factors and explanation. This persists a demonstration override; it does not improve the calculated score. Do not do this to a real profile.
@@ -42,7 +42,7 @@ The 4,800 synthetic cohort and 45 companies come from seed.py. The #4805/#17 lif
 1. In **Create a drive**, enter **Synthetic Final Demo Drive — Run 1**. Use a new Run number on subsequent rehearsals.
 2. Enter CTC **6.50**, minimum CGPA **6**, maximum backlogs **0**, eligible branches **CSE**.
 3. Set Skill 1 **python**, target **60**. Click **Add skill**, enter **sql**, target **60**. Leave scoring settings at their displayed defaults.
-4. Click **Create drive**, record the displayed drive ID, then **Run AI Matching**. This uses the same seeded population and requirements as #17.
+4. Click **Create drive**, record the displayed drive ID, then **Run explained matching**. This uses the same seeded population and requirements as #17.
 5. Use this exact new drive title/ID through scheduling and offer creation below. Offer #2385 is already closed and cannot be used for another acceptance/joining demonstration.
 6. Log out, then log in with your existing administrator account, **Demo College 1**.
 
@@ -58,7 +58,7 @@ The 4,800 synthetic cohort and 45 companies come from seed.py. The #4805/#17 lif
 6. Read the student/venue/panel and overlapping-drive conflict explanation, then the next clear slot. If no other bookings interfere, the alternative is T + 5 minutes; use the actual returned time, not a promised fixed answer.
 7. Click **Create pending proposal**. The calendar remains unchanged until approval. In **03 Pending approval**, enter `Synthetic final demo: approve conflict-free alternative` and click **Approve proposal #…**. Show **Jugaad Ho Gaya ✓**, then both non-overlapping bookings and **05 Calendar review history**.
 
-The fresh scenario deliberately requests a collision but never stores an overlapping confirmed booking. The original seed deliberately imported a real double booking; its resolved history remains the evidence for that separate requirement. Pending proposals do not reserve rooms or panels. Campus working hours are not modeled.
+The fresh scenario deliberately requests a collision but never stores an overlapping confirmed booking. The original seed deliberately imported a real double booking; its resolved history remains evidence for that separate requirement. Pending proposals do not reserve rooms or panels. Working hours, availability and exam constraints are configurable; inspect the current college calendar settings before the demo. Assessment events share the checker but cannot record hiring selection.
 
 ### Continue the same student's fresh offer journey
 

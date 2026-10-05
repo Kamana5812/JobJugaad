@@ -14,6 +14,8 @@ import AnnouncementsPanel from './AnnouncementsPanel'
 import AssessmentsPanel from './AssessmentsPanel'
 import DataRequestsPanel from './DataRequestsPanel'
 import FairnessPanel from './FairnessPanel'
+import DriveReviewPanel from './DriveReviewPanel'
+import StudentsPanel from './StudentsPanel'
 export default function AdminPage() {
   const { user } = useAuth()
   const [tab, setTab] = useState('overview')
@@ -38,9 +40,9 @@ export default function AdminPage() {
     <PortalHero role="admin" collegeId={user.college_id} description="See the evidence. Coordinate your campus, review support needs, and keep people in the decision.">
       <button className={secondaryStyle} onClick={reload} disabled={busy}>{busy ? 'Refreshing…' : 'Refresh dashboard'}</button>
     </PortalHero>
-    {!['accounts', 'announcements', 'assessments', 'data', 'fairness'].includes(tab) && <Message error>{error}</Message>}
+    {!['accounts', 'announcements', 'assessments', 'data', 'fairness', 'drives', 'students'].includes(tab) && <Message error>{error}</Message>}
     <nav aria-label="Command Center sections" className="flex flex-wrap gap-2 rounded-2xl border border-line bg-white p-2">
-      {[['overview', 'Overview'], ['scheduling', 'Scheduling' + (board?.conflicts.length ? ' · ' + board.conflicts.length + ' conflict(s)' : '')], ['announcements', 'Announcements'], ['assessments', 'Assessment evidence'], ['support', 'Placement support'], ['offers', 'Offers'], ['accounts', 'Account approvals'], ['data', 'Data requests'], ['fairness', 'Fairness review']].map(([key, label]) =>
+      {[['overview', 'Overview'], ['students', 'Student directory'], ['drives', 'Drive review'], ['scheduling', 'Scheduling' + (board?.conflicts.length ? ' · ' + board.conflicts.length + ' conflict(s)' : '')], ['announcements', 'Announcements'], ['assessments', 'Assessment evidence'], ['support', 'Placement support'], ['offers', 'Offers'], ['accounts', 'Account approvals'], ['data', 'Data requests'], ['fairness', 'Fairness review']].map(([key, label]) =>
         <button key={key} onClick={() => setTab(key)} aria-current={tab === key ? 'page' : undefined}
           className={'rounded-xl px-5 py-3 text-sm font-bold ' + (tab === key ? 'bg-navy text-white' : 'text-navy hover:bg-paper') + ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy'}>{label}</button>)}
     </nav>
@@ -49,7 +51,9 @@ export default function AdminPage() {
     {tab === 'assessments' && <AssessmentsPanel />}
     {tab === 'data' && <DataRequestsPanel />}
     {tab === 'fairness' && <FairnessPanel />}
-    {['accounts', 'announcements', 'assessments', 'data', 'fairness'].includes(tab) ? null : !data || !board ? <p role="status">{busy ? 'Loading college records…' : 'Use Refresh dashboard to retry.'}</p> : <>
+    {tab === 'drives' && <DriveReviewPanel />}
+    {tab === 'students' && <StudentsPanel />}
+    {['accounts', 'announcements', 'assessments', 'data', 'fairness', 'drives', 'students'].includes(tab) ? null : !data || !board ? <p role="status">{busy ? 'Loading college records…' : 'Use Refresh dashboard to retry.'}</p> : <>
       {tab === 'overview' && <><AnalyticsPanel data={data}><AdminAttention board={board} onSection={setTab} /></AnalyticsPanel><SupportPanel jobs={board.jobs} /></>}
       {tab === 'scheduling' && <SchedulingPanel board={board} refresh={refresh} />}
       {tab === 'support' && <SupportPanel jobs={board.jobs} />}
@@ -58,7 +62,7 @@ export default function AdminPage() {
     <details className="rounded-2xl border border-line bg-white p-5 text-sm">
       <summary className="cursor-pointer font-bold text-navy">Jugaad Dost 🤝 · Quick help</summary>
       <div className="mt-4 space-y-3 text-muted"><p><strong>Who confirms a schedule?</strong> An administrator approves a proposal with a reason. Availability is checked again, so a stale proposal can be refused.</p>
-        <p><strong>What do support indicators mean?</strong> They are proposed rule thresholds using recorded skills, self-reported interview scores and recent completed interview records. Review opportunity and missing records before acting.</p>
+        <p><strong>What do support indicators mean?</strong> They are proposed thresholds using recorded skills, self-reported or explicitly staff-adopted interview evidence, and recent completed interview records. Sources are named in the breakdown. Review opportunity and missing records before acting.</p>
         <p><strong>What does placement percentage mean?</strong> It counts students with an issued, accepted offer, excluding recorded non-joining. Joining is reported separately. Synthetic offers are included and labeled; branch and skill charts still show shortlist conversion.</p>
         <p><strong>What does the post-selection journey count?</strong> Each student and drive form one pair, regardless of interview rounds. The funnel counts recorded milestones, while closures show recorded withdrawal, decline or non-joining. Use its record filter to separate college workflow from synthetic/archive records; its rates are not predictions or proof of employment.</p>
         <p>This is a static help panel.</p></div>

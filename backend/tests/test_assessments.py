@@ -60,6 +60,30 @@ class AssessmentTests(unittest.TestCase):
     def create(self, payload=None):
         return self.client.post('/admin/assessments', headers=self.a['admin']['headers'], json=payload or self.payload)
 
+    def test_adopted_results_normalize_precedence_and_withdrawal(self):
+        path = f"/students/{self.a['student_id']}"
+        headers = self.a['student']['headers']
+        baseline = self.client.get(path, headers=headers).json()
+        first = self.create({**self.payload, 'use_for_scoring': True})
+        self.assertEqual(first.status_code, 201, first.text)
+        adopted = self.client.get(path, headers=headers).json()
+        self.assertEqual(adopted['aptitude_score'], 25)  # Original self-report is preserved.
+        factor = next(f for f in adopted['readiness']['breakdown'] if f['key'] == 'aptitude')
+        self.assertEqual(factor['value'], 75)
+        self.assertIn(f"assessment #{first.json()['id']}", factor['evidence'])
+        second = self.create({**self.payload, 'use_for_scoring': True, 'score': 40,
+            'assessed_on': datetime.now(timezone.utc).isoformat()})
+        self.assertEqual(second.status_code, 201, second.text)
+        current = self.client.get(path, headers=headers).json()
+        self.assertEqual(next(f for f in current['readiness']['breakdown'] if f['key'] == 'aptitude')['value'], 100)
+        for row, expected in ((second.json(), 75), (first.json(), 25)):
+            withdrawn = self.client.post(f"/admin/assessments/{row['id']}/withdraw",
+                headers=self.a['admin']['headers'], json={'reason': 'Withdraw controlled adopted scoring fixture'})
+            self.assertEqual(withdrawn.status_code, 200, withdrawn.text)
+            current = self.client.get(path, headers=headers).json()
+            self.assertEqual(next(f for f in current['readiness']['breakdown'] if f['key'] == 'aptitude')['value'], expected)
+        self.assertEqual(current['readiness'], baseline['readiness'])
+
     def test_result_provenance_and_no_silent_profile_overwrite(self):
         before = self.client.get(f"/students/{self.a['student_id']}", headers=self.a['student']['headers']).json()
         result = self.create()

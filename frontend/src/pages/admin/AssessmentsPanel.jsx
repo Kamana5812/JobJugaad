@@ -4,7 +4,7 @@ import { errorMessage } from '../../api/student'
 import AssessmentRecords from '../../components/AssessmentRecords'
 import { FormField, Message, buttonStyle, secondaryStyle } from '../../components/FormField'
 
-const empty = {student_id:'', kind:'aptitude', skill_name:'', title:'', source:'', reference:'', assessed_on:'', score:'', maximum:'100', reason:''}
+const empty = {student_id:'', kind:'aptitude', skill_name:'', title:'', source:'', reference:'', assessed_on:'', score:'', maximum:'100', reason:'', use_for_scoring:false}
 export default function AssessmentsPanel() {
   const [form, setForm] = useState(empty)
   const [data, setData] = useState(null)
@@ -37,7 +37,7 @@ export default function AssessmentsPanel() {
   }
   return <section className="space-y-6 rounded-xl border border-line bg-white p-6 sm:p-8">
     <header><h2 className="text-xl font-bold text-navy">Assessment evidence</h2>
-      <p className="mt-2 text-sm leading-6 text-muted">Record results you have reviewed from an external assessment. Source, result reference and review context are required. Staff entry is a human declaration; JobJugaad does not authenticate the exam or conduct assessments. Readiness, matching and support still use self-reported profile inputs.</p></header>
+      <p className="mt-2 text-sm leading-6 text-muted">Record reviewed external results with source and reference. Staff entry is a human declaration, not independent exam authentication. Evidence-only is the default. Explicit adoption replaces the corresponding scoring input; latest assessment date wins, ties by record ID. Withdraw an incorrect result to restore earlier evidence or the self-report. Rerun matching and support after a change.</p></header>
     <form onSubmit={save} className="space-y-4">
       <fieldset disabled={busy} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <FormField label="Student ID" type="number" min={1} step={1} required value={form.student_id} onChange={e=>change('student_id',e.target.value)} />
@@ -50,6 +50,7 @@ export default function AssessmentsPanel() {
         <FormField label="Original score" type="number" min={0} max={100000} step="any" required value={form.score} onChange={e=>change('score',e.target.value)} />
         <FormField label="Maximum score" type="number" min={0.000001} max={100000} step="any" required value={form.maximum} onChange={e=>change('maximum',e.target.value)} />
         <FormField label="Review context / reason" required minLength={10} maxLength={1000} value={form.reason} onChange={e=>change('reason',e.target.value)} />
+        <label className="flex items-start gap-3 text-sm text-navy"><input type="checkbox" checked={form.use_for_scoring} onChange={e=>change('use_for_scoring',e.target.checked)} />Adopt this reviewed result for readiness, matching and support scoring. The original self-report is retained.</label>
       </fieldset>
       <button className={buttonStyle} disabled={busy}>{busy ? 'Saving / loading…' : 'Record reviewed result'}</button>
     </form>

@@ -30,8 +30,11 @@ def owned_interview(session, college, interview_id):
 
 
 def validate_references(session, college, payload):
-    if session.scalar(select(Job.id).where(Job.id == payload.job_id, Job.college_id == college)) is None:
+    drive_row = session.scalar(select(Job).where(Job.id == payload.job_id, Job.college_id == college))
+    if drive_row is None:
         raise HTTPException(404, "Drive not found.")
+    if not drive_row.is_open and not payload.reschedule_interview_id:
+        raise HTTPException(409, 'Drive is closed to new interview proposals. Existing interviews and offers remain recorded.')
     if session.scalar(select(Student.id).where(Student.id == payload.student_id, Student.college_id == college)) is None:
         raise HTTPException(404, "Student not found.")
     if college not in (1, 2):
@@ -50,7 +53,7 @@ def validate_references(session, college, payload):
         source = owned_interview(session, college, payload.reschedule_interview_id)
         if source.status != "scheduled" or (source.student_id, source.job_id) != (payload.student_id, payload.job_id):
             raise HTTPException(409, "Only a scheduled interview for the same student and drive can be rescheduled.")
-        if (source.round_number, source.round_name) != (payload.round_number, payload.round_name):
+        if (source.round_number, source.round_name, source.event_type) != (payload.round_number, payload.round_name, payload.event_type):
             raise HTTPException(409, "A reschedule must preserve the source interview's round number and name.")
 
 
@@ -84,7 +87,7 @@ def create_proposal(session, user, payload):
         venue=payload.venue, panel_id=payload.panel_id, status="pending",
         conflicts=[c.model_dump(mode="json") for c in proposal.conflicts], explanation=proposal.explanation,
         calendar_conflicts=[c.model_dump(mode="json") for c in proposal.calendar_conflicts],
-        round_number=payload.round_number, round_name=payload.round_name,
+        round_number=payload.round_number, round_name=payload.round_name, event_type=payload.event_type,
         reschedule_interview_id=payload.reschedule_interview_id, created_by=user.id)
     session.add(row)
     session.flush()
@@ -106,7 +109,7 @@ def as_input(row, requested=False):
         scheduled_time=row.requested_time if requested else row.scheduled_time,
         duration_minutes=int((row.end_time - row.scheduled_time).total_seconds() / 60),
         venue=row.venue, panel_id=row.panel_id, reschedule_interview_id=row.reschedule_interview_id,
-        round_number=row.round_number, round_name=row.round_name)
+        round_number=row.round_number, round_name=row.round_name, event_type=row.event_type)
 
 
 def recheck_proposal(session, user, schedule_id, payload):
@@ -152,7 +155,7 @@ def review_proposal(session, user, schedule_id, payload):
         interview = Interview(college_id=user.college_id, schedule_id=row.id, job_id=row.job_id,
             student_id=row.student_id, scheduled_time=row.scheduled_time, end_time=row.end_time,
             venue=row.venue, panel_id=row.panel_id, status="scheduled",
-            round_number=row.round_number, round_name=row.round_name)
+            round_number=row.round_number, round_name=row.round_name, event_type=row.event_type)
         session.add(interview)
         session.flush()
     session.execute(update(Schedule).where(Schedule.id == row.id, Schedule.college_id == user.college_id).values(
@@ -162,7 +165,7 @@ def review_proposal(session, user, schedule_id, payload):
         schedule_id=row.id, interview_id=interview.id if interview else None)
     if interview:
         notify_student(session,user.college_id,interview.student_id,f"interview:{interview.id}:confirmed",
-            "Interview confirmed",f"Interview #{interview.id} for drive #{interview.job_id} is confirmed at {interview.scheduled_time.isoformat()} in {interview.venue}, panel {interview.panel_id}. "
+            f"{interview.event_type.capitalize()} confirmed",f"{interview.event_type.capitalize()} #{interview.id} for drive #{interview.job_id} is confirmed at {interview.scheduled_time.isoformat()} in {interview.venue}, panel {interview.panel_id}. "
             + f"Round {interview.round_number}: {interview.round_name}. "
             + (f"It replaces interview #{row.reschedule_interview_id}. " if row.reschedule_interview_id else "") + row.explanation)
     return response(row)
@@ -171,6 +174,8 @@ def review_proposal(session, user, schedule_id, payload):
 def change_interview_status(session, user, interview_id, payload):
     lock_calendar(session, user.college_id)
     row = owned_interview(session, user.college_id, interview_id)
+    if row.event_type == 'assessment' and payload.status == 'selected':
+        raise HTTPException(422, 'An assessment event cannot record hiring selection. Record completion and enter the reviewed assessment result separately.')
     if row.status == "cancelled":
         raise HTTPException(409, "A cancelled interview cannot be reopened; create a new proposal.")
     if payload.status != "cancelled" and row.end_time > datetime.now(timezone.utc):
@@ -203,7 +208,7 @@ def calendar_board(session, user):
         request = ScheduleInput(job_id=booking.job_id, student_id=booking.student_id, scheduled_time=booking.scheduled_time,
             duration_minutes=int((booking.end_time-booking.scheduled_time).total_seconds()/60),
             venue=booking.venue, panel_id=booking.panel_id, reschedule_interview_id=booking.id,
-            round_number=booking.round_number, round_name=booking.round_name)
+            round_number=booking.round_number, round_name=booking.round_name, event_type=booking.event_type)
         # Existing bookings are never cancelled by calendar edits. Only live or
         # future scheduled intervals need current-constraint warnings.
         if booking.end_time > datetime.now(timezone.utc):

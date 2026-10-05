@@ -125,6 +125,7 @@ _Add a new row every time a meaningful architectural or product decision is made
 ## 3. Current State
 
 ### ✅ Completed
+- [x] 2026-10-05: Implemented KT backlog closure on feature/acceptance-and-erasure-inventory: college staff directory/profile review, admin matching/override and consented-application handoff, profile experience, reviewed drive descriptions with separately explained lexical TF-IDF evidence, audited drive closure, explicit external-assessment adoption, recorded hiring demand, assessment calendar events, idempotent in-app reminders, bounded PDF processing/CSP and guarded student erasure tooling. Final backend regression passes 200/200 in 521.040 seconds; completion SSR checks and final build pass. Deployment remains pending. See docs/COMPLETION-STATUS.md for boundaries.
 - [x] Production-controls implementation: hashed login/signup limits, server session revocation, owned export/privacy/reviewed closure; synthetic fairness audit/admin view; CI/health/encrypted backup/restore tools. Local 179-case suite plus three additional operations cases, 24 frontend checks and final build pass. Remote CI regression/restore/frontend build pass (run 37256477073); deployment and owner checks remain separate.
 
 
@@ -550,3 +551,10 @@ CI preparation identified fresh-database seed prerequisites and publisher CSV li
 Published a366db8 after corrected fresh-run CI passed. Render shows Live and Vercel source success; all 39 public checks pass, including API 0.18.0, the complete 34-table policy inventory, exact CORS and anonymous access denial. New account controls and privacy are served; local admin fairness/data queue/account pages were observed with disposable fixtures. Live health monitoring script passes. Render Free/Available still expires October 21, 2026. Remaining owner steps are listed in docs/LIVE-ACCEPTANCE.md; inbox verification has not been tried, production backup/continuity and permanent erasure are not claimed. No payment, destructive cleanup, real-account restriction or password change occurred. Preserve unrelated evaluations/navigation-live-security.json edit.
 
 
+
+### Production backup verification — 2026-10-05
+- Owner authorized encrypted local backup and, after local verification, production-data import into the new empty Neon database.
+- Encrypted archive covers all 171 registered colleges: 87,362 rows across 34 tables. Local isolated PostgreSQL restore passed exact record/byte digest comparison and verified RLS policies.
+- Restore handles the optional schedule-to-rescheduled-interview dependency in two passes inside one transaction, retaining all foreign-key constraints and tenant filters.
+- Preliminary Neon import passed exact record/file digest and restricted-role RLS verification (34 tables, 171 colleges, 87,362 rows). The live app remains on Render. This archive was taken while live writes continued and is not the final cutover snapshot.
+- Off-site backup, final synchronized cutover, actual alert receipt, and signed-in workflow acceptance remain unverified.

@@ -8,6 +8,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import unittest
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -543,15 +544,24 @@ class OfferDocumentTests(unittest.TestCase):
         self.assertEqual(replay["offer"]["version"],reviewed["offer"]["version"])
 
     def test_concurrent_retries_and_new_uploads_cannot_overwrite_versions(self):
+        def upload_after_capacity_retry(**kwargs):
+            # A bounded parser can decline concurrent work before any DB mutation.
+            response = self.upload_response(**kwargs)
+            for _ in range(5):
+                if response.status_code != 503 or not response.headers.get("retry-after"):
+                    break
+                time.sleep(int(response.headers["retry-after"]))
+                response = self.upload_response(**kwargs)
+            return response
         key=str(uuid.uuid4())
         with ThreadPoolExecutor(max_workers=2) as pool:
-            results=list(pool.map(lambda _:self.upload_response(key=key),range(2)))
+            results=list(pool.map(lambda _:upload_after_capacity_retry(key=key),range(2)))
         self.assertEqual([r.status_code for r in results],[201,201])
         self.assertEqual(len({r.json()["document"]["id"] for r in results}),1)
         self.assertEqual(self.counts()[0],1)
         row=self.new_offer(self.a)
         with ThreadPoolExecutor(max_workers=2) as pool:
-            results=list(pool.map(lambda _:self.upload_response(row=row),range(2)))
+            results=list(pool.map(lambda _:upload_after_capacity_retry(row=row),range(2)))
         self.assertEqual(sorted(r.status_code for r in results),[201,409])
         self.assertEqual(self.counts(row)[0],1)
         self.assertEqual(self.get_row(row)["version"],row["version"]+1)

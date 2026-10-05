@@ -28,12 +28,15 @@ def notify_admins(session, college, key, title, body):
 
 
 def feed(session, user, offset=0, limit=20):
+    if user.role == 'student':
+        from engines.reminders import generate
+        generate(session, user.college_id, user_id=user.id)
     scope = (Notification.college_id == user.college_id, Notification.recipient_user_id == user.id)
     total = session.scalar(select(func.count()).select_from(Notification).where(*scope))
     unread = session.scalar(select(func.count()).select_from(Notification).where(*scope, Notification.read_at.is_(None)))
     rows = session.scalars(select(Notification).where(*scope).order_by(Notification.id.desc()).offset(offset).limit(limit)).all()
     delivery = "simulated_in_app" if user.college_id in (1, 2) else "in_app"
-    return NotificationFeed(explanation="Archived demo notifications." if delivery == "simulated_in_app" else "Recorded in-app notifications. Hiring events are not delivered by email or SMS.",
+    return NotificationFeed(explanation="Archived demo notifications." if delivery == "simulated_in_app" else "Recorded in-app notifications. Due reminders are checked when you open the feed; a configured worker also checks while the API runs. Free-service sleep can delay reminders. Hiring events are not delivered by email or SMS.",
         notifications=[NotificationResponse(**NotificationResponse.model_validate(row,from_attributes=True).model_dump(exclude={"delivery"}), delivery=delivery) for row in rows],
         total=total,unread_count=unread,offset=offset,limit=limit)
 

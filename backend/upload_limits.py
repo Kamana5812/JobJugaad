@@ -10,6 +10,7 @@ from engines.document_pdf import MAX_BYTES
 
 MAX_UPLOAD_BODY_BYTES = MAX_BYTES + 64 * 1024
 UPLOAD_PATH = re.compile(r"^/(?:admin/offers/[^/]+|students/[^/]+/offers/[^/]+)/documents/?$")
+RESUME_PATH = re.compile(r"^/students/[^/]+/resume/?$")
 
 
 class DocumentUploadLimitMiddleware:
@@ -18,8 +19,9 @@ class DocumentUploadLimitMiddleware:
 
     async def __call__(self, scope, receive, send):
         if (scope["type"] != "http" or scope["method"] != "POST"
-                or not UPLOAD_PATH.fullmatch(scope["path"])):
+                or not (UPLOAD_PATH.fullmatch(scope["path"]) or RESUME_PATH.fullmatch(scope["path"]))):
             return await self.app(scope, receive, send)
+        maximum = (5 * 1024 * 1024 + 64 * 1024) if RESUME_PATH.fullmatch(scope['path']) else MAX_UPLOAD_BODY_BYTES
         headers = scope.get("headers", [])
         authorization = dict(headers).get(b"authorization", b"").decode("latin-1")
         scheme, _, token = authorization.partition(" ")
@@ -36,7 +38,7 @@ class DocumentUploadLimitMiddleware:
         lengths = [value for key, value in headers if key == b"content-length"]
         if len(lengths) > 1 or (lengths and (len(lengths[0]) > 20 or not lengths[0].isdigit())):
             return await JSONResponse({"detail": "Invalid upload request length."}, status_code=400)(scope, receive, send)
-        if lengths and int(lengths[0]) > MAX_UPLOAD_BODY_BYTES:
+        if lengths and int(lengths[0]) > maximum:
             return await self.too_large(scope, receive, send)
         body = bytearray()
         while True:
@@ -44,7 +46,7 @@ class DocumentUploadLimitMiddleware:
             if message["type"] == "http.disconnect":
                 return
             chunk = message.get("body", b"")
-            if len(body) + len(chunk) > MAX_UPLOAD_BODY_BYTES:
+            if len(body) + len(chunk) > maximum:
                 return await self.too_large(scope, receive, send)
             body.extend(chunk)
             if not message.get("more_body", False):
@@ -62,5 +64,6 @@ class DocumentUploadLimitMiddleware:
 
     @staticmethod
     async def too_large(scope, receive, send):
-        await JSONResponse({"detail": "Upload request is too large. Use one PDF of at most 2 MiB and short form fields."},
+        limit = '5 MiB' if RESUME_PATH.fullmatch(scope['path']) else '2 MiB'
+        await JSONResponse({"detail": f"Upload request is too large. Use one PDF of at most {limit} and short form fields."},
                            status_code=413)(scope, receive, send)

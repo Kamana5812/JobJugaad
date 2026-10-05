@@ -53,6 +53,8 @@ jobs:
         working-directory: frontend
       - run: node scripts/check-production-controls.mjs
         working-directory: frontend
+      - run: node scripts/check-kt-completion.mjs
+        working-directory: frontend
       - run: npm run build
         working-directory: frontend
         env:

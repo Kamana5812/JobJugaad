@@ -7,9 +7,12 @@ import pdfplumber
 MAX_BYTES = 5 * 1024 * 1024
 MAX_PAGES = 20
 MAX_CHARACTERS = 200_000
+from engines.pdf_budget import PARSER_SLOTS
 
 def _extract(content, channel):
     try:
+        from engines.document_pdf import _resource_bounds
+        _resource_bounds()
         with pdfplumber.open(io.BytesIO(content)) as pdf:
             if len(pdf.pages) > MAX_PAGES:
                 channel.send((False, "Please upload a PDF with at most 20 pages."))
@@ -30,13 +33,27 @@ def _extract(content, channel):
         channel.close()
 
 def extract_resume(content: bytes):
+    if not PARSER_SLOTS.acquire(timeout=2):
+        raise HTTPException(503, "PDF processing is busy. Please try again shortly.", headers={'Retry-After': '3'})
+    try:
+        return _extract_bounded(content)
+    finally:
+        PARSER_SLOTS.release()
+
+
+def _extract_bounded(content: bytes):
     if not content.startswith(b"%PDF-"):
         raise HTTPException(422, "Please upload a valid PDF file.")
     # A separate process bounds parser time and releases its memory on completion.
     context = multiprocessing.get_context("spawn")
     parent, child = context.Pipe(duplex=False)
     worker = context.Process(target=_extract, args=(content, child), daemon=True)
-    worker.start()
+    try:
+        worker.start()
+    except (OSError, RuntimeError):
+        parent.close()
+        child.close()
+        raise HTTPException(503, "Resume processing could not start. Please try again shortly.") from None
     child.close()
     try:
         if not parent.poll(20):

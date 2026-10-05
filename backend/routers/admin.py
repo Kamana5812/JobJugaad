@@ -12,6 +12,103 @@ from schemas import (AnalyticsResponse, SchedulingBoard, ScheduleInput, SlotProp
 
 router = APIRouter(prefix="/admin", tags=["Placement Command Center"])
 
+from engines import demand
+from schemas import DemandReport, ReminderRunResponse
+
+@router.post('/reminders/run', response_model=ReminderRunResponse)
+def due_reminders(context=Depends(admin_session)):
+    from engines.reminders import generate
+    session, user = context
+    count = generate(session, user.college_id)
+    return {'eligible_bookings_processed': count, 'explanation': 'Due in-app reminders were checked for this college. Duplicate event/bucket keys are ignored. This count is processed bookings, not delivered emails or read receipts.'}
+
+@router.get('/analytics/demand', response_model=DemandReport)
+def college_demand(context=Depends(admin_session)):
+    return demand.report(*context)
+
+from sqlalchemy import select
+from models import Job, Application
+from engines import talent, applications
+from schemas import JobResponse, MatchResults, MatchSummary, OverrideInput, CandidateResponse, ApplicationList, ApplicationReview, ApplicationResponse
+from schemas import ProfileResponse
+from schemas import DriveStateInput
+from schemas import StudentDirectory
+from sqlalchemy import func, or_
+from models import Student, User
+from engines.profile import profile_response
+from fastapi import HTTPException
+
+@router.get('/students', response_model=StudentDirectory)
+def student_directory(query: str = Query('', max_length=100), offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=50), context=Depends(admin_session)):
+    session, user = context
+    filters = [Student.college_id == user.college_id, User.college_id == user.college_id, User.role == 'student']
+    if query.strip():
+        escaped = query.strip().replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+        pattern = '%' + escaped + '%'
+        filters.append(or_(Student.name.ilike(pattern, escape='\\'), User.email.ilike(pattern, escape='\\')))
+    join = (User.id == Student.user_id) & (User.college_id == Student.college_id)
+    total = session.scalar(select(func.count()).select_from(Student).join(User, join).where(*filters))
+    rows = session.execute(select(Student, User).join(User, join).where(*filters)
+        .order_by(Student.id).offset(offset).limit(limit)).all()
+    return {'items': [dict(id=s.id, user_id=u.id, name=s.name, branch=s.branch, email=u.email,
+        restricted=u.disabled_at is not None) for s, u in rows], 'total': total, 'offset': offset, 'limit': limit}
+
+@router.get('/students/{student_id}/profile', response_model=ProfileResponse)
+def staff_student_profile(student_id: int, context=Depends(admin_session)):
+    session, user = context
+    student = session.scalar(select(Student).join(User,
+        (User.id == Student.user_id) & (User.college_id == Student.college_id)).where(
+        Student.college_id == user.college_id, User.college_id == user.college_id,
+        User.role == 'student', Student.id == student_id))
+    if student is None:
+        raise HTTPException(404, 'Student profile not found in your college.')
+    return profile_response(session, student)
+
+@router.post('/jobs/{job_id}/state', response_model=JobResponse)
+def college_drive_state(job_id: int, payload: DriveStateInput, context=Depends(admin_session)):
+    session, user = context
+    return talent.set_drive_state(session, user, talent.college_job(session, user, job_id, lock=True), payload)
+
+@router.get('/jobs/{job_id}/applications/{application_id}/profile', response_model=ProfileResponse)
+def college_application_profile(job_id: int, application_id: int, context=Depends(admin_session)):
+    session, user = context
+    return applications.review_profile(session, user, talent.college_job(session, user, job_id), application_id)
+
+@router.get('/jobs', response_model=list[JobResponse])
+def college_jobs(context=Depends(admin_session)):
+    session, user = context
+    return [talent.job_response(job) for job in session.scalars(select(Job).where(
+        Job.college_id == user.college_id).order_by(Job.id.desc()))]
+
+@router.post('/jobs/{job_id}/matching', response_model=MatchSummary)
+def college_matching(job_id: int, context=Depends(admin_session)):
+    session, user = context
+    return talent.run_matching(session, talent.college_job(session, user, job_id, lock=True))
+
+@router.get('/jobs/{job_id}/matches', response_model=MatchResults)
+def college_matches(job_id: int, status: Literal['all', 'shortlisted', 'excluded'] = 'shortlisted',
+    offset: int = Query(0, ge=0), limit: int = Query(5, ge=1, le=100), context=Depends(admin_session)):
+    session, user = context
+    return talent.match_results(session, talent.college_job(session, user, job_id), status, offset, limit)
+
+@router.post('/jobs/{job_id}/matches/{match_id}/override', response_model=CandidateResponse)
+def college_override(job_id: int, match_id: int, payload: OverrideInput, context=Depends(admin_session)):
+    session, user = context
+    return talent.override_match(session, user, talent.college_job(session, user, job_id, lock=True), match_id, payload)
+
+@router.get('/jobs/{job_id}/applications', response_model=ApplicationList)
+def college_applications(job_id: int, offset: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=50), context=Depends(admin_session)):
+    session, user = context
+    job = talent.college_job(session, user, job_id)
+    return applications.listing(session, user.college_id, Application.job_id == job.id, offset, limit)
+
+@router.post('/jobs/{job_id}/applications/{application_id}/review', response_model=ApplicationResponse)
+def college_application_review(job_id: int, application_id: int, payload: ApplicationReview, context=Depends(admin_session)):
+    session, user = context
+    job = talent.college_job(session, user, job_id)
+    return applications.action(session, user, application_id, Application.job_id == job.id, payload)
+
 @router.get('/assessments', response_model=AssessmentList)
 def assessment_list(student_id: int | None = Query(None, gt=0), offset: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=50), context=Depends(admin_session)):

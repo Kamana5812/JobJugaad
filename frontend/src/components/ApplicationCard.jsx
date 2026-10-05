@@ -1,4 +1,5 @@
 import FactorTable from './FactorTable'
+import TextEvidence from './TextEvidence'
 export const applicationStatus = value => value.replaceAll('_', ' ')
 export default function ApplicationCard({ application: a, children }) {
   const e = a.evidence
@@ -12,6 +13,7 @@ export default function ApplicationCard({ application: a, children }) {
     <div className="rounded-lg bg-paper p-4"><p className="text-sm font-semibold text-navy">Submission-time match: {e.match_score}/100 · {e.eligible ? 'Meets weighted rules' : 'Gaps for human review'}</p>
       <p className="mt-2 text-sm leading-6 text-ink">{e.explanation}</p><p className="mt-2 text-sm text-navy">Next step: {e.next_step}</p></div>
     <FactorTable factors={e.factor_breakdown} />
+    <TextEvidence evidence={e.text_evidence} />
     {e.missing_requirements.length > 0 && <div><h4 className="text-sm font-bold text-navy">Recorded requirements to review</h4><ul className="mt-2 list-inside list-disc space-y-1 text-sm text-muted">{e.missing_requirements.map((gap, i) => <li key={i}>{gap}</li>)}</ul></div>}
     <p className="text-xs leading-5 text-muted">{e.methodology}</p>
     {children}

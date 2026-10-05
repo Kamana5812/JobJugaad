@@ -9,6 +9,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from models import Job, Company
 from engines.profile import collections
+from engines.scoring_evidence import resolve_scoring
 from engines.accounts import approved_scope
 from engines.matching import calculate_match
 from schemas import StudentOpportunity, StudentOpportunities, OpportunityRole
@@ -16,13 +17,14 @@ from schemas import StudentOpportunity, StudentOpportunities, OpportunityRole
 
 def student_opportunities(session, student, status, offset, limit, target_job_id=None):
     evidence = collections(session, student)
+    scoring_student, scoring_skills = resolve_scoring(session, student, evidence['skills'])
     # Both application filters remain explicit, independently of FORCE RLS.
     rows = session.execute(select(Job, Company).join(Company,
         (Company.id == Job.company_id) & (Company.college_id == Job.college_id)).where(
-        Job.college_id == student.college_id, Company.college_id == student.college_id, approved_scope(Company.recruiter_user_id, student.college_id, "recruiter"))).all()
+        Job.college_id == student.college_id, Job.is_open.is_(True), Company.college_id == student.college_id, approved_scope(Company.recruiter_user_id, student.college_id, "recruiter"))).all()
     results = []
     for job, company in rows:
-        calculation = calculate_match(student, evidence["skills"], evidence["projects"],
+        calculation = calculate_match(scoring_student, scoring_skills, evidence["projects"],
             evidence["certifications"], job)
         results.append(StudentOpportunity(**calculation.model_dump(), job_id=job.id,
             title=job.title, company_name=company.name, ctc=float(job.ctc), min_cgpa=job.min_cgpa,

@@ -1,6 +1,6 @@
 """Phase 1 models; composite foreign keys enforce tenant consistency."""
 from datetime import datetime, timezone
-from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKeyConstraint, Integer, String, Text, UniqueConstraint, LargeBinary, Uuid, Index, text
+from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKeyConstraint, Integer, String, Text, UniqueConstraint, LargeBinary, Uuid, Index, text, JSON, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
 
@@ -27,6 +27,7 @@ class Student(TenantRow, Base):
     cgpa: Mapped[float | None] = mapped_column(Float, nullable=True)
     backlog_count: Mapped[int] = mapped_column(Integer, default=0)
     resume_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    experiences: Mapped[list] = mapped_column(JSON, nullable=False, default=list, server_default=text("'[]'::json"))
     aptitude_score: Mapped[float | None] = mapped_column(Float, nullable=True)
     communication_score: Mapped[float | None] = mapped_column(Float, nullable=True)
     interview_score: Mapped[float | None] = mapped_column(Float, nullable=True)
@@ -53,6 +54,7 @@ class Assessment(TenantRow, Base):
     student_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     recorded_by: Mapped[int] = mapped_column(Integer, nullable=False)
     kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    use_for_scoring: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default='false')
     skill_name: Mapped[str | None] = mapped_column(String(80))
     title: Mapped[str] = mapped_column(String(160), nullable=False)
     source: Mapped[str] = mapped_column(String(160), nullable=False)
@@ -103,6 +105,10 @@ class Job(TenantRow, Base):
     __tablename__ = "jobs"
     company_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     title: Mapped[str] = mapped_column(String(160), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default='', server_default='')
+    is_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default='true')
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default='1')
+    lifecycle_events: Mapped[list] = mapped_column(JSON, nullable=False, default=list, server_default="'[]'::json")
     ctc: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)  # INR lakh per annum
     min_cgpa: Mapped[float] = mapped_column(Float, nullable=False)
     max_backlogs: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
@@ -130,6 +136,7 @@ class Match(TenantRow, Base):
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
     next_step: Mapped[str] = mapped_column(Text, nullable=False)
     methodology: Mapped[str] = mapped_column(Text, nullable=False)
+    text_evidence: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     override_action: Mapped[str | None] = mapped_column(String(20), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     calculated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
@@ -143,6 +150,7 @@ class MatchOverride(TenantRow, Base):
     __tablename__ = "match_overrides"
     match_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     recruiter_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    actor_role: Mapped[str] = mapped_column(String(20), nullable=False, default="recruiter", server_default="recruiter")
     action: Mapped[str] = mapped_column(String(20), nullable=False)
     reason: Mapped[str] = mapped_column(Text, nullable=False)
     previous_action: Mapped[str | None] = mapped_column(String(20), nullable=True)
@@ -168,6 +176,7 @@ class Schedule(TenantRow, Base):
     calendar_conflicts: Mapped[list] = mapped_column(JSON, nullable=False, default=list, server_default="[]")
     round_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1")
     round_name: Mapped[str] = mapped_column(String(80), nullable=False, default="Interview", server_default="Interview")
+    event_type: Mapped[str] = mapped_column(String(20), nullable=False, default='interview', server_default='interview')
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
     reschedule_interview_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_by: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -198,6 +207,7 @@ class Interview(TenantRow, Base):
     seed_key: Mapped[str | None] = mapped_column(String(100), nullable=True)
     round_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1")
     round_name: Mapped[str] = mapped_column(String(80), nullable=False, default="Interview", server_default="Interview")
+    event_type: Mapped[str] = mapped_column(String(20), nullable=False, default='interview', server_default='interview')
     __table_args__ = (UniqueConstraint("id","college_id"), UniqueConstraint("college_id","seed_key"),
         ForeignKeyConstraint(["schedule_id","college_id"], ["schedules.id","schedules.college_id"]),
         ForeignKeyConstraint(["job_id","college_id"], ["jobs.id","jobs.college_id"]),

@@ -6,10 +6,27 @@ from models import Application, ApplicationEvent, Student, Job, Company
 from schemas import ApplicationResponse, ApplicationEventResponse, ApplicationList
 from engines.accounts import approved_scope
 from engines.profile import collections
+from engines.scoring_evidence import resolve_scoring
 from engines.matching import calculate_match
 from engines.notifications import notify
 
 ACTIVE = {"submitted", "under_review", "shortlisted"}
+
+def review_profile(session, user, job, application_id):
+    """Only authorised reviewers of an active, consenting application see its profile."""
+    if user.role not in {"admin", "recruiter"} or job.college_id != user.college_id:
+        raise HTTPException(403, "A college reviewer is required.")
+    row = session.scalar(select(Application).where(Application.college_id == user.college_id,
+        Application.id == application_id, Application.job_id == job.id,
+        Application.status.in_(ACTIVE)))
+    if row is None:
+        raise HTTPException(404, "Active application not found. Closed applications do not grant profile access.")
+    student = session.scalar(select(Student).where(Student.college_id == user.college_id,
+        Student.id == row.student_id))
+    if student is None:
+        raise HTTPException(404, "Profile not found.")
+    from engines.profile import profile_response
+    return profile_response(session, student)
 TRANSITIONS = {
     "submitted": {"under_review", "shortlisted", "rejected"},
     "under_review": {"shortlisted", "rejected"},
@@ -53,7 +70,8 @@ def submit(session, user, student, payload):
     pair = session.execute(select(Job, Company).join(Company,
         (Company.id == Job.company_id) & (Company.college_id == Job.college_id)).where(
         Job.college_id == user.college_id, Company.college_id == user.college_id,
-        Job.id == payload.job_id, approved_scope(Company.recruiter_user_id, user.college_id, "recruiter"))).first()
+        Job.id == payload.job_id, Job.is_open.is_(True), approved_scope(Company.recruiter_user_id, user.college_id, "recruiter"))
+        .with_for_update(of=Job)).first()
     if pair is None:
         raise HTTPException(404, "College drive not found. Historical market references cannot receive applications.")
     job, company = pair
@@ -62,7 +80,8 @@ def submit(session, user, student, payload):
         raise HTTPException(409, "You already applied to this drive. Open the recorded application to view its status.")
     evidence = collections(session, student)
     # Reuse the existing proposed weighted rule, including its unvalidated starting weights.
-    calculation = calculate_match(student, evidence["skills"], evidence["projects"], evidence["certifications"], job)
+    scoring_student, scoring_skills = resolve_scoring(session, student, evidence['skills'])
+    calculation = calculate_match(scoring_student, scoring_skills, evidence["projects"], evidence["certifications"], job)
     row = Application(college_id=user.college_id, student_id=student.id, job_id=job.id,
         cover_note=payload.cover_note, evidence_snapshot={"calculation": calculation.model_dump(),
             "student_name": student.name, "job_title": job.title, "company_name": company.name})

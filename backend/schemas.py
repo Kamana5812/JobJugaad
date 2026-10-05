@@ -41,6 +41,7 @@ class AccountExportResponse(BaseModel):
 class AssessmentInput(InputModel):
     student_id: int = Field(gt=0)
     kind: Literal['aptitude', 'communication', 'interview', 'skill']
+    use_for_scoring: bool = Field(default=False, strict=True)
     skill_name: str | None = Field(None, min_length=1, max_length=80)
     title: str = Field(min_length=1, max_length=160)
     source: str = Field(min_length=1, max_length=160)
@@ -58,6 +59,7 @@ class AssessmentResponse(BaseModel):
     student_id: int
     student_name: str
     kind: str
+    use_for_scoring: bool = False
     skill_name: str | None
     title: str
     source: str
@@ -79,7 +81,7 @@ class AssessmentList(BaseModel):
     total: int
     offset: int
     limit: int
-    methodology: str = 'Staff-recorded evidence from external assessments; no independent exam authentication. Readiness, matching and support still use self-reported profile inputs.'
+    methodology: str = 'Staff-recorded external evidence; no independent exam authentication. Only explicitly adopted, active results replace corresponding self-reported scoring inputs. Latest assessment date wins, ties by record ID; withdrawal restores the previous eligible evidence or self-report.'
 
 class IsolationTableResponse(BaseModel):
     table: str
@@ -203,6 +205,13 @@ class EvidenceInput(InputModel):
     title: str = Field(min_length=1, max_length=160)
     description: str = Field(min_length=1, max_length=3000)
 
+class ExperienceInput(InputModel):
+    kind: Literal['internship', 'employment', 'volunteering']
+    organization: str = Field(min_length=1, max_length=160)
+    role: str = Field(min_length=1, max_length=160)
+    description: str = Field(min_length=1, max_length=3000)
+    reference: str = Field(default='', max_length=300)
+
 class ProfileUpdate(InputModel):
     name: Name
     branch: str = Field(min_length=1, max_length=80)
@@ -214,6 +223,7 @@ class ProfileUpdate(InputModel):
     skills: list[SkillInput] = Field(default_factory=list, max_length=30)
     projects: list[EvidenceInput] = Field(default_factory=list, max_length=20)
     certifications: list[EvidenceInput] = Field(default_factory=list, max_length=20)
+    experiences: list[ExperienceInput] = Field(default_factory=list, max_length=20)
 
     @field_validator("skills")
     @classmethod
@@ -246,6 +256,20 @@ class ProfileResponse(ProfileUpdate):
     user_id: int
     resume_text: str | None
     readiness: ReadinessResponse
+
+class StudentDirectoryItem(BaseModel):
+    id: int
+    user_id: int
+    name: str
+    branch: str
+    email: str
+    restricted: bool
+
+class StudentDirectory(BaseModel):
+    items: list[StudentDirectoryItem]
+    total: int
+    offset: int
+    limit: int
 
 class ResumeResponse(BaseModel):
     detail: str
@@ -292,6 +316,7 @@ class MatchingWeights(InputModel):
 
 class JobInput(InputModel):
     title: str = Field(min_length=1, max_length=160)
+    description: str = Field(default='', max_length=20000)
     ctc: float = Field(gt=0, le=1000, allow_inf_nan=False)
     min_cgpa: float = Field(ge=0, le=10, allow_inf_nan=False)
     max_backlogs: int = Field(default=0, ge=0, le=100, strict=True)
@@ -321,6 +346,41 @@ class JobResponse(JobInput):
     college_id: int
     company_id: int
     created_at: datetime
+    is_open: bool = True
+    version: int = 1
+    lifecycle_events: list[dict] = Field(default_factory=list)
+
+class DriveStateInput(InputModel):
+    is_open: bool = Field(strict=True)
+    version: int = Field(gt=0, strict=True)
+    reason: str = Field(min_length=10, max_length=1000)
+
+class DemandSkill(BaseModel):
+    skill_name: str
+    open_drive_count: int = Field(ge=0)
+
+class DemandDrive(BaseModel):
+    job_id: int
+    title: str
+    is_open: bool
+    submitted: int = Field(ge=0)
+    active_applications: int = Field(ge=0)
+    shortlisted: int = Field(ge=0)
+    selected: int = Field(ge=0)
+    accepted: int = Field(ge=0)
+    joined: int = Field(ge=0)
+
+class DemandReport(BaseModel):
+    scope: str
+    open_drives: int = Field(ge=0)
+    total_drives: int = Field(ge=0)
+    skills: list[DemandSkill]
+    drives: list[DemandDrive]
+    explanation: str
+
+class ReminderRunResponse(BaseModel):
+    eligible_bookings_processed: int = Field(ge=0)
+    explanation: str
 
 class SkillGapResponse(BaseModel):
     skill_name: str
@@ -331,6 +391,24 @@ class SkillGapResponse(BaseModel):
     explanation: str
     next_step: str
 
+class TextTermEvidence(BaseModel):
+    term: str
+    contribution: float
+
+class TextEvidence(BaseModel):
+    score: float
+    factor_breakdown: list[TextTermEvidence]
+    explanation: str
+    methodology: str
+
+class DescriptionInput(InputModel):
+    description: str = Field(min_length=1, max_length=20000)
+
+class DescriptionReview(BaseModel):
+    skills: list[str]
+    explanation: str
+    methodology: str
+
 class MatchCalculation(BaseModel):
     match_score: float
     factor_breakdown: list[FactorResponse]
@@ -340,6 +418,7 @@ class MatchCalculation(BaseModel):
     explanation: str
     next_step: str
     methodology: str
+    text_evidence: TextEvidence | None = None
 
 class OverrideInput(InputModel):
     action: Literal["promote", "reject"]
@@ -349,6 +428,7 @@ class OverrideResponse(BaseModel):
     id: int
     match_id: int
     recruiter_user_id: int
+    actor_role: Literal["recruiter", "admin"] = "recruiter"
     action: Literal["promote", "reject"]
     reason: str
     previous_action: str | None
@@ -404,6 +484,7 @@ class ScheduleInput(InputModel):
     reschedule_interview_id: int | None = Field(default=None, gt=0)
     round_number: int = Field(default=1, ge=1, le=20, strict=True)
     round_name: str = Field(default="Interview", min_length=1, max_length=80)
+    event_type: Literal['interview', 'assessment'] = 'interview'
 
     @field_validator("venue", "panel_id")
     @classmethod
@@ -451,6 +532,7 @@ class ScheduleResponse(BaseModel):
     calendar_conflicts: list[CalendarConflictResponse] = Field(default_factory=list)
     round_number: int = 1
     round_name: str = "Interview"
+    event_type: Literal['interview', 'assessment'] = 'interview'
     explanation: str
     reschedule_interview_id: int | None
     version: int
@@ -472,6 +554,7 @@ class InterviewResponse(BaseModel):
     seed_key: str | None
     round_number: int = 1
     round_name: str = "Interview"
+    event_type: Literal['interview', 'assessment'] = 'interview'
 
 class AuditEventResponse(BaseModel):
     id: int

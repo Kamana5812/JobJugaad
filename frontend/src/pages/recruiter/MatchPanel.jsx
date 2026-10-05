@@ -3,8 +3,9 @@ import { getMatches, runMatching } from '../../api/recruiter'
 import { errorMessage } from '../../api/student'
 import { FormField, buttonStyle, secondaryStyle, Message } from '../../components/FormField'
 import CandidateCard from './CandidateCard'
+import { getCollegeMatches, runCollegeMatching, overrideCollegeMatch } from '../../api/admin'
 
-export default function MatchPanel({ job }) {
+export default function MatchPanel({ job, admin = false }) {
   const [data, setData] = useState(null)
   const [status, setStatus] = useState('shortlisted')
   const [offset, setOffset] = useState(0)
@@ -16,15 +17,15 @@ export default function MatchPanel({ job }) {
   useEffect(() => {
     let active = true
     setLoading(true); setError(''); setData(null)
-    getMatches(job.id, status, offset).then(result => { if (active) setData(result) })
+    ;(admin ? getCollegeMatches : getMatches)(job.id, status, offset).then(result => { if (active) setData(result) })
       .catch(failure => { if (active) setError(errorMessage(failure)) })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [job.id, status, offset, revision])
+  }, [job.id, status, offset, revision, admin])
   async function run() {
     setBusy(true); setError(''); setMessage('')
     try {
-      await runMatching(job.id); setOffset(0); setRevision(v => v + 1)
+      await (admin ? runCollegeMatching : runMatching)(job.id); setOffset(0); setRevision(v => v + 1)
       setMessage('Jugaad Ho Gaya ✓ Matching refreshed. Review the evidence before deciding.')
     } catch (failure) { setError(errorMessage(failure)) }
     finally { setBusy(false) }
@@ -40,7 +41,9 @@ export default function MatchPanel({ job }) {
       <p className="mt-2 text-sm text-white/80">₹{job.ctc} lakh/year · CGPA ≥ {job.min_cgpa} · Backlogs ≤ {job.max_backlogs} · {job.eligible_branches.join(', ')}</p>
       <p className="mt-2 text-sm text-white/80">Skill targets: {job.required_skills.map(s => s.skill_name + ' ' + s.min_proficiency + '/100').join(' · ')}</p>
       <p className="mt-2 text-sm text-white/80">Shortlist threshold: {job.min_match_score}/100. Eligibility rules apply before shortlist ranking.</p>
-      <button onClick={run} disabled={busy || loading} className={buttonStyle + ' mt-5'}>{busy ? 'Matching profiles…' : 'Run AI Matching'}</button>
+      <button onClick={run} disabled={busy || loading || job.is_open === false} className={buttonStyle + ' mt-5'}>{busy ? 'Matching profiles…' : 'Run explained matching'}</button>
+      {job.is_open === false && <p className="mt-2 text-sm text-white/80">Drive closed: saved evidence and human reviews remain available. Reopen with a reason to run matching again.</p>}
+      <p className="mt-3 text-sm text-white/80">Promoting a match records a recommendation. To arrange an interview, review the student's submitted application below and explicitly shortlist it. No application is created without student consent.</p>
       <p className="mt-3 text-xs text-white/80">This button runs keyword matching and a weighted rule, with no trained model. Starting weights are unvalidated assumptions. Manual decisions survive reruns.</p>
     </div>
     <Message error>{error}</Message><Message>{message}</Message>
@@ -56,7 +59,7 @@ export default function MatchPanel({ job }) {
     {!loading && data?.candidates.length === 0 && <div className="rounded-xl border border-dashed border-line bg-white p-6 text-muted">
       {data.total === 0 ? 'No matching run yet. Run matching to review this college’s profiles.' : 'No candidates in this view. Review excluded candidates or adjust the view.'}</div>}
     {data?.candidates.map((candidate, index) => <CandidateCard key={candidate.id + ':' + candidate.calculated_at + ':' + candidate.audit.length}
-      candidate={candidate} position={offset + index + 1} onReviewed={reviewed} />)}
+      candidate={candidate} position={offset + index + 1} onReviewed={reviewed} {...(admin ? {onOverride:overrideCollegeMatch} : {})} />)}
     {data && total > 0 && <div className="flex items-center justify-between gap-3">
       <button className={secondaryStyle} disabled={offset === 0 || loading || busy} onClick={() => setOffset(Math.max(0, offset - 5))}>Previous</button>
       <p className="text-sm text-muted">{offset + 1}–{Math.min(offset + 5, total)} of {total}</p>

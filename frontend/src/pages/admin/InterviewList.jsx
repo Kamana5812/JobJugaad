@@ -14,17 +14,17 @@ function InterviewRow({ item, names, onResolve, busy, perform }) {
   return <article className="border-t border-line py-4">
     <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-bold text-navy">#{item.id} · {names.student(item.student_id)}</h3><StatusPill critical={item.status === 'rejected'} warning={['cancelled', 'scheduled'].includes(item.status)}>{item.status}</StatusPill></div>
     <p className="text-sm">{names.job(item.job_id)} · {item.venue} · {item.panel_id}</p>
-    <p className="text-sm text-muted">Round {item.round_number || 1} · {item.round_name || 'Interview'}</p>
+    <p className="text-sm text-muted">{item.event_type === 'assessment' ? 'Assessment event' : 'Interview'} · Round {item.round_number || 1} · {item.round_name || 'Interview'}</p>
     <p className="text-sm text-muted">{displayTime(item.scheduled_time)} – {displayTime(item.end_time)}</p>
     {item.seed_key?.startsWith('phase3-double') && <p className="mt-1 text-xs text-muted">Synthetic imported double-booking demonstration.</p>}
     {item.status === 'scheduled' && <button className={secondaryStyle + ' mt-3'} disabled={busy} onClick={() => onResolve(item)}>Propose reschedule #{item.id}</button>}
     {item.status !== 'cancelled' && <details className="mt-3 text-sm"><summary className="cursor-pointer font-semibold text-navy">Record outcome or cancellation</summary>
       <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2">
         <FormField label={'Status for interview #' + item.id} value={status} onChange={event => setStatus(event.target.value)}>
-          <option value="cancelled">Cancelled</option><option value="completed">Completed</option><option value="selected">Selected</option><option value="rejected">Rejected</option>
+          <option value="cancelled">Cancelled</option><option value="completed">Completed</option>{item.event_type !== 'assessment' && <option value="selected">Selected</option>}<option value="rejected">Rejected</option>
         </FormField>
         <FormField label={'Reason for interview #' + item.id} required minLength="10" maxLength="1000" hint="Enter at least 10 characters, for example: Synthetic workflow verification." value={reason} onChange={event => setReason(event.target.value)} />
-        <p className="text-xs text-muted sm:col-span-2">Selected, Completed or Rejected can be saved after {displayTime(item.end_time)}. Selected does not mean an offer or placement.</p>
+        <p className="text-xs text-muted sm:col-span-2">Outcomes can be saved after {displayTime(item.end_time)}. {item.event_type === 'assessment' ? 'Record reviewed results in Assessment evidence; this event cannot grant selection or an offer.' : 'Selected does not mean an offer or placement.'}</p>
         <div className="sm:col-span-2"><Message error={feedback?.error}>{feedback?.message}</Message></div>
         <button type="submit" className={buttonStyle} disabled={busy}>{busy ? 'Saving…' : 'Save interview status'}</button>
       </form>

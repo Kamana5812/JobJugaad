@@ -72,6 +72,20 @@ class StudentCoreTests(unittest.TestCase):
         self.assertEqual(self.client.post("/auth/login", json=wrong).status_code, 401)
         self.assertEqual(self.client.post("/auth/signup", json=payload).status_code, 409)
 
+    def test_experience_persists_without_changing_readiness(self):
+        _, account, headers = self.accounts[0]
+        path = f"/students/{account['user']['student_id']}"
+        before = self.client.get(path, headers=headers).json()['readiness']
+        experience = dict(kind='internship', organization='Synthetic workplace', role='Backend intern',
+            description='Built an audited test API.', reference='Synthetic test reference')
+        result = self.client.put(path, headers=headers, json={**self.payload, 'experiences': [experience]})
+        self.assertEqual(result.status_code, 200, result.text)
+        self.assertEqual(result.json()['experiences'], [experience])
+        self.assertEqual(result.json()['readiness'], before)
+        self.assertEqual(self.client.get(path, headers=headers).json()['experiences'], [experience])
+        self.assertEqual(self.client.put(path, headers=headers, json={**self.payload,
+            'experiences': [{**experience, 'kind': 'invented'}]}).status_code, 422)
+
     def test_ownership_tenant_and_forged_identity(self):
         _, account, headers = self.accounts[0]
         own = account["user"]["student_id"]

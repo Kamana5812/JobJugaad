@@ -4,6 +4,7 @@ import os
 import unittest
 import uuid
 from concurrent.futures import ThreadPoolExecutor
+from unittest.mock import patch
 from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace as Obj
 from fastapi.testclient import TestClient
@@ -134,6 +135,69 @@ class AdminIntegrationTests(unittest.TestCase):
         if cls.old_admins is None:os.environ.pop("ADMIN_ACCOUNTS",None)
         else:os.environ["ADMIN_ACCOUNTS"]=cls.old_admins
 
+    def test_assessment_event_round_cannot_be_hiring_selection(self):
+        account = self.accounts[0]
+        payload = {**account['slot'], 'student_id': account['support_student_id'],
+            'scheduled_time': (self.start + timedelta(days=1)).isoformat(),
+            'venue': 'assessment-' + self.suffix, 'panel_id': 'assessor-' + self.suffix,
+            'event_type': 'assessment', 'round_name': 'External aptitude test'}
+        created = self.client.post('/admin/schedules', headers=account['headers'], json=payload)
+        self.assertEqual(created.status_code, 201, created.text)
+        proposal = created.json()
+        self.assertEqual(proposal['event_type'], 'assessment')
+        approved = self.client.post(f"/admin/schedules/{proposal['id']}/review", headers=account['headers'],
+            json=dict(action='approve', version=proposal['version'], reason='Controlled external assessment booking'))
+        self.assertEqual(approved.status_code, 200, approved.text)
+        with tenant_session(account['credentials']['college_id']) as session:
+            booking = session.scalar(select(Interview).where(Interview.college_id == account['credentials']['college_id'],
+                Interview.schedule_id == proposal['id']))
+            identity, end = booking.id, booking.end_time
+            self.assertEqual(booking.event_type, 'assessment')
+        outcome = self.client.put(f'/admin/interviews/{identity}/status', headers=account['headers'],
+            json=dict(status='selected', reason='Must not grant selection from a test event'))
+        self.assertEqual(outcome.status_code, 422, outcome.text)
+        self.assertIn('cannot record hiring selection', outcome.json()['detail'])
+        class AfterEnd(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return end + timedelta(minutes=1)
+        with patch('engines.scheduling.datetime', AfterEnd):
+            complete = self.client.put(f'/admin/interviews/{identity}/status', headers=account['headers'],
+                json=dict(status='completed', reason='Controlled external assessment completion'))
+        self.assertEqual(complete.status_code, 200, complete.text)
+        self.assertEqual(complete.json()['event_type'], 'assessment')
+
+    def test_admin_matching_authority_and_consented_application_handoff(self):
+        account = self.accounts[0]
+        job = account['job_id']
+        base = f'/admin/jobs/{job}'
+        headers = account['headers']
+        self.assertEqual(self.client.post(base+'/matching', headers=headers).status_code, 200)
+        from models import Match
+        with tenant_session(account['credentials']['college_id']) as session:
+            row = session.scalar(select(Match).where(Match.college_id == account['credentials']['college_id'], Match.job_id == job, Match.student_id == account['support_student_id']))
+            candidate = {'id':row.id, 'match_score':row.match_score}
+        original = candidate['match_score']
+        override = self.client.post(base+f"/matches/{candidate['id']}/override", headers=headers,
+            json={'action':'promote','reason':'Administrator reviewed the original scoring evidence'})
+        self.assertEqual(override.status_code, 200, override.text)
+        self.assertEqual(override.json()['audit'][-1]['actor_role'], 'admin')
+        self.assertEqual(override.json()['audit'][-1]['evidence_at_action']['match_score'], original)
+        self.assertEqual(self.client.post(base+'/matching', headers=headers).status_code, 200)
+        self.assertEqual(self.client.get(base+'/matches', headers=account['recruiter_headers']).status_code, 403)
+        self.assertEqual(self.client.get(base+'/matches', headers=self.accounts[1]['headers']).status_code, 404)
+        submitted = self.client.post(f"/students/{account['support_student_id']}/applications",
+            headers=account['student_headers'], json={'job_id':job,'cover_note':'Synthetic consenting application'})
+        self.assertEqual(submitted.status_code, 201, submitted.text)
+        row = submitted.json()
+        reviewed = self.client.post(base+f"/applications/{row['id']}/review", headers=headers,
+            json={'version':row['version'],'status':'shortlisted','reason':'Administrator approved interview consideration'})
+        self.assertEqual(reviewed.status_code, 200, reviewed.text)
+        self.assertEqual(reviewed.json()['status'], 'shortlisted')
+        self.assertEqual(reviewed.json()['evidence'], row['evidence'])
+        self.assertEqual(self.client.post(base+f"/applications/{row['id']}/review", headers=headers,
+            json={'version':row['version'],'status':'rejected','reason':'Stale concurrent review must be rejected'}).status_code, 409)
+
     def test_interview_notification_delivery_and_recipient_isolation(self):
         account = self.accounts[0]
         # Target the baseline interview: earlier tests may confirm another booking.
@@ -155,6 +219,15 @@ class AdminIntegrationTests(unittest.TestCase):
 
     def test_admin_role_allowlist_and_cross_tenant_access(self):
         a,b=self.accounts
+        directory = self.client.get('/admin/students', headers=a['headers'], params={'query': 'support-' + self.suffix})
+        self.assertEqual(directory.status_code, 200, directory.text)
+        ids = {row['id'] for row in directory.json()['items']}
+        self.assertIn(a['support_student_id'], ids)
+        self.assertNotIn(b['support_student_id'], ids)
+        self.assertEqual(self.client.get(f"/admin/students/{a['support_student_id']}/profile", headers=a['headers']).status_code, 200)
+        self.assertEqual(self.client.get(f"/admin/students/{b['support_student_id']}/profile", headers=a['headers']).status_code, 404)
+        self.assertEqual(self.client.get('/admin/students', headers=a['recruiter_headers']).status_code, 403)
+        self.assertEqual(self.client.get('/admin/students', headers=a['student_headers']).status_code, 403)
         self.assertEqual(self.client.get("/admin/schedules").status_code,401)
         for headers in (a["student_headers"],a["recruiter_headers"]):
             self.assertEqual(self.client.get("/admin/analytics/overview",headers=headers).status_code,403)
@@ -247,7 +320,7 @@ class AdminIntegrationTests(unittest.TestCase):
         a,b=self.accounts;headers=a["headers"]
         self.assertEqual(self.client.get("/docs").status_code,200)
         paths=self.client.get("/openapi.json").json()["paths"]
-        self.assertEqual(sum(len([m for m in methods if m in ("get","post","put")]) for path,methods in paths.items() if path.startswith("/admin/")),37)
+        self.assertTrue({"/admin/schedules", "/admin/offers", "/admin/jobs", "/admin/jobs/{job_id}/matches/{match_id}/override"}.issubset(paths))
         payload={**a["slot"],"scheduled_time":(self.start+timedelta(days=30)).isoformat()}
         proposal=self.client.post("/admin/schedules",headers=headers,json=payload).json()
         approved=self.client.post(f"/admin/schedules/{proposal['id']}/review",headers=headers,

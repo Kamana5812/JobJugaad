@@ -39,9 +39,21 @@ def initialize_schema():
         if connection.execute(text("SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = current_user")).scalar_one():
             raise RuntimeError("Database runtime role must not be superuser or BYPASSRLS.")
         Base.metadata.create_all(connection)
+        connection.execute(text("ALTER TABLE assessments ADD COLUMN IF NOT EXISTS use_for_scoring boolean NOT NULL DEFAULT false"))
+        connection.execute(text("ALTER TABLE jobs ADD COLUMN IF NOT EXISTS description text NOT NULL DEFAULT ''"))
+        connection.execute(text("ALTER TABLE jobs ADD COLUMN IF NOT EXISTS is_open boolean NOT NULL DEFAULT true"))
+        connection.execute(text("ALTER TABLE jobs ADD COLUMN IF NOT EXISTS version integer NOT NULL DEFAULT 1"))
+        connection.execute(text("ALTER TABLE jobs ADD COLUMN IF NOT EXISTS lifecycle_events json NOT NULL DEFAULT '[]'::json"))
+        connection.execute(text("ALTER TABLE matches ADD COLUMN IF NOT EXISTS text_evidence json"))
+        connection.execute(text("ALTER TABLE students ADD COLUMN IF NOT EXISTS experiences json NOT NULL DEFAULT '[]'::json"))
+        connection.execute(text("ALTER TABLE match_overrides ADD COLUMN IF NOT EXISTS actor_role varchar(20) NOT NULL DEFAULT 'recruiter'"))
         connection.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version integer NOT NULL DEFAULT 0'))
         connection.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS disabled_at timestamptz'))
         for name in ("schedules", "interviews"):
+            connection.execute(text(f"ALTER TABLE {name} ADD COLUMN IF NOT EXISTS event_type varchar(20) NOT NULL DEFAULT 'interview'"))
+            event_check = f'ck_{name}_event_type'
+            if not connection.execute(text("SELECT 1 FROM pg_constraint WHERE conrelid = CAST(:table AS regclass) AND conname = :name"), {'table': name, 'name': event_check}).scalar():
+                connection.execute(text(f"ALTER TABLE {name} ADD CONSTRAINT {event_check} CHECK (event_type IN ('interview','assessment'))"))
             connection.execute(text(f"ALTER TABLE {name} ADD COLUMN IF NOT EXISTS round_number integer NOT NULL DEFAULT 1"))
             connection.execute(text(f"ALTER TABLE {name} ADD COLUMN IF NOT EXISTS round_name varchar(80) NOT NULL DEFAULT 'Interview'"))
             check_name = f"ck_{name}_round_number"
@@ -50,6 +62,8 @@ def initialize_schema():
             if not exists:
                 connection.execute(text(f"ALTER TABLE {name} ADD CONSTRAINT {check_name} CHECK (round_number BETWEEN 1 AND 20)"))
         connection.execute(text("ALTER TABLE schedules ADD COLUMN IF NOT EXISTS calendar_conflicts json NOT NULL DEFAULT '[]'::json"))
+        if not connection.execute(text("SELECT 1 FROM pg_constraint WHERE conrelid = 'interviews'::regclass AND conname = 'ck_assessment_not_selected'")).scalar():
+            connection.execute(text("ALTER TABLE interviews ADD CONSTRAINT ck_assessment_not_selected CHECK (event_type = 'interview' OR status <> 'selected')"))
         for table in Base.metadata.sorted_tables:
             name = connection.dialect.identifier_preparer.quote(table.name)
             connection.execute(text(f"ALTER TABLE {name} ENABLE ROW LEVEL SECURITY"))

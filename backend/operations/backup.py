@@ -9,7 +9,7 @@ from decimal import Decimal
 from pathlib import Path
 from uuid import UUID
 from cryptography.fernet import Fernet
-from sqlalchemy import Date, DateTime, LargeBinary, Numeric, Uuid, insert, select, text
+from sqlalchemy import Date, DateTime, LargeBinary, Numeric, Uuid, insert, select, text, update
 from sqlalchemy.orm import Session
 from database import Base, engine, initialize_schema, tenant_session
 from security_audit import require_isolation
@@ -72,15 +72,28 @@ def restore(path):
             if any(set(r)!=set(Base.metadata.tables[name].columns.keys()) or type(r['college_id']) is not int or r['college_id']!=college for r in rows):
                 raise RuntimeError('Snapshot tenant/column mismatch.')
     with engine.begin() as connection:
+        reschedule_links=[]
         for table in Base.metadata.sorted_tables:
             maximum=0
             for college in payload['colleges']:
                 connection.execute(text("SELECT set_config('app.college_id', :tenant, true)"),{'tenant':str(college)})
                 for row in payload['tenants'][str(college)][table.name]:
-                    connection.execute(insert(table).values(**{c.name:decode(c,row[c.name]) for c in table.columns}))
+                    values={c.name:decode(c,row[c.name]) for c in table.columns}
+                    # The optional reschedule FK forms a schedule/interview
+                    # cycle. Stage only this nullable link; preserve every
+                    # constraint and reconnect inside the same transaction.
+                    if table.name=='schedules' and values['reschedule_interview_id'] is not None:
+                        reschedule_links.append((college,row['id'],values['reschedule_interview_id']))
+                        values['reschedule_interview_id']=None
+                    connection.execute(insert(table).values(**values))
                     maximum=max(maximum,row['id'])
             # Trusted ORM table names; sequence repair is documented maintenance SQL.
             if maximum: connection.execute(text("SELECT setval(pg_get_serial_sequence(:table, 'id'), :value, true)"),{'table':table.name,'value':maximum})
+        schedules=Base.metadata.tables['schedules']
+        for college,identity,interview in reschedule_links:
+            connection.execute(text("SELECT set_config('app.college_id', :tenant, true)"),{'tenant':str(college)})
+            connection.execute(update(schedules).where(schedules.c.college_id==college,schedules.c.id==identity)
+                .values(reschedule_interview_id=interview))
     actual=snapshot(payload['colleges'])
     if digest(actual['tenants'])!=digest(payload['tenants']): raise RuntimeError('Restored row/byte comparison failed.')
     return {'verified':True,'tables':len(Base.metadata.tables),'rows':sum(len(r) for t in actual['tenants'].values() for r in t.values()),'source_digest':digest(payload['tenants']),'policies':'verified'}
@@ -98,4 +111,9 @@ if __name__=='__main__':
         print(json.dumps(result,indent=2))
     except Exception as error:
         # Never log credentials, URLs, keys, decrypted records or driver error details.
-        print(json.dumps({'status':'failed','error_type':type(error).__name__}));raise SystemExit(1)
+        original=getattr(error,'orig',None)
+        diagnostic=getattr(original,'diag',None)
+        print(json.dumps({'status':'failed','error_type':type(error).__name__,
+            'sqlstate':getattr(original,'pgcode',None),
+            'constraint':getattr(diagnostic,'constraint_name',None),
+            'table':getattr(diagnostic,'table_name',None)}));raise SystemExit(1)

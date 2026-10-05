@@ -1,6 +1,7 @@
 """Bounded PDF format checks; not malware scanning or document certification."""
 import io
 import multiprocessing
+from engines.pdf_budget import PARSER_SLOTS
 
 from fastapi import HTTPException
 
@@ -98,6 +99,15 @@ def _validate(content, channel):
 
 
 def validate_document_pdf(content: bytes) -> int:
+    if not PARSER_SLOTS.acquire(timeout=2):
+        raise HTTPException(503, 'PDF processing is busy. Please try again shortly.', headers={'Retry-After': '3'})
+    try:
+        return _validate_bounded(content)
+    finally:
+        PARSER_SLOTS.release()
+
+
+def _validate_bounded(content: bytes) -> int:
     """Validate format in a disposable process, accepting scanned PDFs without OCR."""
     if not content:
         raise HTTPException(422, "The PDF is empty.")

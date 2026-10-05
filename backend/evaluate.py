@@ -74,7 +74,10 @@ def evaluate(college=1):
                 skills=[dict(skill_name=s.skill_name,proficiency=s.proficiency) for s in skills],
                 projects=[dict(title=p.title,description=p.description) for p in projects],
                 certifications=[dict(title=c.title,description=c.description) for c in certs])
-            inputs=dict(profile=profile.model_dump(mode="json"),completed_interviews=activity)
+            # This legacy sanity check froze the original six-factor input schema.
+            # New optional experience evidence is not a core weighted factor; do not
+            # rewrite frozen hashes/labels merely because the response schema grew.
+            inputs=dict(profile=profile.model_dump(mode="json", exclude={'experiences'}),completed_interviews=activity)
             digest=hashlib.sha256(json.dumps(inputs,sort_keys=True).encode()).hexdigest()
             if digest!=label["input_sha256"]:
                 raise RuntimeError(f"Frozen inputs changed for sample {label['seed_index']}; inspect drift instead of relabeling.")

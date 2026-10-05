@@ -8,6 +8,7 @@ from models import Company, Job, Match, MatchOverride, Student, StudentSkill, Pr
 from schemas import CompanyResponse, JobResponse, MatchCalculation, CandidateResponse, OverrideResponse, MatchSummary, MatchResults
 from engines.matching import calculate_match
 from engines.accounts import approved_scope
+from engines.scoring_evidence import assessment_groups, resolve_scoring
 
 
 def candidate_scope(college):
@@ -35,6 +36,17 @@ def owned_job(session, user, job_id, lock=False):
     return job
 
 
+def college_job(session, user, job_id, lock=False):
+    """College administrator access; never reuses recruiter ownership as authority."""
+    if user.role != "admin":
+        raise HTTPException(403, "Placement administrator access required.")
+    query = select(Job).where(Job.college_id == user.college_id, Job.id == job_id)
+    job = session.scalar(query.with_for_update() if lock else query)
+    if job is None:
+        raise HTTPException(404, "Drive not found in your college.")
+    return job
+
+
 def job_response(job):
     return JobResponse.model_validate(job, from_attributes=True)
 
@@ -55,6 +67,8 @@ def create_job(session, user, payload):
 
 def run_matching(session, job):
     # Caller locks the owned job row; concurrent reruns and overrides serialize.
+    if not job.is_open:
+        raise HTTPException(409, 'This drive is closed. Existing evidence remains available; reopen with a recorded reason before rerunning matching.')
     college = job.college_id
     students = session.scalars(select(Student).where(Student.college_id == college, approved_scope(Student.user_id, college, "student")).order_by(Student.id)).all()
     grouped = []
@@ -64,9 +78,11 @@ def run_matching(session, job):
             rows[row.student_id].append(row)
         grouped.append(rows)
     now = datetime.now(timezone.utc)
+    adopted = assessment_groups(session, college)
+    resolved = {s.id: resolve_scoring(session, s, grouped[0][s.id], adopted[s.id]) for s in students}
     for offset in range(0,len(students),100):
         values=[dict(college_id=college,job_id=job.id,student_id=student.id,calculated_at=now,
-            **calculate_match(student,*(items[student.id] for items in grouped),job).model_dump())
+            **calculate_match(resolved[student.id][0], resolved[student.id][1], grouped[1][student.id], grouped[2][student.id], job).model_dump())
             for student in students[offset:offset+100]]
         statement=insert(Match).values(values)
         # Only computed evidence changes on conflict. Human override and creation time are retained.
@@ -76,6 +92,21 @@ def run_matching(session, job):
             where=and_(Match.college_id==college,candidate_scope(college),Match.job_id==job.id)))
     session.flush()
     return summary(session, job)
+
+def set_drive_state(session, user, job, payload):
+    if user.role not in {'admin', 'recruiter'} or user.college_id != job.college_id:
+        raise HTTPException(403, 'Authorised college reviewer required.')
+    if job.version != payload.version:
+        raise HTTPException(409, 'Drive changed. Refresh before recording another action.')
+    if job.is_open == payload.is_open:
+        raise HTTPException(409, 'Drive already has this state.')
+    event = {'actor_user_id': user.id, 'actor_role': user.role, 'previous_is_open': job.is_open,
+        'is_open': payload.is_open, 'reason': payload.reason, 'created_at': datetime.now(timezone.utc).isoformat()}
+    job.is_open = payload.is_open
+    job.version += 1
+    job.lifecycle_events = [*(job.lifecycle_events or []), event]
+    session.flush()
+    return job_response(job)
 
 
 def shortlisted(row):
@@ -127,11 +158,14 @@ def match_results(session, job, status, offset, limit):
 
 
 def override_match(session, user, job, match_id, payload):
+    if user.role not in ("admin", "recruiter") or job.college_id != user.college_id:
+        raise HTTPException(403, "Authorized college reviewer required.")
     row = session.scalar(select(Match).where(Match.college_id == user.college_id, candidate_scope(user.college_id), Match.job_id == job.id, Match.id == match_id).with_for_update())
     if row is None:
         raise HTTPException(404, "Candidate match not found. Run matching first.")
     snapshot = MatchCalculation.model_validate(row, from_attributes=True).model_dump()
     session.add(MatchOverride(college_id=user.college_id, match_id=row.id, recruiter_user_id=user.id,
+        actor_role=user.role,
         action=payload.action, reason=payload.reason, previous_action=row.override_action,
         score_at_action=row.match_score, evidence_at_action=snapshot))
     session.execute(update(Match).where(Match.id == row.id, Match.college_id == user.college_id,

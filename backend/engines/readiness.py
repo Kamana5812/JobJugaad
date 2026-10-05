@@ -28,6 +28,13 @@ def calculate_readiness(student, skills, projects) -> ReadinessResponse:
         f"CGPA {student.cgpa:g}/10 x 10." if student.cgpa is not None else "CGPA not recorded; contributes zero.",
     ] + [f"Self-reported existing assessment: {v:g}/100." if not absent else "Assessment not recorded; contributes zero."
          for v, absent in zip(values[3:], missing[3:])]
+    sources = getattr(student, '_assessment_sources', {})
+    for index, kind in enumerate(('aptitude', 'communication', 'interview'), 3):
+        if kind in sources:
+            evidence[index] = sources[kind]
+    skill_sources = [source for key, source in sources.items() if key.startswith('skill:')]
+    if skill_sources:
+        evidence[0] = f'Mean of {len(skills)} recorded skills; staff-adopted results replace corresponding self-reports. ' + ' '.join(skill_sources)
     factors, total = [], Decimal("0")
     for key, label, value, weight, reason, absent in zip(KEYS, LABELS, values, WEIGHTS, evidence, missing):
         value_decimal = Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
@@ -47,4 +54,4 @@ def calculate_readiness(student, skills, projects) -> ReadinessResponse:
         explanation += " Missing information contributes zero, which is not a judgment of your ability."
     return ReadinessResponse(score=score, raw_score=float(total), band=band, breakdown=factors,
         explanation=explanation, next_step=NEXT_STEPS[weakest],
-        methodology="Proposed weighted rule: 30/20/15/15/10/10; self-reported inputs, not a trained model or validated hiring prediction. Round the total half-up to a whole number before band mapping.")
+        methodology="Proposed weighted rule: 30/20/15/15/10/10; self-reported inputs with explicitly adopted staff evidence where recorded, not a trained model or validated hiring prediction. Round the total half-up to a whole number before band mapping.")

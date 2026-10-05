@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import FactorTable from '../../components/FactorTable'
+import TextEvidence from '../../components/TextEvidence'
 import { FormField, secondaryStyle, Message } from '../../components/FormField'
 import { overrideMatch } from '../../api/recruiter'
 import { errorMessage } from '../../api/student'
 
-export default function CandidateCard({ candidate: c, position, onReviewed }) {
+export default function CandidateCard({ candidate: c, position, onReviewed, onOverride = overrideMatch }) {
   const [reason, setReason] = useState('')
   const [action, setAction] = useState('promote')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   async function review(event) {
     event.preventDefault(); setBusy(true); setError('')
-    try { await overrideMatch(c.job_id, c.id, { action, reason }); setReason(''); await onReviewed() }
+    try { await onOverride(c.job_id, c.id, { action, reason }); setReason(''); await onReviewed() }
     catch (failure) { setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
@@ -23,9 +24,10 @@ export default function CandidateCard({ candidate: c, position, onReviewed }) {
       </div>
       <div className="text-right"><p className="text-3xl font-bold text-navy">{c.match_score}<span className="text-sm text-muted"> /100</span></p><p className="text-xs text-muted">Weighted match score</p></div>
     </div>
-    {c.override_action && <p className="mt-4 rounded-xl bg-warning-soft p-3 text-sm text-navy">A recruiter manually {c.override_action === 'promote' ? 'promoted' : 'rejected'} this candidate. The calculated recommendation below is retained for review.</p>}
+    {c.override_action && <p className="mt-4 rounded-xl bg-warning-soft p-3 text-sm text-navy">An authorized reviewer manually {c.override_action === 'promote' ? 'promoted' : 'rejected'} this candidate. The calculated recommendation below is retained for review.</p>}
     <p className="my-4 text-sm leading-6">{c.explanation}</p>
     <FactorTable factors={c.factor_breakdown} />
+    <div className="mt-4"><TextEvidence evidence={c.text_evidence} /></div>
     {c.missing_requirements.length > 0 && <div className="mt-4 rounded-xl bg-warning-soft p-4">
       <h4 className="font-bold text-navy">Requirements and review flags</h4><ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{c.missing_requirements.map((item, i) => <li key={i}>{item}</li>)}</ul>
     </div>}
@@ -51,7 +53,7 @@ export default function CandidateCard({ candidate: c, position, onReviewed }) {
     <details className="mt-4 border-t border-line pt-4">
       <summary className="cursor-pointer text-sm font-bold text-navy">Audit history ({c.audit.length})</summary>
       {c.audit.length === 0 ? <p className="mt-3 text-sm text-muted">No manual decisions yet.</p> : c.audit.map(a => <div key={a.id} className="mt-4 rounded-xl bg-paper p-4">
-        <p className="text-sm font-bold text-navy">{a.action} · Recruiter #{a.recruiter_user_id} · {new Date(a.created_at).toLocaleString()}</p>
+        <p className="text-sm font-bold text-navy">{a.action} · {a.actor_role === 'admin' ? 'Administrator' : 'Recruiter'} #{a.recruiter_user_id} · {new Date(a.created_at).toLocaleString()}</p>
         <p className="mt-1 text-sm">{a.reason}</p><p className="mt-1 text-xs text-muted">Previous manual decision: {a.previous_action || 'none'}</p>
         <details className="mt-3"><summary className="cursor-pointer text-sm font-semibold">Evidence at decision time</summary>
           <p className="my-3 font-bold text-navy">Weighted match score: {a.evidence_at_action.match_score}/100</p>

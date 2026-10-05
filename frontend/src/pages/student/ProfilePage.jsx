@@ -12,6 +12,7 @@ import OpportunitiesPanel from './OpportunitiesPanel'
 import InterviewsPanel from './InterviewsPanel'
 import ApplicationsPanel from './ApplicationsPanel'
 import AssessmentPanel from './AssessmentPanel'
+import ExperienceEditor from '../../components/ExperienceEditor'
 
 const MarketRolesPanel = lazy(() => import('./MarketRolesPanel'))
 
@@ -19,7 +20,7 @@ const nullable = (value) => value === '' || value === null ? null : Number(value
 function editable(profile) {
   const { name, branch, cgpa, backlog_count, aptitude_score, communication_score, interview_score, skills, projects, certifications } = profile
   return { name, branch, cgpa: cgpa ?? '', backlog_count, aptitude_score: aptitude_score ?? '',
-    communication_score: communication_score ?? '', interview_score: interview_score ?? '', skills, projects, certifications }
+    communication_score: communication_score ?? '', interview_score: interview_score ?? '', skills, projects, certifications, experiences: profile.experiences ?? [] }
 }
 export default function ProfilePage() {
   const { user, logout } = useAuth()
@@ -79,7 +80,7 @@ export default function ProfilePage() {
     <div id="resume" className="scroll-mt-6"><ResumeUpload sectionNumber="04" profile={profile} disabled={busy} onBusyChange={setUploading} onExpired={logout} onUploaded={(value) => setProfile(value)} /></div>
     <section id="profile-editor" aria-labelledby="profile-title" className="scroll-mt-6 rounded-xl border border-line bg-white p-6 sm:p-8">
       <h2 id="profile-title" className="text-xl font-bold text-navy"><span className="mr-3 text-saffron-deep">05</span>Build your profile evidence.</h2>
-      <p className="mt-2 text-sm leading-6 text-muted">Keep it accurate. Leave unknown assessments blank; missing information contributes zero, not a judgment of ability.</p>
+      <p className="mt-2 text-sm leading-6 text-muted">Keep it accurate. Staff-adopted results take precedence in scoring and are named in the breakdown; your self-reports stay editable. Leave unknown assessments blank; missing information contributes zero, not a judgment of ability.</p>
       <form onSubmit={save} className="mt-6 space-y-6">
         <fieldset disabled={busy || uploading} className="space-y-6">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -97,6 +98,7 @@ export default function ProfilePage() {
           <EvidenceEditor title="Technical skills" kind="skills" items={form.skills} onChange={(value) => change('skills', value)} limit={30} />
           <EvidenceEditor title="Projects" kind="projects" items={form.projects} onChange={(value) => change('projects', value)} limit={20} />
           <EvidenceEditor title="Certifications" kind="certifications" items={form.certifications} onChange={(value) => change('certifications', value)} limit={20} />
+          <ExperienceEditor items={form.experiences} onChange={value => change('experiences', value)} />
           <p className="text-xs leading-5 text-muted">Certifications and backlogs are saved for your profile but do not change this six-factor readiness formula. Project count is a simple proxy; project quality is not assessed.</p>
         </fieldset>
         <Message error>{error}</Message><Message>{notice}</Message>

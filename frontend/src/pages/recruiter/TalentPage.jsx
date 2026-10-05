@@ -9,6 +9,8 @@ import CompanyEditor from './CompanyEditor'
 import DriveForm from './DriveForm'
 import MatchPanel from './MatchPanel'
 import JobApplicationsPanel from './JobApplicationsPanel'
+import DriveState from '../../components/DriveState'
+import DemandPanel from '../../components/DemandPanel'
 
 export default function TalentPage() {
   const { user, logout } = useAuth()
@@ -38,6 +40,7 @@ export default function TalentPage() {
     <Message error>{error}</Message>{error && <button onClick={() => setRetry(retry + 1)} className={secondaryStyle}>Retry loading</button>}
     {loading && <p role="status">Loading your company and drives…</p>}
     {company && <>
+      <DemandPanel />
       <section id="drives" className="scroll-mt-6 rounded-xl border border-line bg-white p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-widest text-muted">{company.name}</p><h2 className="mt-2 text-2xl font-bold text-navy"><span className="mr-3 text-saffron-deep">01</span>Your drives</h2></div><p className="text-sm text-muted">{jobs.length} recorded drive{jobs.length === 1 ? '' : 's'}</p></div>
         <p className="mt-3 text-sm text-muted">Choose a drive to review its requirements and explained candidate matches below.</p>
@@ -48,7 +51,7 @@ export default function TalentPage() {
         {jobs.length > 6 && <Pagination data={{ total: jobs.length, offset, limit: 6 }} busy={loading} onPage={setOffset} />}
       </section>
       <div id="matching" className="scroll-mt-6">{selected ? <MatchPanel key={selected.id} job={selected} /> : <p className="rounded-2xl border border-line bg-white p-6 text-sm text-muted">Create a drive to run keyword matching and review candidates.</p>}</div>
-      {selected && <JobApplicationsPanel key={selected.id} job={selected} onExpired={logout} />}
+      {selected && <><DriveState key={`${selected.id}-${selected.version}`} job={selected} onSaved={job => { setSelected(job); setJobs(rows => rows.map(row => row.id === job.id ? job : row)) }} /><JobApplicationsPanel key={selected.id} job={selected} onExpired={logout} /></>}
       <div id="create-drive" className="scroll-mt-6 space-y-4"><DriveForm onCreated={created} /><Message>{notice}</Message>{notice && <a href="#matching" className={buttonStyle}>Review the new drive’s matches ↑</a>}</div>
       <div id="company" className="scroll-mt-6"><CompanyEditor company={company} onSaved={setCompany} /></div>
       <details className="rounded-2xl border border-line bg-white p-6"><summary className="cursor-pointer font-bold text-navy">Jugaad Dost 🤝 · Matching help</summary><p className="mt-3 text-sm leading-7 text-muted">This is a static help panel. Matching uses exact skill names, project keyword coverage, academics, existing assessment inputs and certificate count. Scores are suggestions, not placement predictions. Review excluded profiles and record a human exception when justified.</p></details>

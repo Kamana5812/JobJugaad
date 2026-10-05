@@ -9,6 +9,26 @@ from schemas import CompanyInput, CompanyResponse, JobInput, JobResponse, MatchS
 
 router = APIRouter(prefix="/recruiters", tags=["Talent Finder"])
 
+from engines import demand
+from schemas import DemandReport
+
+@router.get('/analytics/demand', response_model=DemandReport)
+def hiring_demand(context=Depends(recruiter_session)):
+    return demand.report(*context)
+
+from schemas import DescriptionInput, DescriptionReview
+from schemas import DriveStateInput
+from engines.job_text import review_description
+
+@router.post('/jobs/description/review', response_model=DescriptionReview)
+def description_review(payload: DescriptionInput, context=Depends(recruiter_session)):
+    return review_description(payload.description)
+
+@router.post('/jobs/{job_id}/state', response_model=JobResponse)
+def drive_state(job_id: int, payload: DriveStateInput, context=Depends(recruiter_session)):
+    session, user = context
+    return talent.set_drive_state(session, user, talent.owned_job(session, user, job_id, lock=True), payload)
+
 
 @router.get("/company", response_model=CompanyResponse)
 def company(context=Depends(recruiter_session)):
@@ -59,6 +79,12 @@ def override(job_id: int, match_id: int, payload: OverrideInput, context=Depends
 from engines import applications
 from models import Application
 from schemas import ApplicationList, ApplicationResponse, ApplicationReview
+from schemas import ProfileResponse
+
+@router.get("/jobs/{job_id}/applications/{application_id}/profile", response_model=ProfileResponse)
+def application_profile(job_id: int, application_id: int, context=Depends(recruiter_session)):
+    session, user = context
+    return applications.review_profile(session, user, talent.owned_job(session, user, job_id), application_id)
 
 @router.get("/jobs/{job_id}/applications", response_model=ApplicationList)
 def job_applications(job_id: int, offset: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=50), context=Depends(recruiter_session)):

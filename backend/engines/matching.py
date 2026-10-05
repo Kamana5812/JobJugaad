@@ -2,12 +2,13 @@
 
 Starting 40/20/20/15/5 weights and normalization choices are UNVALIDATED
 ASSUMPTIONS, not empirically tuned. Each component is normalized to 0-100.
-Experience is omitted because no structured experience field is collected.
+Experience remains outside the fixed weighted formula; separate lexical evidence can include it.
 """
 import re
 from decimal import Decimal, ROUND_HALF_UP
 from engines.skill_gap import skill_gaps
 from schemas import MatchCalculation
+from engines.job_text import compare_text
 
 METHODOLOGY = ("Proposed weighted rule using exact skill keywords, project keyword coverage, "
     "CGPA x 10, the mean of three self-reported assessments (missing = 0), and a capped "
@@ -48,6 +49,10 @@ def calculate_match(student, skills, projects, certifications, job):
     factors = [dict(key=key, label=label, value=rounded(value), weight=job.weights[key],
         contribution=rounded(rounded(value) * job.weights[key] / 100), evidence=evidence, missing=missing)
         for key, label, value, evidence, missing in values]
+    sources = getattr(student, '_assessment_sources', {})
+    if sources:
+        factors[0]['evidence'] += ' ' + ' '.join(source for key, source in sources.items() if key.startswith('skill:'))
+        factors[3]['evidence'] = f'Mean of three assessment inputs; {sum(v is None for v in assessments)} missing contribute zero. ' + ' '.join(sources.get(kind, f'{kind}: self-reported profile input.') for kind in ('aptitude', 'communication', 'interview'))
     score = rounded(sum(f["contribution"] for f in factors))
     low = score < job.min_match_score
     deficient = [g for g in gaps if g["status"] != "on-track"]
@@ -73,4 +78,6 @@ def calculate_match(student, skills, projects, certifications, job):
     if hard:
         next_step += " Ask a recruiter to review the stated eligibility restriction; a manual exception must be recorded."
     return MatchCalculation(match_score=score, factor_breakdown=factors, missing_requirements=missing,
-        skill_gaps=gaps, eligible=eligible, explanation=explanation, next_step=next_step, methodology=METHODOLOGY)
+        skill_gaps=gaps, eligible=eligible, explanation=explanation, next_step=next_step,
+        methodology=METHODOLOGY.replace('three self-reported assessments', 'three recorded assessments with explicit staff-adopted results where present') + (' Staff adoption is visible in factor evidence; weights remain unchanged.' if sources else '') if sources else METHODOLOGY,
+        text_evidence=compare_text(getattr(job, 'description', '') or '', student, skills, projects, certifications))

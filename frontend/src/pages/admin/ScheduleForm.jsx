@@ -9,9 +9,9 @@ export default function ScheduleForm({ board, source, applicant, onClearSource, 
   const sourceForm = () => ({ job_id: source.job_id, student_id: source.student_id,
     scheduled_time: localInputTime(Math.max(new Date(source.scheduled_time).getTime(), Date.now() + 3600000)),
     duration_minutes: (new Date(source.end_time) - new Date(source.scheduled_time)) / 60000,
-    venue: source.venue, panel_id: source.panel_id, round_number: source.round_number || 1, round_name: source.round_name || 'Interview' })
+    venue: source.venue, panel_id: source.panel_id, round_number: source.round_number || 1, round_name: source.round_name || 'Interview', event_type: source.event_type || 'interview' })
   const initial = () => source ? sourceForm() : ({ job_id: applicant?.job_id || board.jobs[0]?.id || '', student_id: applicant?.student_id || board.students[0]?.id || '',
-    scheduled_time: localInputTime(Date.now() + 86400000), duration_minutes: 30, venue: '', panel_id: '', round_number: 1, round_name: 'Interview' })
+    scheduled_time: localInputTime(Date.now() + 86400000), duration_minutes: 30, venue: '', panel_id: '', round_number: 1, round_name: 'Interview', event_type: 'interview' })
   const [form, setForm] = useState(initial)
   const [preview, setPreview] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -53,8 +53,10 @@ export default function ScheduleForm({ board, source, applicant, onClearSource, 
         <FormField label="Venue" required maxLength="100" value={form.venue} onChange={change('venue')} hint="Use the same name for the same room." />
         <FormField label="Panel" required maxLength="80" value={form.panel_id} onChange={change('panel_id')} hint="Use the same name for the same interview panel." />
         <FormField label="Round number" type="number" min="1" max="20" step="1" required value={form.round_number} onChange={change('round_number')} disabled={Boolean(source) || busy} />
+        <FormField label="Event type" value={form.event_type} onChange={change('event_type')} disabled={Boolean(source) || busy}><option value="interview">Interview</option><option value="assessment">External assessment / test</option></FormField>
         <FormField label="Round name" required maxLength="80" value={form.round_name} onChange={change('round_name')} disabled={Boolean(source) || busy} hint={source ? 'Rescheduling keeps the original round identity.' : 'For example: Technical interview or HR interview.'} />
       </div>
+      <p className="text-xs text-muted">Assessment events reserve the same resources and obey the same constraints. Tests are conducted externally; staff records results with provenance separately. Assessment completion is not a hiring selection.</p>
       <Message error>{error}</Message><Message>{message}</Message>
       <div className="flex flex-wrap gap-3"><button className={secondaryStyle} disabled={busy} value="check">Check availability</button>
         <button className={buttonStyle} disabled={busy || !board.jobs.length || !board.students.length} value="save">{busy ? 'Checking…' : 'Create pending proposal'}</button></div>

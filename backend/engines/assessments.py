@@ -11,13 +11,17 @@ def response(row, name):
     value = float((Decimal(str(row.score)) * 100 / Decimal(str(row.maximum))).quantize(
         Decimal('0.01'), rounding=ROUND_HALF_UP))
     return AssessmentResponse(id=row.id, student_id=row.student_id, student_name=name,
-        kind=row.kind, skill_name=row.skill_name, title=row.title, source=row.source,
+        kind=row.kind, use_for_scoring=row.use_for_scoring, skill_name=row.skill_name, title=row.title, source=row.source,
         reference=row.reference, assessed_on=row.assessed_on.isoformat(), score=row.score,
         maximum=row.maximum, normalized_score=value,
-        explanation=f"Recorded {row.score:g} out of {row.maximum:g} for {row.title} from {row.source}; score / maximum × 100 = {value:g}/100. This is a staff declaration, not independently authenticated evidence or a readiness contribution.",
+        explanation=f"Recorded {row.score:g} out of {row.maximum:g} for {row.title} from {row.source}; score / maximum × 100 = {value:g}/100. This is a staff declaration, not independently authenticated evidence. " + ('Explicitly adopted for scoring while active; newer adopted results of this type take precedence.' if row.use_for_scoring else 'Evidence only; not adopted for scoring.'),
         recorded_by=row.recorded_by, created_at=row.created_at.isoformat(), reason=row.reason,
         withdrawn_at=row.withdrawn_at.isoformat() if row.withdrawn_at else None,
         withdrawn_by=row.withdrawn_by, withdrawal_reason=row.withdrawal_reason)
+
+def refresh_readiness(session, student):
+    from engines.profile import profile_response, update_fields
+    update_fields(session, student, {'readiness_score': profile_response(session, student).readiness.score})
 
 
 def list_records(session, user, student_id=None, offset=0, limit=20):
@@ -51,6 +55,8 @@ def create(session, user, payload):
     row = Assessment(college_id=user.college_id, recorded_by=user.id,
         **{**payload.model_dump(), 'assessed_on': assessed})
     session.add(row); session.flush()
+    if row.use_for_scoring:
+        refresh_readiness(session, student)
     return response(row, student.name)
 
 
@@ -65,6 +71,10 @@ def withdraw(session, user, identity, payload):
     row.withdrawn_by = user.id
     row.withdrawal_reason = payload.reason
     session.flush()
+    if row.use_for_scoring:
+        student = session.scalar(select(Student).where(Student.college_id == user.college_id,
+            Student.id == row.student_id))
+        refresh_readiness(session, student)
     name = session.scalar(select(Student.name).where(Student.id == row.student_id,
         Student.college_id == user.college_id))
     return response(row, name)

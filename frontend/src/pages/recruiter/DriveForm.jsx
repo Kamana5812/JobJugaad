@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { createJob } from '../../api/recruiter'
+import { createJob, reviewDescription } from '../../api/recruiter'
 import { errorMessage } from '../../api/student'
 import { FormField, buttonStyle, secondaryStyle, Message } from '../../components/FormField'
 
-const initial = { title: '', ctc: '', min_cgpa: '6', max_backlogs: '0', branches: 'CSE, ECE', min_match_score: '60', assessment_benchmark: '60' }
+const initial = { title: '', description: '', ctc: '', min_cgpa: '6', max_backlogs: '0', branches: 'CSE, ECE', min_match_score: '60', assessment_benchmark: '60' }
 const initialWeights = { skills: 40, projects: 20, academics: 20, assessments: 15, certifications: 5 }
 export default function DriveForm({ onCreated }) {
   const [form, setForm] = useState(initial)
@@ -11,17 +11,25 @@ export default function DriveForm({ onCreated }) {
   const [weights, setWeights] = useState(initialWeights)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [review, setReview] = useState(null)
+  const [reviewing, setReviewing] = useState(false)
+  async function extract() {
+    setReviewing(true); setError(''); setReview(null)
+    try { setReview(await reviewDescription(form.description)) }
+    catch (failure) { setError(errorMessage(failure)) }
+    finally { setReviewing(false) }
+  }
   const change = key => event => setForm({ ...form, [key]: event.target.value })
   function changeSkill(index, key, value) { setSkills(skills.map((s, i) => i === index ? { ...s, [key]: value } : s)) }
   async function submit(event) {
     event.preventDefault(); setBusy(true); setError('')
     try {
-      const payload = { title: form.title, ctc: Number(form.ctc), min_cgpa: Number(form.min_cgpa), max_backlogs: Number(form.max_backlogs),
+      const payload = { title: form.title, description: form.description, ctc: Number(form.ctc), min_cgpa: Number(form.min_cgpa), max_backlogs: Number(form.max_backlogs),
         eligible_branches: form.branches.split(',').map(s => s.trim()),
         required_skills: skills.map(s => ({ ...s, min_proficiency: Number(s.min_proficiency) })),
         weights, min_match_score: Number(form.min_match_score), assessment_benchmark: Number(form.assessment_benchmark) }
       const job = await createJob(payload)
-      setForm(initial); setSkills([{ skill_name: '', min_proficiency: '60' }]); setWeights(initialWeights); onCreated(job)
+      setForm(initial); setReview(null); setSkills([{ skill_name: '', min_proficiency: '60' }]); setWeights(initialWeights); onCreated(job)
     } catch (failure) { setError(errorMessage(failure)) }
     finally { setBusy(false) }
   }
@@ -30,6 +38,9 @@ export default function DriveForm({ onCreated }) {
     <p className="mt-2 text-sm text-muted">Define the role and its requirements. All details below are editable before creation.</p>
     <form onSubmit={submit} className="mt-5 space-y-5">
       <FormField label="Role / drive title" required maxLength="160" value={form.title} onChange={change('title')} />
+      <label className="block text-sm font-semibold text-navy">Full job description (optional)<textarea maxLength={20000} className="mt-2 block min-h-36 w-full rounded-lg border border-line p-3 font-normal" value={form.description} onChange={e => { change('description')(e); setReview(null) }} /></label>
+      <button type="button" className={secondaryStyle} disabled={reviewing || !form.description.trim()} onClick={extract}>{reviewing ? 'Extracting…' : 'Review mentioned skills'}</button>
+      {review && <div className="space-y-3 rounded-xl bg-paper p-4"><p className="text-sm text-muted">{review.explanation}</p><p className="text-xs text-muted">{review.methodology}</p><div className="flex flex-wrap gap-2">{review.skills.map(name => <button key={name} type="button" className={secondaryStyle} disabled={skills.length >= 20 || skills.some(s => s.skill_name.toLowerCase().trim() === name)} onClick={() => setSkills([...skills.filter(s => s.skill_name.trim()), { skill_name: name, min_proficiency: '60' }])}>Add {name}</button>)}</div><p className="text-xs text-muted">Targets start at 60 as an editable assumption. Confirm each target and remove optional or negated requirements before creating the drive.</p></div>}
       <div className="grid gap-4 sm:grid-cols-3">
         <FormField label="CTC (₹ lakh / year)" type="number" min="0.01" max="1000" step="0.01" required value={form.ctc} onChange={change('ctc')} />
         <FormField label="Minimum CGPA /10" type="number" min="0" max="10" step="0.1" required value={form.min_cgpa} onChange={change('min_cgpa')} />
@@ -57,7 +68,7 @@ export default function DriveForm({ onCreated }) {
         </div>
       </details>
       <Message error>{error}</Message>
-      <button disabled={busy} className={buttonStyle}>{busy ? 'Creating…' : 'Create drive'}</button>
+      <button disabled={busy || reviewing} className={buttonStyle}>{busy ? 'Creating…' : 'Create drive'}</button>
     </form>
   </section>
 }

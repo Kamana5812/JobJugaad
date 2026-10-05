@@ -26,12 +26,16 @@ are seeded. Manual entry is supported; CSV import is not implemented.
 
 ## Scoring boundary
 
-This release adds evidence storage and human review only. Readiness retains its
-30/20/15/15/10/10 weighted rule and self-reported inputs; matching, support flags,
-public-data model signals and saved decision snapshots remain unchanged. Records
-explicitly state that they are not readiness contributions. Automatically choosing
-which attempt should replace a profile input requires a separate scoring-input
-policy; it is not silently inferred from a staff record.
+Readiness retains its 30/20/15/15/10/10 weighted rule. Evidence-only is the default.
+An administrator can explicitly adopt a reviewed result using the checkbox before
+recording it. Active adopted results replace the corresponding aptitude,
+communication, interview or exact skill input; latest assessment date wins, ties
+by record ID. Each scoring factor names the result, source, reference, scale,
+date and recorder. Original self-reports are not overwritten. Withdrawal restores
+the previous active adopted result, or the self-report if none remains. Readiness
+and its cached overview value refresh; matching/support snapshots need a rerun.
+Frozen applications and override evidence are not rewritten. The separately
+trained public-data models do not adopt these assessment results.
 
 ## Access and history
 

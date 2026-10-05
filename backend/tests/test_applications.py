@@ -42,7 +42,7 @@ class ApplicationsTests(unittest.TestCase):
             headers = {"Authorization": "Bearer " + r.json()["access_token"]}
             cls.recruiters.append(headers)
             drives = []
-            for index in range(5 if college == cls.colleges[0] else 1):
+            for index in range(6 if college == cls.colleges[0] else 1):
                 r = cls.client.post("/recruiters/jobs", headers=headers, json=dict(title=f"Synthetic application drive {index}",
                     ctc=6, min_cgpa=8, eligible_branches=["CSE"], required_skills=[dict(skill_name="python", min_proficiency=70)]))
                 assert r.status_code == 201, r.text
@@ -78,6 +78,59 @@ class ApplicationsTests(unittest.TestCase):
         self.assertEqual(self.client.post("/auth/login", json={**credentials, "college_id": self.colleges[1]}).status_code, 401)
         for value in [999999, True, "1"]:
             self.assertEqual(self.client.post("/auth/login", json={**credentials, "college_id": value}).status_code, 422)
+
+    def test_profile_review_requires_owned_active_consent(self):
+        row = self.submit(self.jobs[0][5])
+        path = f"/recruiters/jobs/{row['job_id']}/applications/{row['id']}/profile"
+        result = self.client.get(path, headers=self.recruiters[0])
+        self.assertEqual(result.status_code, 200, result.text)
+        self.assertEqual(result.json()['id'], self.accounts[0][1]['student_id'])
+        self.assertEqual(self.client.get(path, headers=self.recruiters[1]).status_code, 404)
+        self.assertEqual(self.client.get(path, headers=self.recruiters[2]).status_code, 404)
+        self.assertEqual(self.client.get(path, headers=self.headers).status_code, 403)
+        withdrawn = self.client.post(f"{self.path}/{row['id']}/withdraw", headers=self.headers,
+            json={'version': row['version'], 'reason': 'Synthetic consent withdrawal check'})
+        self.assertEqual(withdrawn.status_code, 200, withdrawn.text)
+        self.assertEqual(self.client.get(path, headers=self.recruiters[0]).status_code, 404)
+
+    def test_drive_closure_audit_and_new_application_gate(self):
+        result = self.client.post('/recruiters/jobs', headers=self.recruiters[0], json=dict(
+            title='Controlled closure drive', description='Python and SQL backend work', ctc=6,
+            min_cgpa=0, eligible_branches=['CSE'], required_skills=[dict(skill_name='python', min_proficiency=60)]))
+        self.assertEqual(result.status_code, 201, result.text)
+        job = result.json()
+        self.assertEqual(job['description'], 'Python and SQL backend work')
+        path = f"/recruiters/jobs/{job['id']}/state"
+        payload = dict(is_open=False, version=job['version'], reason='Controlled drive closure regression')
+        self.assertEqual(self.client.post(path, headers=self.recruiters[1], json=payload).status_code, 404)
+        self.assertEqual(self.client.post(path, headers=self.recruiters[2], json=payload).status_code, 404)
+        closed = self.client.post(path, headers=self.recruiters[0], json=payload)
+        self.assertEqual(closed.status_code, 200, closed.text)
+        self.assertFalse(closed.json()['is_open'])
+        self.assertEqual(closed.json()['lifecycle_events'][0]['reason'], payload['reason'])
+        self.assertEqual(self.client.post(path, headers=self.recruiters[0], json=payload).status_code, 409)
+        self.assertEqual(self.client.post(self.path, headers=self.headers, json={'job_id': job['id']}).status_code, 404)
+        self.assertEqual(self.client.post(f"/recruiters/jobs/{job['id']}/matching", headers=self.recruiters[0]).status_code, 409)
+        reopened = self.client.post(path, headers=self.recruiters[0], json=dict(is_open=True,
+            version=closed.json()['version'], reason='Controlled reopening regression'))
+        self.assertEqual(reopened.status_code, 200, reopened.text)
+        self.assertEqual(len(reopened.json()['lifecycle_events']), 2)
+        self.assertEqual(self.client.post(self.path, headers=self.headers, json={'job_id': job['id']}).status_code, 201)
+
+    def test_demand_report_is_company_and_college_scoped(self):
+        result = self.client.get('/recruiters/analytics/demand', headers=self.recruiters[0])
+        self.assertEqual(result.status_code, 200, result.text)
+        data = result.json()
+        ids = {row['job_id'] for row in data['drives']}
+        self.assertTrue(set(self.jobs[0]).issubset(ids))
+        self.assertFalse(ids.intersection(self.jobs[1]))
+        self.assertFalse(ids.intersection(self.jobs[2]))
+        self.assertIn('not a market forecast', data['explanation'])
+        for row in data['drives']:
+            self.assertGreaterEqual(row['submitted'], row['active_applications'])
+            self.assertGreaterEqual(row['active_applications'], row['shortlisted'])
+        self.assertEqual(self.client.get('/recruiters/analytics/demand').status_code, 401)
+        self.assertEqual(self.client.get('/recruiters/analytics/demand', headers=self.headers).status_code, 403)
 
     def test_submission_frozen_evidence_and_duplicate_handling(self):
         before = self.count_matches()

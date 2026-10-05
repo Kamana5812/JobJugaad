@@ -112,7 +112,7 @@ def candidates(session, user, search="", offset=0, limit=20):
         Offer.student_id == Interview.student_id,Offer.job_id == Interview.job_id))
     query = select(Interview,Student,Job).join(Student,Student.id == Interview.student_id).join(Job,Job.id == Interview.job_id).where(
         Interview.college_id == college,Student.college_id == college,Job.college_id == college,
-        Interview.status == "selected",~already_offered)
+        Interview.status == "selected", Interview.event_type == 'interview', ~already_offered)
     if search:
         query=query.where(Student.name.icontains(search,autoescape=True))
     total=session.scalar(select(func.count()).select_from(query.subquery()))
@@ -141,7 +141,7 @@ def create_offer(session, user, payload):
         Interview.id == payload.interview_id).with_for_update())
     if interview is None:
         raise HTTPException(404,"Selected interview not found.")
-    if interview.status != "selected":
+    if interview.status != "selected" or interview.event_type != 'interview':
         raise HTTPException(409,"Record the interview as selected before creating an offer.")
     if session.scalar(select(Offer.id).where(Offer.college_id == user.college_id,
             Offer.student_id == interview.student_id,Offer.job_id == interview.job_id)):

@@ -17,6 +17,7 @@ export default function AssessmentRecords({ items, onWithdraw, busy }) {
         ["Recorded by", `College administrator #${row.recorded_by}`], ["Review context", row.reason]].map(([label,value]) =>
         <div key={label}><dt className="text-muted">{label}</dt><dd className="mt-1 break-words text-ink">{value}</dd></div>)}
     </dl>
+    <p className="mt-3 text-sm font-semibold text-navy">{row.withdrawn_at ? 'Not used: withdrawn' : row.use_for_scoring ? 'Adopted: latest active result of this type takes precedence' : 'Evidence only: not used in scoring'}</p>
     {row.withdrawn_at && <p className="mt-4 text-sm text-critical">Withdrawn by administrator #{row.withdrawn_by} on {new Date(row.withdrawn_at).toLocaleString()}: {row.withdrawal_reason}</p>}
     {onWithdraw && !row.withdrawn_at && <details className="mt-4 text-sm"><summary className="cursor-pointer font-semibold text-navy">Withdraw an incorrect record</summary>
       <form className="mt-3 space-y-3" onSubmit={async event => { event.preventDefault(); await onWithdraw(row.id, reasons[row.id] || '') }}>

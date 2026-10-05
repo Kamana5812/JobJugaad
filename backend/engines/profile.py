@@ -3,6 +3,7 @@ from sqlalchemy import select, delete, update
 from models import Student, StudentSkill, Project, Certification
 from schemas import ProfileResponse, SkillInput, EvidenceInput
 from engines.readiness import calculate_readiness
+from engines.scoring_evidence import resolve_scoring
 
 COLLECTIONS = {"skills": StudentSkill, "projects": Project, "certifications": Certification}
 
@@ -12,14 +13,16 @@ def collections(session, student):
 
 def profile_response(session, student):
     data = collections(session, student)
+    scoring_student, scoring_skills = resolve_scoring(session, student, data['skills'])
     return ProfileResponse(id=student.id, user_id=student.user_id, college_id=student.college_id,
         name=student.name, branch=student.branch, cgpa=student.cgpa, backlog_count=student.backlog_count,
         aptitude_score=student.aptitude_score, communication_score=student.communication_score,
         interview_score=student.interview_score, resume_text=student.resume_text,
+        experiences=student.experiences or [],
         skills=[SkillInput(skill_name=s.skill_name, proficiency=s.proficiency) for s in data["skills"]],
         projects=[EvidenceInput(title=p.title, description=p.description) for p in data["projects"]],
         certifications=[EvidenceInput(title=c.title, description=c.description) for c in data["certifications"]],
-        readiness=calculate_readiness(student, data["skills"], data["projects"]))
+        readiness=calculate_readiness(scoring_student, scoring_skills, data["projects"]))
 
 def update_fields(session, student, fields):
     session.execute(update(Student).where(Student.id == student.id, Student.college_id == student.college_id,

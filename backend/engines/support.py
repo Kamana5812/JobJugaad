@@ -10,6 +10,7 @@ from models import Job, Student, StudentSkill, Interview, RiskPrediction, Suppor
 from schemas import SupportCalculation, SupportResponse, SupportReport, AuditEventResponse
 from engines.accounts import approved_scope
 from engines.risk import evaluate_support, METHOD
+from engines.scoring_evidence import assessment_groups, resolve_scoring
 
 
 def tenant_job(session, college, job_id):
@@ -37,12 +38,15 @@ def run_support(session, user, job_id):
         skills[skill.student_id].append(skill)
     attendance = defaultdict(int)
     for booking in session.scalars(select(Interview).where(Interview.college_id == college,
+            Interview.event_type == 'interview',
             Interview.status.in_(["completed","selected","rejected"]), Interview.end_time >= now-timedelta(days=30),
             Interview.end_time <= now)):
         attendance[booking.student_id] += 1
     values = []
+    adopted = assessment_groups(session, college)
     for student in students:
-        result = evaluate_support(student, skills[student.id], job, attendance[student.id])
+        scoring_student, scoring_skills = resolve_scoring(session, student, skills[student.id], adopted[student.id])
+        result = evaluate_support(scoring_student, scoring_skills, job, attendance[student.id])
         data = result.model_dump(exclude={"methodology","score_label"})
         digest = hashlib.sha256(json.dumps(data,sort_keys=True).encode()).hexdigest()
         values.append(dict(college_id=college, student_id=student.id, job_id=job_id,

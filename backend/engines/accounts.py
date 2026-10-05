@@ -46,7 +46,7 @@ def approved_scope(column, college, role):
         return true()  # Archived demonstration tenants stay separate from real college records.
     return column.in_(select(User.id).join(AccountAccess,
         (AccountAccess.user_id == User.id) & (AccountAccess.college_id == User.college_id)).where(
-        User.college_id == college, User.role == role, AccountAccess.college_id == college,
+        User.college_id == college, User.role == role, User.disabled_at.is_(None), AccountAccess.college_id == college,
         AccountAccess.email_verified_at.is_not(None), AccountAccess.approval_status == "approved"))
 
 

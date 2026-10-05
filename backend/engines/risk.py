@@ -30,6 +30,12 @@ def evaluate_support(student, skills, job, completed_count):
             triggered=completed_count < 2, contribution=int(completed_count < 2),
             explanation=f"{completed_count} completed interview record(s) in the last 30 days. This is not a measure of effort; verify opportunities and missing records.")
     ]
+    sources = getattr(student, '_assessment_sources', {})
+    if 'interview' in sources:
+        factors[1]['explanation'] = sources['interview'] + ' Proposed support threshold: below 40/100.'
+    skill_sources = [source for key, source in sources.items() if key.startswith('skill:')]
+    if skill_sources:
+        factors[0]['explanation'] += ' Adopted skill evidence: ' + ' '.join(skill_sources)
     count = sum(f["contribution"] for f in factors)
     flagged = count == 3
     interventions = [

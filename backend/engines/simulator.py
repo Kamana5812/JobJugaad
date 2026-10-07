@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from models import Student, StudentSkill, Job
-from engines.readiness import compute_readiness
+from engines.readiness import calculate_readiness
 from engines.matching import calculate_match
 from engines.skill_gap import skill_gaps
 
@@ -27,7 +27,7 @@ def run_simulation(session, college_id, target_skill: str, num_students: int, ta
         skills = session.scalars(select(StudentSkill).where(StudentSkill.student_id == student.id)).all()
         # Compute readiness (using dummy assessment sources since this is a simulation)
         scoring_student = student
-        initial_readiness = compute_readiness(scoring_student, skills, {})
+        initial_readiness = calculate_readiness(scoring_student, skills, [])
         initial_total_readiness += initial_readiness.score
 
         # Check job eligibility
@@ -48,7 +48,7 @@ def run_simulation(session, college_id, target_skill: str, num_students: int, ta
                 proficiency = target_proficiency
             projected_skills.append(DummySkill())
 
-        projected_readiness = compute_readiness(scoring_student, projected_skills, {})
+        projected_readiness = calculate_readiness(scoring_student, projected_skills, [])
         projected_total_readiness += projected_readiness.score
         
         for job in jobs:

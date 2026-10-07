@@ -55,3 +55,6 @@ def calculate_readiness(student, skills, projects) -> ReadinessResponse:
     return ReadinessResponse(score=score, raw_score=float(total), band=band, breakdown=factors,
         explanation=explanation, next_step=NEXT_STEPS[weakest],
         methodology="Proposed weighted rule: 30/20/15/15/10/10; self-reported inputs with explicitly adopted staff evidence where recorded, not a trained model or validated hiring prediction. Round the total half-up to a whole number before band mapping.")
+
+compute_readiness = calculate_readiness
+

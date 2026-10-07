@@ -33,7 +33,10 @@ def request_reset(payload, background):
         row = PasswordResetToken(college_id=payload.college_id, request_key=key,
             user_id=user.id if user else None, token_hash=hashlib.sha256(raw.encode()).hexdigest() if user else None,
             version_at_issue=user.token_version if user else None, expires_at=now + timedelta(minutes=30))
-        deliver = bool(user and email_delivery.configured(user.email))
+        from models import RecruiterBinding
+        linked = user and session.scalar(select(RecruiterBinding.id).where(
+            RecruiterBinding.college_id == payload.college_id, RecruiterBinding.user_id == user.id))
+        deliver = bool(user and not linked and email_delivery.configured(user.email))
         if deliver:
             session.execute(update(PasswordResetToken).where(PasswordResetToken.college_id == payload.college_id,
                 PasswordResetToken.user_id == user.id, PasswordResetToken.used_at.is_(None)).values(used_at=now))
@@ -76,6 +79,9 @@ def reset_password(payload):
             PasswordResetToken.id == challenge.id).with_for_update().execution_options(populate_existing=True))
         now = datetime.now(timezone.utc)
         if user is None or user.disabled_at or challenge.used_at or challenge.expires_at <= now or challenge.version_at_issue != user.token_version:
+            raise invalid
+        from models import RecruiterBinding
+        if session.scalar(select(RecruiterBinding.id).where(RecruiterBinding.college_id == payload.college_id, RecruiterBinding.user_id == user.id)):
             raise invalid
         session.execute(update(User).where(User.college_id == payload.college_id,
             User.id == user.id).values(password_hash=hash_password(payload.password), token_version=user.token_version + 1))

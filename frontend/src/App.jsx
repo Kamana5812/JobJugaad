@@ -12,6 +12,7 @@ import ProfilePage from './pages/student/ProfilePage'
 import OffersPage from './pages/student/OffersPage'
 import NotificationsPage from './components/NotificationsPage'
 import TalentPage from './pages/recruiter/TalentPage'
+import WorkspacesPage from './pages/recruiter/WorkspacesPage'
 import RoleGuard from './components/RoleGuard'
 import SiteHeader from './components/SiteHeader'
 import SiteFooter from './components/SiteFooter'
@@ -43,6 +44,7 @@ export function AppRoutes() {
     <Route path="/student/offers" element={<RoleGuard role="student"><OffersPage /></RoleGuard>} />
     <Route path="/notifications" element={user ? <RoleGuard role={user.role}><NotificationsPage /></RoleGuard> : <Navigate to="/auth" replace />} />
     <Route path="/recruiter" element={<RoleGuard role="recruiter"><TalentPage /></RoleGuard>} />
+    <Route path="/recruiter/workspaces" element={<WorkspacesPage />} />
     <Route path="/admin" element={<RoleGuard role="admin"><Suspense fallback={<p role="status">Loading Command Center…</p>}><AdminPage /></Suspense></RoleGuard>} />
     <Route path="*" element={<div className="rounded-2xl bg-white p-8"><h1 className="text-2xl font-bold text-navy">Page not found</h1><Link className="mt-4 inline-block underline" to="/">Back to JobJugaad</Link></div>} />
   </Routes>

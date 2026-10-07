@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getCompany, getJobs } from '../../api/recruiter'
 import { errorMessage } from '../../api/student'
 import { useAuth } from '../../context/AuthContext'
@@ -33,6 +34,7 @@ export default function TalentPage() {
   }, [retry])
   function created(job) { setJobs([job, ...jobs]); setSelected(job); setOffset(0); setNotice(`Drive “${job.title}” created. Its matching view is ready above.`) }
   return <div className="space-y-8">
+    {!user.is_demo && <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4"><p className="text-sm text-muted">Current college: {user.college_name}</p><Link className={secondaryStyle} to="/recruiter/workspaces">Switch college / request access →</Link></div>}
     <PortalHero role="recruiter" collegeId={user.college_id} description="A clear shortlist starts with a clear why. Define the role, inspect the evidence, and make the human decision.">
       <a href="#create-drive" className={buttonStyle}>Create a drive →</a><a href="#matching" className={secondaryStyle}>Review matches ↓</a>
     </PortalHero>

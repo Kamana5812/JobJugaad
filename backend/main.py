@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from auth import signing_secret
 from database import check_database, initialize_schema, isolation_report
 from routers import auth, students, recruiters, admin, notifications, announcements, offer_documents, privacy
+from routers import workspaces
 from upload_limits import DocumentUploadLimitMiddleware
 from operations.maintenance import MigrationMaintenanceMiddleware
 from schemas import HealthResponse
@@ -43,7 +44,7 @@ async def lifespan(app):
             with suppress(asyncio.CancelledError):
                 await reminder_task
 
-app = FastAPI(title="JobJugaad API", version="0.20.0",
+app = FastAPI(title="JobJugaad API", version="0.21.0",
     description="Explainability-first Student Core, Talent Finder and Placement Command Center. Weighted rules plus separate public-data engineering and MBA Random Forest placement signals.",
     lifespan=lifespan)
 # Exact production origin. CORS is a browser boundary, not a substitute for JWT/RBAC/RLS.
@@ -60,6 +61,7 @@ app.include_router(notifications.router)
 app.include_router(announcements.router)
 app.include_router(offer_documents.router)
 app.include_router(privacy.router)
+app.include_router(workspaces.router)
 
 @app.exception_handler(RequestValidationError)
 async def validation_error(request: Request, error: RequestValidationError):

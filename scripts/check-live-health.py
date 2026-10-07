@@ -8,7 +8,7 @@ for attempt in range(2):
         isolation=data.get('isolation',{})
         assert data.get('maintenance_mode') is not True
         assert data.get('database')=='connected' and isolation.get('status')=='verified' and isolation.get('runtime_role_restricted') is True
-        assert len(isolation.get('tables', [])) == 34
+        assert len(isolation.get('tables', [])) == 36
         assert all(r['status']=='verified' and r['enabled'] and r['forced'] and r['read_write_scoped'] for r in isolation['tables'])
         assert data.get('placement_model')=='ready' and data.get('btech_model')=='ready'
         with urlopen('https://jobjugaad.vercel.app/',timeout=35) as response: assert response.status==200 and b'<html' in response.read(2000).lower()

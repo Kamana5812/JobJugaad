@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from auth import hash_password, verify_password, issue_token, authenticated_session, user_response
 from database import tenant_session
 from admin_access import is_allowed_admin
-from models import User, Student, Company
+from models import User, Student, Company, RecruiterBinding
 from schemas import SignupRequest, RecruiterSignupRequest, LoginRequest, TokenResponse, UserResponse
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -54,6 +54,8 @@ def login(payload: LoginRequest):
         valid = verify_password(payload.password, user.password_hash if user else DUMMY_HASH)
         if not user or not valid or user.disabled_at:
             raise HTTPException(401, "Email, password, or college is incorrect.")
+        if session.scalar(select(RecruiterBinding.id).where(RecruiterBinding.college_id == payload.college_id, RecruiterBinding.user_id == user.id)):
+            raise HTTPException(401, 'Sign in with your home college, then switch recruiter workspaces.')
         if user.role == "student":
             student = session.scalar(select(Student).where(Student.user_id == user.id, Student.college_id == user.college_id))
             if student is None:
@@ -82,6 +84,11 @@ from engines import password_recovery
 @router.post('/logout', response_model=DetailResponse)
 def logout(context=Depends(authenticated_session)):
     session, user = context
+    link = session.scalar(select(RecruiterBinding).where(RecruiterBinding.college_id == user.college_id, RecruiterBinding.user_id == user.id))
+    if link:
+        with tenant_session(link.home_college_id) as home:
+            home.execute(update(User).where(User.college_id == link.home_college_id, User.id == link.home_user_id)
+                .values(token_version=User.token_version + 1))
     session.execute(update(User).where(User.college_id == user.college_id, User.id == user.id)
         .values(token_version=User.token_version + 1))
     return {'detail':'All existing sessions have been revoked. Sign in again to continue.'}

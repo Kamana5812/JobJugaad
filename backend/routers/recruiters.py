@@ -30,8 +30,17 @@ def hiring_demand(context=Depends(recruiter_session)):
     return demand.report(*context)
 
 from schemas import DescriptionInput, DescriptionReview
-from schemas import DriveStateInput
+from schemas import DriveStateInput, JobExtractionRequest, JobExtractionResponse
 from engines.job_text import review_description
+
+@router.post('/jobs/extract', response_model=JobExtractionResponse)
+def extract_job_details(payload: JobExtractionRequest, context=Depends(recruiter_session)):
+    # Automatically extracts skills from unstructured job description text
+    review = review_description(payload.description)
+    return JobExtractionResponse(
+        suggested_skills=review.skills,
+        description=payload.description
+    )
 
 @router.post('/jobs/description/review', response_model=DescriptionReview)
 def description_review(payload: DescriptionInput, context=Depends(recruiter_session)):

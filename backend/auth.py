@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 from sqlalchemy import select
 from database import tenant_session
 from admin_access import is_allowed_admin
-from models import User, Student, Company
+from models import User, Student, Company, RecruiterBinding
 from schemas import UserResponse, TokenResponse
 from colleges import valid_college, college_name
 from engines.accounts import identity_fields, require_access
@@ -46,16 +46,17 @@ def user_response(session, user):
     company = session.scalar(select(Company).where(Company.recruiter_user_id == user.id, Company.college_id == user.college_id))
     if company is None:
         raise HTTPException(404, "Company profile not found.")
-    return UserResponse(**identity_fields(session, user), college_name=college_name(user.college_id), user_id=user.id, company_id=company.id, college_id=user.college_id,
+    link = session.scalar(select(RecruiterBinding).where(RecruiterBinding.college_id == user.college_id, RecruiterBinding.user_id == user.id))
+    return UserResponse(home_college_id=link.home_college_id if link else user.college_id, **identity_fields(session, user), college_name=college_name(user.college_id), user_id=user.id, company_id=company.id, college_id=user.college_id,
         role=user.role, email=user.email, name=company.name)
 
-def issue_token(user, student=None, company=None, session=None):
+def issue_token(user, student=None, company=None, session=None, home_identity=None):
     now = datetime.now(timezone.utc)
     token = jwt.encode({"sub": str(user.id), "user_id": user.id, "role": user.role,
         "college_id": user.college_id, "token_version": user.token_version, "iat": now, "exp": now + timedelta(seconds=TOKEN_SECONDS),
-        "iss": ISSUER, "aud": AUDIENCE}, signing_secret(), algorithm="HS256")
+        "iss": ISSUER, "aud": AUDIENCE, **(home_identity or {})}, signing_secret(), algorithm="HS256")
     return TokenResponse(access_token=token, expires_in=TOKEN_SECONDS,
-        user=UserResponse(**identity_fields(session, user), college_name=college_name(user.college_id), user_id=user.id, student_id=student.id if student else None,
+        user=UserResponse(home_college_id=(home_identity or {}).get('home_college_id', user.college_id) if user.role == 'recruiter' else None, **identity_fields(session, user), college_name=college_name(user.college_id), user_id=user.id, student_id=student.id if student else None,
             company_id=company.id if company else None, college_id=user.college_id,
             role=user.role, email=user.email, name=student.name if student else company.name if company else "Placement administrator"))
 
@@ -88,6 +89,21 @@ def authenticated_session(identity=Depends(current_identity)):
             raise HTTPException(401, 'Your session was invalidated. Please log in again.')
         if user.role == "admin" and not is_allowed_admin(user):
             raise HTTPException(403, "Administrator access is not enabled for this account.")
+        link = session.scalar(select(RecruiterBinding).where(RecruiterBinding.college_id == user.college_id,
+            RecruiterBinding.user_id == user.id)) if user.role == 'recruiter' else None
+        home_fields = ('home_college_id', 'home_user_id', 'home_token_version')
+        if link:
+            if (any(type(identity.get(key)) is not int for key in home_fields)
+                or identity['home_college_id'] != link.home_college_id
+                or identity['home_user_id'] != link.home_user_id):
+                raise HTTPException(401, 'Sign in through your home recruiter account.')
+            with tenant_session(link.home_college_id) as home:
+                owner = home.scalar(select(User).where(User.college_id == link.home_college_id,
+                    User.id == link.home_user_id, User.role == 'recruiter', User.disabled_at.is_(None)))
+                if owner is None or owner.token_version != identity['home_token_version'] or not identity_fields(home, owner)['email_verified']:
+                    raise HTTPException(401, 'Your home session was revoked. Sign in again.')
+        elif any(key in identity for key in home_fields):
+            raise HTTPException(401, 'This workspace binding is no longer valid.')
         yield session, user
 
 def student_session(context=Depends(authenticated_session)):

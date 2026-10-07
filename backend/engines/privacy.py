@@ -59,7 +59,7 @@ def review(session,admin,identity,payload):
     session.flush();return view(row)
 
 def export_account(session,user):
-    from models import Job
+    from models import Job, RecruiterWorkspace, RecruiterBinding
     student=session.scalar(select(Student).where(Student.college_id==user.college_id,Student.user_id==user.id))
     company=session.scalar(select(Company).where(Company.college_id==user.college_id,Company.recruiter_user_id==user.id))
     records={}
@@ -72,6 +72,8 @@ def export_account(session,user):
         elif model in (DataRequest,AccountAccess): condition=model.user_id==user.id
         elif model==Notification: condition=model.recipient_user_id==user.id
         elif model==Job and company: condition=model.company_id==company.id
+        elif model==RecruiterWorkspace and company: condition=model.home_user_id==user.id
+        elif model==RecruiterBinding and company: condition=model.user_id==user.id
         if condition is None: continue
         rows=session.scalars(select(model).where(model.college_id==user.college_id,condition)).all()
         fields=[c.key for c in inspect(model).columns if c.key not in ('password_hash','token_hash','request_key','readiness_score')]

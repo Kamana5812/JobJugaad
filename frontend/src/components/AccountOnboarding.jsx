@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getAccess, requestVerification, requestAccess } from '../api/accounts'
 import { errorMessage } from '../api/student'
@@ -22,6 +23,7 @@ export default function AccountOnboarding() {
   return <div className="mx-auto max-w-2xl space-y-6">
     <header><p className="text-sm text-muted">{user.college_name}</p><h1 className="mt-2 text-3xl font-semibold text-navy">Activate your college workspace</h1><p className="mt-3 text-sm text-muted">{user.email} · {user.role}. Inbox verification and college approval are separate checks.</p></header>
     <Message error>{error}</Message><Message>{notice}</Message>
+    {user.role === 'recruiter' && !user.is_demo && <Link className={secondaryStyle} to="/recruiter/workspaces">Your college workspaces →</Link>}
     <DashboardCard title="01 Verify your email" label={data?.email_verified ? 'Verified' : 'Verification required'}>
       <p className="text-sm text-muted">Open the verification link in your email, then return here and refresh your account.</p>
       {!data?.email_verified && <button className={buttonStyle + ' mt-4'} disabled={busy || !data?.email_delivery_ready} onClick={() => perform(requestVerification)}>Send verification email</button>}

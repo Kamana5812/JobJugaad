@@ -7,11 +7,48 @@ from models import Notification, Student, User
 from schemas import NotificationResponse, NotificationFeed
 
 
+import os
+import smtplib
+from email.message import EmailMessage
+import threading
+
+def send_email_notification(to_email: str, subject: str, content: str):
+    smtp_host = os.environ.get("SMTP_HOST")
+    if not smtp_host:
+        return
+    smtp_port = int(os.environ.get("SMTP_PORT", 587))
+    smtp_user = os.environ.get("SMTP_USER")
+    smtp_pass = os.environ.get("SMTP_PASS")
+    
+    def _send():
+        try:
+            msg = EmailMessage()
+            msg.set_content(content)
+            msg["Subject"] = subject
+            msg["From"] = os.environ.get("SMTP_FROM", "no-reply@jobjugaad.com")
+            msg["To"] = to_email
+            
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+                server.starttls()
+                if smtp_user and smtp_pass:
+                    server.login(smtp_user, smtp_pass)
+                server.send_message(msg)
+        except Exception as e:
+            print(f"Failed to send email to {to_email}: {e}")
+            
+    threading.Thread(target=_send, daemon=True).start()
+
 def notify(session, college, recipient, key, title, body, target, kind="offer"):
     # PostgreSQL conflict handling makes retries idempotent; tenant FK binds recipient.
-    session.execute(insert(Notification).values(college_id=college, recipient_user_id=recipient,
+    result = session.execute(insert(Notification).values(college_id=college, recipient_user_id=recipient,
         event_key=key, kind=kind, title=title, body=body, target_path=target)
         .on_conflict_do_nothing(index_elements=["college_id","recipient_user_id","event_key"]))
+        
+    if result.rowcount > 0:
+        # Fetch user email to send actual email if configured
+        user = session.scalar(select(User).where(User.id == recipient))
+        if user and user.email:
+            send_email_notification(user.email, title, body)
 
 
 def notify_student(session, college, student_id, key, title, body, kind="interview"):

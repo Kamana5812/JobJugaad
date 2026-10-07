@@ -33,7 +33,7 @@ class ErasureInventoryTests(unittest.TestCase):
         self.assertEqual(result['table_counts']['users'], 1)
         self.assertEqual(result['table_counts']['students'], 1)
         self.assertEqual(result['table_counts']['student_skills'], 1)
-        self.assertEqual(len(result['table_counts']), 34)
+        self.assertEqual(len(result['table_counts']), 36)
         self.assertTrue(result['read_only'])
         self.assertFalse(result['permanent_erasure_completed'])
         with tenant_session(college) as session:

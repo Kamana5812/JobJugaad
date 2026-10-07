@@ -30,6 +30,7 @@ export default function AccountPage() {
   }
   return <section className="mx-auto max-w-3xl space-y-6">
     <h1 className="text-3xl font-bold text-navy">Account & data</h1>
+    {user.role === 'recruiter' && !user.is_demo && <Link to="/recruiter/workspaces" className="font-semibold text-navy underline">Manage college workspaces →</Link>}
     <p>{user.email} · Your college workspace</p><Link to="/privacy" className="text-navy underline">Privacy and retention notice</Link>
     <Message error>{error}</Message><Message>{message}</Message>
     <div className="rounded-2xl border border-line bg-white p-6"><h2 className="text-xl font-bold text-navy">Export your records</h2>

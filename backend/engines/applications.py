@@ -115,4 +115,26 @@ def action(session, user, identity, scope, payload, withdraw=False):
         Application.id == row.id, scope, Application.version == payload.version).values(
         status=status, version=row.version + 1, updated_at=datetime.now(timezone.utc)))
     record_event(session, user, row, previous, payload.reason)
+    
+    if status == "shortlisted":
+        # Auto-interview creation pipeline
+        from models import Interview
+        from datetime import timedelta
+        # Schedule it for tomorrow by default
+        scheduled = datetime.now(timezone.utc) + timedelta(days=1)
+        end = scheduled + timedelta(hours=1)
+        interview = Interview(
+            college_id=user.college_id,
+            job_id=row.job_id,
+            student_id=row.student_id,
+            scheduled_time=scheduled,
+            end_time=end,
+            venue="TBD",
+            panel_id="Auto-assigned",
+            status="scheduled",
+            round_name="Auto-Shortlisted Interview"
+        )
+        session.add(interview)
+        session.flush()
+        
     return response(session, row)

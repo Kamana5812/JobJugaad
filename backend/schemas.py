@@ -174,6 +174,7 @@ class PasswordResetInput(InputModel):
         return LoginRequest.password_bytes(value)
 
 class UserResponse(BaseModel):
+    home_college_id: int | None = None
     email_verified: bool = False
     access_status: Literal["unverified", "pending", "approved", "rejected", "legacy_demo"] = "unverified"
     is_demo: bool = False
@@ -851,7 +852,7 @@ class Intervention(BaseModel):
 
 class SupportCalculation(BaseModel):
     score: int
-    score_label: Literal["Support indicators met /3"] = "Support indicators met /3"
+    score_label: str = "Support indicators met /3"
     support_priority: Literal["low","high"]
     flagged: bool
     assessable: bool
@@ -1217,6 +1218,32 @@ class AccessRequestInput(InputModel):
     consent: Literal[True]
     affiliation_reference: str = Field(min_length=3, max_length=120)
     context: str = Field(default="", max_length=1000)
+
+class WorkspaceRequestInput(AccessRequestInput):
+    college_id: int = Field(gt=2, strict=True)
+
+    @field_validator('college_id')
+    @classmethod
+    def known_college(cls, value):
+        from colleges import valid_college
+        if not valid_college(value):
+            raise ValueError('Choose a listed college.')
+        return value
+
+class WorkspaceSwitchInput(InputModel):
+    college_id: int = Field(gt=2, strict=True)
+
+class WorkspaceItem(BaseModel):
+    college_id: int
+    college_name: str
+    access_status: str
+    is_home: bool
+    active: bool
+
+class WorkspaceList(BaseModel):
+    home_college_id: int
+    items: list[WorkspaceItem]
+    explanation: str = 'One home login; each college independently approves access. Company profiles and placement records remain college-scoped.'
 class AccessReviewInput(InputModel):
     version: int = Field(ge=1, strict=True)
     status: Literal["approved", "rejected"]
@@ -1331,3 +1358,42 @@ class AnnouncementRecipientList(BaseModel):
     offset: int
     limit: int
     explanation: str
+
+class ChatbotRequest(BaseModel):
+    message: str
+    job_id: int | None = None
+
+class ChatbotResponse(BaseModel):
+    reply: str
+
+class SimulationRequest(BaseModel):
+    target_skill: str
+    num_students: int
+    target_proficiency: int = 80
+
+class SimulationJobImpact(BaseModel):
+    job_title: str
+    initial_eligible: int
+    projected_eligible: int
+    increase: int
+
+class SimulationResponse(BaseModel):
+    scenario: str
+    initial_avg_readiness: float
+    projected_avg_readiness: float
+    jobs_impact: list[SimulationJobImpact]
+
+class JobExtractionRequest(BaseModel):
+    description: str
+
+class JobExtractionResponse(BaseModel):
+    suggested_skills: list[str]
+    description: str
+
+
+
+class GamificationStats(BaseModel):
+    points: int = 0
+    badges: list[str] = []
+    leaderboard_rank: int | None = None
+

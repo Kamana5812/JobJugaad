@@ -240,3 +240,54 @@ def account_queue(status: Literal["pending", "approved", "rejected"] = "pending"
 @router.post("/accounts/{access_id}/review", response_model=AccountAccessResponse)
 def review_account(access_id: int, payload: AccessReviewInput, context=Depends(admin_session)):
     return accounts.review(*context, access_id, payload)
+
+from schemas import SimulationRequest, SimulationResponse
+from engines.simulator import run_simulation
+
+@router.post("/simulator", response_model=SimulationResponse)
+def simulate_scenario(payload: SimulationRequest, context=Depends(admin_session)):
+    session, user = context
+    return run_simulation(session, user.college_id, payload.target_skill, payload.num_students, payload.target_proficiency)
+
+from pydantic import BaseModel
+class SyncResponse(BaseModel):
+    status: str
+    colleges_synced: int
+
+@router.post("/directory/sync", response_model=SyncResponse)
+def sync_college_directory(context=Depends(admin_session)):
+    """
+    Dynamic Institutional Sync: Pulls live college data from a mock institutional API (BPUT)
+    and updates the local database, replacing the static 2022-23 snapshot.
+    """
+    session, user = context
+    if user.college_id not in (1, 2):  # Limit to system admins
+        raise HTTPException(403, "System admin required to trigger global directory sync.")
+    
+    # Mocking a dynamic API call to an institutional database
+    import urllib.request
+    import json
+    from models import College
+    try:
+        # In a real scenario, this would be the actual BPUT API URL
+        # For demonstration, we simulate fetching updated JSON
+        url = "https://raw.githubusercontent.com/kamana5812/JobJugaad/refs/heads/main/backend/colleges.json"
+        req = urllib.request.Request(url, headers={'User-Agent': 'JobJugaad-Sync/1.0'})
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode())
+            
+        synced = 0
+        for item in data:
+            c = session.scalar(select(College).where(College.id == item["id"]))
+            if c:
+                c.name = item["name"]
+                c.location = item["location"]
+                c.type = item["type"]
+            else:
+                c = College(**item)
+                session.add(c)
+            synced += 1
+        session.flush()
+        return SyncResponse(status="success", colleges_synced=synced)
+    except Exception as e:
+        raise HTTPException(502, f"Failed to sync with institutional database: {str(e)}")

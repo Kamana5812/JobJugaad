@@ -549,3 +549,29 @@ All additions retain the existing 34 tenant tables, explicit application college
 
 The owner explicitly authorized all three NLP upgrades: semantic evidence, improved keyword/TF-IDF processing and review-only resume-field extraction. See [NLP-UPGRADES.md](docs/NLP-UPGRADES.md). Semantic evidence uses the pinned pretrained Sentence Transformers all-MiniLM-L6-v2 model through quantized ONNX Runtime on CPU, rather than installing PyTorch on the free backend. Bounded pair comparisons do not persist embeddings and need no pgvector index. This amendment supersedes the deferred-only status of these upgrades; it does not change Section 5's default weighted matching, eligibility, ranking, readiness or risk methodology. Semantic values always include section contributions and a truthful explanation and are never confidence or validated accuracy. Resume extraction and keyword review remain deterministic and require human review.
 
+
+
+### Recruiter college workspaces (authorized 2026-10-06)
+
+A recruiter registers once at a real home college and uses that college for login, inbox verification, and password recovery. Independently approved additional college workspaces use local users/company records with randomly generated, unusable standalone passwords. `recruiter_workspaces` is a home-college directory containing only owned identity references; `recruiter_bindings` is a target-college binding. Both have college_id, application filters, composite foreign keys, and the same ENABLE/FORCE college_isolation RLS policy as other core tables. Their explicit home/target identity foreign keys are the sole cross-tenant identity references: they never authorize cross-tenant student, drive, application, interview, or offer queries. Membership creation changes the transaction-local tenant setting only after validating the authenticated, inbox-verified owner and target directory entry, and flushes every tenant's writes before changing scope. College approvals use the existing AccountAccess queue and audit history.
+
+Every switched JWT contains local user_id/role/college_id/token_version plus home_college_id/home_user_id/home_token_version. Every authenticated request validates its target binding and current, enabled, email-verified home identity/version under a separate tenant-scoped read. College workflow endpoints additionally require that college's current approval. Password reset or logout of the home account invalidates all workspace sessions; logout from an additional workspace also revokes home sessions. A college can reject its own access without affecting other colleges. Existing same-email accounts are never adopted, merged, or re-passworded; linking separately registered historical recruiter accounts requires a future proof-of-ownership migration.
+
+Company name/industry are copied initially; company profiles and placement records remain college-specific. Inbox verification is inherited as an auditable home-verification declaration, not a second email or proof of college affiliation. Archived demo tenants cannot create additional workspaces. Backup/restore automatically includes both tables and must cover all linked colleges; table-first restore loads users across colleges before identity references. Older 34-table snapshots require their original schema for restore or an explicitly reviewed conversion. Workspace account exports include locally owned directory/binding records. Recruiter deletion remains a governed succession/retention review covering every linked college; existing automatic student erasure does not erase recruiters.
+
+
+## 10. Hackathon Grand Finale Deliverables Mapping
+
+This section maps the official BPUT Hackathon Grand Finale criteria directly to our implemented capabilities:
+
+1. **Student Readiness & Employability Scoring (25%)**
+   - *Implementation:* The Readiness Engine (Phase 1) assesses technical skills, projects, academics, aptitude, and communication to generate a 4-band readiness score. It surfaces explicit skill gaps against standard benchmarks.
+2. **Recruiter-Student Matching & Explainability (25%)**
+   - *Implementation:* The Matching Engine (Phase 2) evaluates hard eligibility (CGPA, branch) and ranks students using weighted rules. It provides a fixed explanation format (e.g., "Below threshold, because...") for inclusion/exclusion, maintaining complete explainability without LLM hallucination risks.
+3. **Conflict-Aware Drive Scheduling (20%)**
+   - *Implementation:* The Scheduling Engine (Phase 3 & 4) is a deterministic greedy constraint-checker that prevents overlapping drives, double-booked venues, and simultaneous shortlists. It integrates with an automated in-app notification workflow.
+4. **Placement Monitoring & At-Risk Identification (20%)**
+   - *Implementation:* The Admin Dashboard (Phase 3 & 4) provides live analytics on branch/skill conversion and tracks offers/documents. The Placement Support Engine uses a machine learning classifier (Random Forest with SMOTE/class-weighting) to identify at-risk students based on skill gaps, interview scores, and activity, explaining its reasoning via feature importances.
+5. **Technical Documentation & Scalability (10%)**
+   - *Implementation:* This ARCHITECTURE.md file documents the models, algorithms, and our multi-campus scalability approach. The system uses PostgreSQL Row-Level Security (RLS) on all tenant tables, enabling true multi-campus isolation within a single deployment.
+

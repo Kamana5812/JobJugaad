@@ -26,9 +26,9 @@ def main():
         health = client.get(API + '/health').json()
         isolation = health.get('isolation', {})
         result['policies'] = isolation.get('tables', [])
-        check('34 ENABLE/FORCE read-write scoped policies and restricted role',
+        check('36 ENABLE/FORCE read-write scoped policies and restricted role',
             health.get('database') == 'connected' and isolation.get('status') == 'verified'
-            and isolation.get('runtime_role_restricted') is True and len(result['policies']) == 34
+            and isolation.get('runtime_role_restricted') is True and len(result['policies']) == 36
             and all(row['enabled'] and row['forced'] and row['read_write_scoped']
                 and row['status'] == 'verified' for row in result['policies']))
         check('public-data models still ready', health.get('placement_model') == 'ready' and health.get('btech_model') == 'ready')

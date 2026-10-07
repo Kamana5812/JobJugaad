@@ -101,6 +101,31 @@ class Company(TenantRow, Base):
     __table_args__ = (UniqueConstraint("id", "college_id"),
         ForeignKeyConstraint(["recruiter_user_id", "college_id"], ["users.id", "users.college_id"]),)
 
+class RecruiterWorkspace(TenantRow, Base):
+    """Owned home-tenant directory; stores references, never another campus's placement data."""
+    __tablename__ = 'recruiter_workspaces'
+    home_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    target_college_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    target_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (
+        ForeignKeyConstraint(['home_user_id', 'college_id'], ['users.id', 'users.college_id']),
+        ForeignKeyConstraint(['target_user_id', 'target_college_id'], ['users.id', 'users.college_id']),
+        UniqueConstraint('home_user_id', 'college_id', 'target_college_id'),
+        CheckConstraint('college_id > 2 AND target_college_id > 2 AND college_id <> target_college_id'))
+
+class RecruiterBinding(TenantRow, Base):
+    """Target-tenant binding: local company owner cannot authenticate independently."""
+    __tablename__ = 'recruiter_bindings'
+    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    home_college_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    home_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    __table_args__ = (
+        ForeignKeyConstraint(['user_id', 'college_id'], ['users.id', 'users.college_id']),
+        ForeignKeyConstraint(['home_user_id', 'home_college_id'], ['users.id', 'users.college_id']),
+        UniqueConstraint('user_id', 'college_id'),
+        CheckConstraint('college_id > 2 AND home_college_id > 2 AND college_id <> home_college_id'))
+
 class Job(TenantRow, Base):
     __tablename__ = "jobs"
     company_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)

@@ -180,42 +180,20 @@ def cancel_availability(student_id: int, constraint_id: int, payload: CalendarCa
     return calendar_constraints.cancel_constraint(session, user, constraint_id, payload, student.id)
 
 from schemas import ChatbotRequest, ChatbotResponse
+from engines.rag_chatbot import generate_chat_response
 
 @router.post("/{student_id}/chatbot/eligibility", response_model=ChatbotResponse)
 def chatbot_eligibility_assistant(student_id: int, payload: ChatbotRequest, context=Depends(student_session)):
     session, user = context
     student = owned_student(session, user, student_id)
     
-    msg = payload.message.lower()
-    reply = "Namaste! I am Jugaad Dost, your placement copilot. "
-    
+    job = None
     if payload.job_id:
         from models import Job
         from sqlalchemy import select
         job = session.scalar(select(Job).where(Job.id == payload.job_id, Job.college_id == user.college_id))
-        if not job:
-            reply += "I couldn't find that drive. Are you sure the Job ID is correct?"
-        else:
-            if student.cgpa < job.min_cgpa:
-                reply += f"For the role of '{job.title}', you need a CGPA of {job.min_cgpa}, but yours is {student.cgpa}. You are not eligible yet."
-            else:
-                from engines.skill_gap import skill_gaps
-                from models import StudentSkill
-                skills = session.scalars(select(StudentSkill).where(StudentSkill.student_id == student.id)).all()
-                gaps = [g for g in skill_gaps(skills, job.required_skills) if g["status"] != "on-track"]
-                if gaps:
-                    gap_names = ", ".join([g['skill_name'] for g in gaps])
-                    reply += f"You meet the CGPA requirement for '{job.title}'! However, you have skill gaps in: {gap_names}. I recommend focusing on these areas to increase your chances of being shortlisted."
-                else:
-                    reply += f"Great news! You meet the CGPA and skill requirements for '{job.title}'. Keep an eye out for the shortlist!"
-    elif "eligibility" in msg or "ready" in msg or "employable" in msg:
-        from engines.profile import profile_response
-        profile = profile_response(session, student)
-        readiness = profile.readiness
-        reply += f"Based on your profile, your readiness score is {readiness.score}/100, which puts you in the '{readiness.band}' band. {readiness.sentence}"
-    else:
-        reply += "I can help you understand your readiness score or check your eligibility for a specific drive. Try asking 'Am I employable?' or provide a job_id to check your fit!"
-        
+
+    reply = generate_chat_response(session, user, student, job, payload.message)
     return ChatbotResponse(reply=reply)
 
 from schemas import GamificationStats

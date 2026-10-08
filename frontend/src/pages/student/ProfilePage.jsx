@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { getProfile, saveProfile, errorMessage } from '../../api/student'
+import { getProfile, saveProfile, errorMessage, askJugaadDost } from '../../api/student'
 import { FormField, buttonStyle, secondaryStyle, Message } from '../../components/FormField'
 import BTechModelPanel from './BTechModelPanel'
 import PlacementModelPanel from './PlacementModelPanel'
@@ -34,6 +34,9 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [chatInput, setChatInput] = useState('')
+  const [chatMessages, setChatMessages] = useState([{ role: 'dost', content: 'Namaste! I am Jugaad Dost, your placement copilot. Ask me about your eligibility or readiness!' }])
+  const [chatLoading, setChatLoading] = useState(false)
   async function load() {
     setLoading(true); setError('')
     try { const value = await getProfile(user.student_id); setProfile(value); setForm(editable(value)); setDirty(false) }
@@ -122,10 +125,59 @@ export default function ProfilePage() {
     </section>
     <div id="placement-models" className="scroll-mt-6 space-y-8"><BTechModelPanel sectionNumber="06" studentId={profile.id} onExpired={logout} />
     <PlacementModelPanel sectionNumber="07" studentId={profile.id} onExpired={logout} /></div>
-    <aside className="rounded-2xl bg-navy p-6 text-white"><h2 className="font-bold">Jugaad Dost 🤝</h2>
-      <p className="mt-1 text-xs text-white/70">Quick help · static FAQ</p>
-      <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">Why did uploading my resume not change my score?</summary><p className="mt-2 text-sm leading-6 text-white/80">Uploading stores readable text for your review. Add skills, projects, academics, and existing assessment scores to your profile, then save to recalculate.</p></details>
-      <details className="mt-4"><summary className="cursor-pointer text-sm font-semibold">How do readiness and the placement models differ?</summary><p className="mt-2 text-sm leading-6 text-white/80">Weighted Readiness Score is a proposed rule based on your profile evidence, without real-outcome validation. The BTech and MBA Placement Likelihood Models are separate Random Forests trained on their respective public placement datasets. Their outputs are uncalibrated and do not decide eligibility or offers. Use only the model whose fields match your recorded studies. A person should review the evidence before making any decision.</p></details>
+    <aside className="rounded-2xl bg-navy p-6 text-white flex flex-col h-96">
+      <h2 className="font-bold">Jugaad Dost 🤝</h2>
+      <p className="mt-1 text-xs text-white/70 mb-4">Your AI Placement Copilot</p>
+      
+      <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2">
+        {chatMessages.map((msg, i) => (
+          <div key={i} className={`p-3 rounded-xl text-sm ${msg.role === 'user' ? 'bg-white/10 ml-8' : 'bg-blue-600/50 mr-8'} whitespace-pre-wrap`}>
+            {msg.content}
+          </div>
+        ))}
+        {chatLoading && (
+          <div className="p-3 rounded-xl text-sm bg-blue-600/50 mr-8 animate-pulse">
+            Dost is thinking...
+          </div>
+        )}
+      </div>
+
+      <form 
+        className="flex gap-2"
+        onSubmit={async (e) => {
+          e.preventDefault()
+          if (!chatInput.trim() || chatLoading) return
+          
+          const userMsg = chatInput.trim()
+          setChatInput('')
+          setChatMessages(prev => [...prev, { role: 'user', content: userMsg }])
+          setChatLoading(true)
+          
+          try {
+            const res = await askJugaadDost(profile.id, userMsg)
+            setChatMessages(prev => [...prev, { role: 'dost', content: res.reply }])
+          } catch (err) {
+            setChatMessages(prev => [...prev, { role: 'dost', content: 'Oops! I am having trouble connecting right now.' }])
+          } finally {
+            setChatLoading(false)
+          }
+        }}
+      >
+        <input 
+          type="text" 
+          value={chatInput}
+          onChange={(e) => setChatInput(e.target.value)}
+          placeholder="Ask about your eligibility or readiness..." 
+          className="flex-1 bg-white/10 rounded-lg px-4 py-2 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 border-none"
+        />
+        <button 
+          type="submit" 
+          disabled={chatLoading}
+          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg text-sm font-bold transition-colors disabled:opacity-50"
+        >
+          Send
+        </button>
+      </form>
     </aside>
   </div>
 }

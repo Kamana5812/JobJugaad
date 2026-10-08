@@ -28,3 +28,5 @@ export const saveBTechModel = async (id, input) => (await api.put(`/students/${i
 export const getOpportunities = async (id, params) => (await api.get(`/students/${id}/opportunities`, { params })).data
 
 export const getInterviews = async (id, offset = 0) => (await api.get(`/students/${id}/interviews`, { params: { offset, limit: 10 } })).data
+
+export const askJugaadDost = async (id, message, jobId) => (await api.post(`/students/${id}/chatbot/eligibility`, { message, job_id: jobId })).data

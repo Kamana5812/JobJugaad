@@ -85,7 +85,7 @@ Please respond to the student directly."""
 
     try:
         response = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "system", "content": prompt}]
         )
         return response.choices[0].message.content
